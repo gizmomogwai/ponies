@@ -1,3 +1,7 @@
+/++
+ + License: MIT
+ +/
+
 module ps;
 import std.stdio;
 import std.file;
