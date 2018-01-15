@@ -1,0 +1,7 @@
+name "project-setup"
+description "Helps you to setup nice projects."
+authors "Christian Köstlin"
+copyright "Copyright © 2018, Christian Köstlin"
+license "MIT"
+dependency "colored" version="~>0.0.8"
+x:ddoxFilterArgs "--min-protection=Protected"
