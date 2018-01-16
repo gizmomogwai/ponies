@@ -12,6 +12,7 @@ import androidlogger;
 void commit(string message)
 {
     import std.process;
+
     auto addCommand = ["git", "add", "-u"];
     auto res = addCommand.execute;
     "result of %s: %s".format(addCommand, res).info;
@@ -41,7 +42,7 @@ int main(string[] args)
             "main:Commit before %s".format(pony).info;
             "Before %s".format(pony.name).commit;
             "main:Running %s".format(pony).info;
-            pony.doSetup;
+            pony.run;
             "After %s".format(pony.name).commit;
             "main:Commit after %s".format(pony).info;
         }

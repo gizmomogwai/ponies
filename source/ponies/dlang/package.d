@@ -5,15 +5,15 @@
 module ponies.dlang;
 
 import ponies;
-import std.stdio;
-import std.file;
 import std.algorithm;
+import std.array;
+import std.conv;
+import std.experimental.logger;
+import std.file;
+import std.regex;
+import std.stdio;
 import std.string;
 import std.traits;
-import std.conv;
-import std.array;
-import std.regex;
-import std.experimental.logger;
 
 enum ProtectionLevel
 {
@@ -40,7 +40,8 @@ abstract class DlangPony : Pony
 
 class DDoxPony : DlangPony
 {
-    string name() {
+    string name()
+    {
         return "Setup ddox in dub.sdl";
     }
 
@@ -57,7 +58,7 @@ class DDoxPony : DlangPony
         }
     }
 
-    void doSetup()
+    void run()
     {
         append("dub.sdl",
                 "x:ddoxFilterArgs \"--min-protection=%s\"\n".format(askFor!ProtectionLevel));
@@ -70,6 +71,7 @@ class RakeFormatPony : DlangPony
     {
         return "Setup rake format";
     }
+
     bool check()
     {
         try
@@ -83,7 +85,7 @@ class RakeFormatPony : DlangPony
         }
     }
 
-    void doSetup()
+    void run()
     {
         append("rakefile.rb",
                 "desc 'format'\ntask :format do\n  sh 'find . -name \"*.d\" | xargs dfmt -i'\nend\n");
@@ -100,9 +102,11 @@ class LicenseCommentPony : DlangPony
         license = getFromDubSdl("license");
     }
 
-    string name() {
+    string name()
+    {
         return "Setup license headers in .d files";
     }
+
     bool check()
     {
         auto res = appender!(string[]);
@@ -120,7 +124,7 @@ class LicenseCommentPony : DlangPony
         return noLicenseFiles.length == 0;
     }
 
-    void doSetup()
+    void run()
     {
         "Fixing license for %s".format(noLicenseFiles).info;
 

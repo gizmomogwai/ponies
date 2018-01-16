@@ -3,12 +3,13 @@
  +/
 
 module ponies;
-import std.stdio;
-import std.file;
+
 import std.algorithm;
+import std.conv;
+import std.file;
+import std.stdio;
 import std.string;
 import std.traits;
-import std.conv;
 
 auto possibleValues(E)() if (is(E == enum))
 {
@@ -27,5 +28,5 @@ interface Pony
     string name();
     bool applicable();
     bool check();
-    void doSetup();
+    void run();
 }
