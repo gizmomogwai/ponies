@@ -24,6 +24,7 @@ T askFor(T)() if (is(T == enum))
 
 interface Pony
 {
+    string name();
     bool applicable();
     bool check();
     void doSetup();

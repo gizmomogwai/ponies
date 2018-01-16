@@ -40,6 +40,10 @@ abstract class DlangPony : Pony
 
 class DDoxPony : DlangPony
 {
+    string name() {
+        return "Setup ddox in dub.sdl";
+    }
+
     bool check()
     {
         try
@@ -62,6 +66,10 @@ class DDoxPony : DlangPony
 
 class RakeFormatPony : DlangPony
 {
+    string name()
+    {
+        return "Setup rake format";
+    }
     bool check()
     {
         try
@@ -92,6 +100,9 @@ class LicenseCommentPony : DlangPony
         license = getFromDubSdl("license");
     }
 
+    string name() {
+        return "Setup license headers in .d files";
+    }
     bool check()
     {
         auto res = appender!(string[]);
