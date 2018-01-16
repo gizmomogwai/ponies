@@ -8,6 +8,7 @@ import std.experimental.logger;
 import std.stdio;
 import std.string;
 import androidlogger;
+import commandline;
 
 void commit(string message)
 {
@@ -26,9 +27,8 @@ auto readyToRun(P)(P ponies)
     return ponies.filter!(a => a.applicable);
 }
 
-int run(P)(P ponies, CommandLine commandLine)
+int run(P)(P ponies, string[] args)
 {
-
     foreach (pony; ponies.readyToRun)
     {
         "main:Checking %s".format(pony).info;
@@ -46,30 +46,11 @@ int run(P)(P ponies, CommandLine commandLine)
     return 0;
 }
 
-class CommandLine
+int list(T)(T ponies, string[] args)
 {
-    public immutable string command;
-    public string[string] args;
-    this(string[] args)
-    {
-        if (args.length < 2)
-        {
-            command = "run";
-            return;
-        }
-        this.command = args[1];
-        foreach (arg; args[2 .. $])
-        {
-            string[] keyValue = arg.split("=");
-            this.args[keyValue[0]] = keyValue[1];
-        }
-    }
-}
 
-int list(P)(P ponies, CommandLine commandLine)
-{
-    switch (commandLine.args["set"])
-    {
+    auto res = commandline.parse(args[1..$]);
+    switch (res.rest[0]) {
     case "all":
         ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
         return 0;
@@ -77,7 +58,7 @@ int list(P)(P ponies, CommandLine commandLine)
         ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString).join("\n  ")).writeln;
         return 0;
     default:
-        throw new Exception("unknown list option %s".format(commandLine));
+        throw new Exception("unknown list option %s".format(args));
     }
 }
 
@@ -93,14 +74,20 @@ int main(string[] args)
     ];
     // dfmt on
 
-    auto commandLine = new CommandLine(args);
-    switch (commandLine.command)
+    auto res = commandline.parse(args[1..$]);
+    if ("help" in res.parsed)
     {
-    case "run":
-        return run(ponies, commandLine);
-    case "list":
-        return list(ponies, commandLine);
-    default:
-        throw new Exception("unknown command: %s".format(args));
+        writeln("Usage: ponies [--help] command
+  Commands:
+    list [--help] all|readyToRun
+    run");
     }
+
+    if ((res.rest == []) || (res.rest[0] == "run")) {
+        return run(ponies, res.rest);
+    } else if (res.rest[0] == "list") {
+        return list(ponies, res.rest);
+    }
+
+    return 1;
 }
