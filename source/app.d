@@ -21,20 +21,15 @@ void commit(string message)
     "result of %s: %s".format(commitCommand, res).info;
 }
 
-int main(string[] args)
+auto readyToRun(P)(P ponies)
 {
-    sharedLog = new AndroidLogger(true, LogLevel.all);
+    return ponies.filter!(a => a.applicable);
+}
 
-    // dfmt off
-    auto ponies = [
-        new ponies.dlang.DDoxPony,
-        new ponies.dlang.RakeFormatPony,
-        new ponies.dlang.LicenseCommentPony,
-    ];
-    // dfmt on
+int run(P)(P ponies, CommandLine commandLine)
+{
 
-    auto applicable = ponies.filter!(a => a.applicable);
-    foreach (pony; applicable)
+    foreach (pony; ponies.readyToRun)
     {
         "main:Checking %s".format(pony).info;
         if (!pony.check)
@@ -49,4 +44,63 @@ int main(string[] args)
     }
 
     return 0;
+}
+
+class CommandLine
+{
+    public immutable string command;
+    public string[string] args;
+    this(string[] args)
+    {
+        if (args.length < 2)
+        {
+            command = "run";
+            return;
+        }
+        this.command = args[1];
+        foreach (arg; args[2 .. $])
+        {
+            string[] keyValue = arg.split("=");
+            this.args[keyValue[0]] = keyValue[1];
+        }
+    }
+}
+
+int list(P)(P ponies, CommandLine commandLine)
+{
+    switch (commandLine.args["set"])
+    {
+    case "all":
+        ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
+        return 0;
+    case "readyToRun":
+        ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString).join("\n  ")).writeln;
+        return 0;
+    default:
+        throw new Exception("unknown list option %s".format(commandLine));
+    }
+}
+
+int main(string[] args)
+{
+    sharedLog = new AndroidLogger(true, LogLevel.all);
+
+    // dfmt off
+    auto ponies = [
+        new ponies.dlang.DDoxPony,
+        new ponies.dlang.RakeFormatPony,
+        new ponies.dlang.LicenseCommentPony,
+    ];
+    // dfmt on
+
+    auto commandLine = new CommandLine(args);
+    switch (commandLine.command)
+    {
+    case "run":
+        return run(ponies, commandLine);
+    case "list":
+        return list(ponies, commandLine);
+    default:
+        throw new Exception("unknown command: %s".format(args));
+    }
 }
