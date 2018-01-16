@@ -2,7 +2,7 @@
  + License: MIT
  +/
 
-import ps.dlang;
+import ponies.dlang;
 import std.algorithm;
 import std.experimental.logger;
 import std.stdio;
@@ -15,9 +15,9 @@ int main(string[] args)
 
     // dfmt off
     auto projectSetups = [
-        new ps.dlang.DDoxPS,
-        new ps.dlang.RakeFormatPS,
-        new ps.dlang.LicenseCommentPS,
+        new ponies.dlang.DDoxPony,
+        new ponies.dlang.RakeFormatPony,
+        new ponies.dlang.LicenseCommentPony,
     ];
     // dfmt on
 

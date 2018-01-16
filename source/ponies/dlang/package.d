@@ -2,9 +2,9 @@
  + License: MIT
  +/
 
-module ps.dlang;
+module ponies.dlang;
 
-import ps;
+import ponies;
 import std.stdio;
 import std.file;
 import std.algorithm;
@@ -22,7 +22,7 @@ enum ProtectionLevel
     Public
 }
 
-abstract class DlangPS : PS
+abstract class DlangPony : Pony
 {
     bool applicable()
     {
@@ -38,7 +38,7 @@ abstract class DlangPS : PS
     }
 }
 
-class DDoxPS : DlangPS
+class DDoxPony : DlangPony
 {
     bool check()
     {
@@ -60,7 +60,7 @@ class DDoxPS : DlangPS
     }
 }
 
-class RakeFormatPS : DlangPS
+class RakeFormatPony : DlangPony
 {
     bool check()
     {
@@ -82,7 +82,7 @@ class RakeFormatPS : DlangPS
     }
 }
 
-class LicenseCommentPS : DlangPS
+class LicenseCommentPony : DlangPony
 {
     string[] noLicenseFiles;
     string license;
