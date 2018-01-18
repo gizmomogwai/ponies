@@ -27,8 +27,9 @@ auto readyToRun(P)(P ponies)
     return ponies.filter!(a => a.applicable);
 }
 
-int run(P)(P ponies, string[] args)
+void run(P)(P ponies, Option[] args)
 {
+    "run".info;
     foreach (pony; ponies.readyToRun)
     {
         "main:Checking %s".format(pony).info;
@@ -43,14 +44,16 @@ int run(P)(P ponies, string[] args)
         }
     }
 
-    return 0;
+    //return 0;
 }
 
-int list(T)(T ponies, string[] args)
+void list(T)(T ponies, ParseResult args)
 {
-
-    auto res = commandline.parse(args[1..$]);
-    switch (res.rest[0]) {
+    "list args: %s".format(args).info;
+    /*
+    auto res = commandline.parse(args[1 .. $]);
+    switch (res.rest[0])
+    {
     case "all":
         ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
         return 0;
@@ -60,6 +63,7 @@ int list(T)(T ponies, string[] args)
     default:
         throw new Exception("unknown list option %s".format(args));
     }
+    */
 }
 
 int main(string[] args)
@@ -72,22 +76,60 @@ int main(string[] args)
         new ponies.dlang.RakeFormatPony,
         new ponies.dlang.LicenseCommentPony,
     ];
+    auto rootDelegate = (Command command) {
+        "rootDelegate %s %s".format(command.result, ponies).info;
+    };
+    auto runDelegate = (Command command) {
+        "runDelegate %s %s".format(command.result, ponies).info;
+        //run(ponies, result);
+    };
+    auto versionDelegate = (Command command) {
+        "versionDelegate %s %s".format(command.result, ponies).info;
+    };
+    auto listDelegate = (Command command) {
+        "listDelegate %s %s".format(command.result, ponies).info;
+        //list(ponies, result);
+    };
+
+    Command rootCommand =
+        Command(
+            "root", rootDelegate,
+            [
+                Option.withName("help").withDescription("show general help"),
+                Option.withName("verbose").withDescription("enable verbose logging").withDefault("false")
+            ],
+            [
+                Command("run", runDelegate,
+                        [Option.withName("help").withDescription("show run help")],
+                        []
+                ),
+                Command("version", versionDelegate,
+                        [Option.withName("help").withDescription("show version help")],
+                        []
+                ),
+                Command("list", listDelegate,
+                        [
+                            Option.withName("help").withDescription("show list help"),
+                            Option.withName("set").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")
+                        ], []
+                )
+            ]
+        );
     // dfmt on
 
-    auto res = commandline.parse(args[1..$]);
-    if ("help" in res.parsed)
-    {
-        writeln("Usage: ponies [--help] command
-  Commands:
-    list [--help] all|readyToRun
-    run");
+    rootCommand.parse(args[1..$]);
+    /*
+    writeln("parsed: ", rootCommand.result.parsed);
+    if ("help" in rootCommand.result.parsed) {
+        writeln(rootCommand.help);
+        return 0;
     }
 
-    if ((res.rest == []) || (res.rest[0] == "run")) {
-        return run(ponies, res.rest);
-    } else if (res.rest[0] == "list") {
-        return list(ponies, res.rest);
+    if ("help" in rootCommand.subCommand.result.parsed) {
+        writeln(rootCommand.subCommand.help);
     }
+    */
+    rootCommand.run;
 
     return 1;
 }
