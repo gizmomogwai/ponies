@@ -85,7 +85,9 @@ struct Command
     Command[] subCommands;
     ParseResult result;
     Command* subCommand;
-
+    bool helpNeeded() {
+        return ("help" in result.parsed) != null;
+    }
     void parse(string[] args) {
         "Parsing command %s".format(name).trace;
         result = options.parse(args);

@@ -76,18 +76,31 @@ int main(string[] args)
         new ponies.dlang.RakeFormatPony,
         new ponies.dlang.LicenseCommentPony,
     ];
+
     auto rootDelegate = (Command command) {
         "rootDelegate %s %s".format(command.result, ponies).info;
+        if (command.helpNeeded) {
+            writeln(command.help);
+        }
     };
     auto runDelegate = (Command command) {
         "runDelegate %s %s".format(command.result, ponies).info;
+        if (command.helpNeeded) {
+            writeln(command.help);
+        }
         //run(ponies, result);
     };
     auto versionDelegate = (Command command) {
         "versionDelegate %s %s".format(command.result, ponies).info;
+        if (command.helpNeeded) {
+            writeln(command.help);
+        }
     };
     auto listDelegate = (Command command) {
         "listDelegate %s %s".format(command.result, ponies).info;
+        if (command.helpNeeded) {
+            writeln(command.help);
+        }
         //list(ponies, result);
     };
 
