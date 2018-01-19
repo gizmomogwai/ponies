@@ -9,7 +9,7 @@ import std.stdio;
 import std.string;
 import androidlogger;
 import commandline;
-
+import std.conv;
 void commit(string message)
 {
     import std.process;
@@ -27,7 +27,7 @@ auto readyToRun(P)(P ponies)
     return ponies.filter!(a => a.applicable);
 }
 
-void run(P)(P ponies, Option[] args)
+void run(P)(P ponies)
 {
     "run".info;
     foreach (pony; ponies.readyToRun)
@@ -47,28 +47,31 @@ void run(P)(P ponies, Option[] args)
     //return 0;
 }
 
-void list(T)(T ponies, ParseResult args)
+enum What {
+    all, readyToRun
+}
+
+void list(T)(T ponies, What what)
 {
-    "list args: %s".format(args).info;
-    /*
-    auto res = commandline.parse(args[1 .. $]);
-    switch (res.rest[0])
+    "list args: %s".format(what).info;
+
+    switch (what)
     {
-    case "all":
+    case What.all:
         ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
-        return 0;
-    case "readyToRun":
+        return;
+    case What.readyToRun:
         ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString).join("\n  ")).writeln;
-        return 0;
+        return;
     default:
-        throw new Exception("unknown list option %s".format(args));
+        throw new Exception("unknown list option %s".format(what));
     }
-    */
 }
 
 int main(string[] args)
 {
-    sharedLog = new AndroidLogger(true, LogLevel.all);
+    auto androidLogger = new AndroidLogger(true, LogLevel.warning);
+    sharedLog = androidLogger;
 
     // dfmt off
     auto ponies = [
@@ -78,6 +81,11 @@ int main(string[] args)
     ];
 
     auto rootDelegate = (Command command) {
+        if (auto verbose = "verbose" in command.result.parsed) {
+            if (*verbose == "true") {
+                androidLogger.logLevel = LogLevel.all;
+            }
+        }
         "rootDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
@@ -87,8 +95,9 @@ int main(string[] args)
         "runDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+        } else {
+            run(ponies);
         }
-        //run(ponies, result);
     };
     auto versionDelegate = (Command command) {
         "versionDelegate %s %s".format(command.result, ponies).info;
@@ -100,8 +109,11 @@ int main(string[] args)
         "listDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+        } else {
+            auto what = command.result.parsed["set"].to!What;
+            writeln(what);
+            list(ponies, what);
         }
-        //list(ponies, result);
     };
 
     Command rootCommand =

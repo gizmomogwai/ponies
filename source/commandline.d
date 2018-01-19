@@ -9,6 +9,7 @@ import std.range;
 import std.typecons;
 import std.algorithm;
 import std.experimental.logger;
+import asciitable;
 
 auto toKv(string s)
 {
@@ -110,7 +111,11 @@ struct Command
         }
     }
     string help() {
-        auto res = "Options:\n    " ~ options.map!("a.help").join("\n    ") ~ "\n";
+        auto table = AsciiTable(16, 80);
+        foreach (option; options) {
+            table.add(option.name, option.description);
+        }
+        auto res = "Options:\n" ~ table.toString("    ");
         if (!subCommands.empty) {
             res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");
         }
@@ -124,20 +129,3 @@ struct Command
     }
 }
 
-@("process normal options") unittest
-{
-    import unit_threaded;
-
-    auto res = parse(["--test1=1", "--test2=2", "command", "--test3=3"]);
-    res.parsed.shouldEqual(["test1" : "1", "test2" : "2"]);
-    res.rest.shouldEqual(["command", "--test3=3"]);
-}
-
-@("process empty options") unittest
-{
-    import unit_threaded;
-
-    auto res = parse(["--test1", "--test2=2", "command", "all"]);
-    res.parsed.shouldEqual(["test1" : null, "test2" : "2"]);
-    res.rest.shouldEqual(["command", "all"]);
-}
