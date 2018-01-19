@@ -93,31 +93,39 @@ int main(string[] args)
         "rootDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+            return false;
         }
+        return true;
     };
     auto runDelegate = (Command command) {
         "runDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+            return false;
         } else {
             run(ponies);
         }
+        return true;
     };
     auto versionDelegate = (Command command) {
         "versionDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+            return false;
         }
+        return true;
     };
     auto listDelegate = (Command command) {
         "listDelegate %s %s".format(command.result, ponies).info;
         if (command.helpNeeded) {
             writeln(command.help);
+            return false;
         } else {
             auto what = command.result.parsed["set"].to!What;
             writeln(what);
             list(ponies, what);
         }
+        return true;
     };
 
     Command rootCommand =

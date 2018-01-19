@@ -20,14 +20,16 @@ auto toKv(ref string[] args)
         arg = arg[2 .. $];
         res = arg.split("=");
         args.popFront;
-        if (res.length == 1) {
-            if (args.empty) {
+        if (res.length == 1)
+        {
+            if (args.empty)
+            {
                 res ~= "true";
             }
             else
-                {
-                    throw new Exception("argument missing");
-                }
+            {
+                throw new Exception("argument missing");
+            }
         }
         return res;
     }
@@ -35,9 +37,10 @@ auto toKv(ref string[] args)
     {
         if (arg.startsWith("-"))
         {
-            auto k = arg[1..$];
+            auto k = arg[1 .. $];
             args.popFront;
-            if (args.empty) {
+            if (args.empty)
+            {
                 return [k, "true"];
             }
             auto v = args.front;
@@ -114,7 +117,7 @@ struct Option
 struct Command
 {
     string name;
-    void delegate(Command) runDelegate;
+    bool delegate(Command) runDelegate;
     Option[] options;
     Command[] subCommands;
     ParseResult result;
@@ -171,10 +174,12 @@ struct Command
 
     void run()
     {
-        runDelegate(this);
-        if (subCommand != null)
+        if (runDelegate(this))
         {
-            subCommand.run;
+            if (subCommand != null)
+            {
+                subCommand.run;
+            }
         }
     }
 }
