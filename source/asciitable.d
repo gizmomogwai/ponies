@@ -1,3 +1,7 @@
+/++
+ + License: MIT
+ +/
+
 module asciitable;
 
 struct Row
