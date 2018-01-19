@@ -11,17 +11,44 @@ import std.algorithm;
 import std.experimental.logger;
 import asciitable;
 
-auto toKv(string s)
+auto toKv(ref string[] args)
 {
-    if (s.startsWith("--"))
+    auto arg = args.front;
+    string[] res;
+    if (arg.startsWith("--"))
     {
-        s = s[2 .. $];
+        arg = arg[2 .. $];
+        res = arg.split("=");
+        args.popFront;
+        if (res.length == 1) {
+            if (args.empty) {
+                res ~= "true";
+            }
+            else
+                {
+                    throw new Exception("argument missing");
+                }
+        }
+        return res;
     }
     else
     {
-        return null;
+        if (arg.startsWith("-"))
+        {
+            auto k = arg[1..$];
+            args.popFront;
+            if (args.empty) {
+                return [k, "true"];
+            }
+            auto v = args.front;
+            args.popFront;
+            return [k, v];
+        }
+        else
+        {
+            return null;
+        }
     }
-    return s.split("=");
 }
 
 alias ParseResult = Tuple!(string[string], "parsed", string[], "rest");
@@ -31,29 +58,28 @@ alias ParseResult = Tuple!(string[string], "parsed", string[], "rest");
 ParseResult parse(Option[] options, string[] args)
 {
     string[string] keyValues;
-    foreach (option; options) {
-        if (option.defaultValue != null) {
+    foreach (option; options)
+    {
+        if (option.defaultValue != null)
+        {
             keyValues[option.name] = option.defaultValue;
         }
     }
     while (!args.empty)
     {
-        auto arg = args.front;
-
-        auto kv = toKv(arg);
+        auto kv = toKv(args);
         if (kv == null)
         {
             return ParseResult(keyValues, args);
         }
-        args.popFront;
+
         if (kv.length == 2)
         {
             keyValues[kv[0]] = kv[1];
         }
-
         else
         {
-            keyValues[kv[0]] = null;
+            throw new Exception("kv.length not 2");
         }
     }
     return ParseResult(keyValues, args);
@@ -64,17 +90,24 @@ struct Option
     string name;
     string defaultValue;
     string description;
-    static Option withName(string name) {
+    static Option withName(string name)
+    {
         return Option(name);
     }
-    Option withDefault(string defaultValue) {
+
+    Option withDefault(string defaultValue)
+    {
         return Option(name, defaultValue, description);
     }
-    Option withDescription(string description) {
+
+    Option withDescription(string description)
+    {
         return Option(name, defaultValue, description);
     }
-    string help() {
-        return (this.name ~ "\t" ~ ((this.description != null)? this.description : "no description"));
+
+    string help()
+    {
+        return (this.name ~ "\t" ~ ((this.description != null) ? this.description : "no description"));
     }
 }
 
@@ -86,46 +119,62 @@ struct Command
     Command[] subCommands;
     ParseResult result;
     Command* subCommand;
-    bool helpNeeded() {
+    bool helpNeeded()
+    {
         return ("help" in result.parsed) != null;
     }
-    void parse(string[] args) {
+
+    void parse(string[] args)
+    {
         "Parsing command %s".format(name).trace;
         result = options.parse(args);
-        auto wrongOptions = result.parsed.keys.filter!(i => !options.canFind!("a.name == b")(i)).array;
-        if (wrongOptions.length > 0) {
+        auto wrongOptions = result.parsed.keys.filter!(
+                i => !options.canFind!("a.name == b")(i)).array;
+        if (wrongOptions.length > 0)
+        {
             throw new Exception("wrong options: %s".format(wrongOptions));
         }
         "Parsed %s".format(result).trace;
-        if (result.rest.length > 0) {
+        if (result.rest.length > 0)
+        {
             auto help = subCommands.find!("a.name == b")(result.rest.front);
-            if (!help.empty) {
+            if (!help.empty)
+            {
                 subCommand = &help.front;
-                subCommand.parse(result.rest[1..$]);
+                subCommand.parse(result.rest[1 .. $]);
             }
-        } else {
-            if (!subCommands.empty) {
+        }
+        else
+        {
+            if (!subCommands.empty)
+            {
                 subCommand = &subCommands.front;
                 subCommand.parse(result.rest);
             }
         }
     }
-    string help() {
+
+    string help()
+    {
         auto table = AsciiTable(16, 80);
-        foreach (option; options) {
+        foreach (option; options)
+        {
             table.add(option.name, option.description);
         }
         auto res = "Options:\n" ~ table.toString("    ");
-        if (!subCommands.empty) {
+        if (!subCommands.empty)
+        {
             res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");
         }
         return res;
     }
-    void run() {
+
+    void run()
+    {
         runDelegate(this);
-        if (subCommand != null) {
+        if (subCommand != null)
+        {
             subCommand.run;
         }
     }
 }
-

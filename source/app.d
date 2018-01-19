@@ -10,6 +10,7 @@ import std.string;
 import androidlogger;
 import commandline;
 import std.conv;
+
 void commit(string message)
 {
     import std.process;
@@ -47,8 +48,10 @@ void run(P)(P ponies)
     //return 0;
 }
 
-enum What {
-    all, readyToRun
+enum What
+{
+    all,
+    readyToRun
 }
 
 void list(T)(T ponies, What what)
@@ -61,7 +64,8 @@ void list(T)(T ponies, What what)
         ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
         return;
     case What.readyToRun:
-        ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString).join("\n  ")).writeln;
+        ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString)
+                .join("\n  ")).writeln;
         return;
     default:
         throw new Exception("unknown list option %s".format(what));
@@ -142,7 +146,7 @@ int main(string[] args)
         );
     // dfmt on
 
-    rootCommand.parse(args[1..$]);
+    rootCommand.parse(args[1 .. $]);
     /*
     writeln("parsed: ", rootCommand.result.parsed);
     if ("help" in rootCommand.result.parsed) {
