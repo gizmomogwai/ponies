@@ -179,12 +179,6 @@ struct Command
     {
         "Parsing command %s".format(name).trace;
         auto result = options.parse(args);
-        auto wrongOptions = result.parsed.keys.filter!(
-                i => !options.canFind!("a.name == b")(i)).array;
-        if (wrongOptions.length > 0)
-        {
-            throw new Exception("wrong options: %s".format(wrongOptions));
-        }
         "Parsed %s".format(result).trace;
         parsed = result.parsed;
         rest = result.rest;

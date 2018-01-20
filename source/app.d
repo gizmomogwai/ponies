@@ -150,6 +150,7 @@ int main(string[] args)
         new ponies.dlang.DDoxPony,
         new ponies.dlang.RakeFormatPony,
         new ponies.dlang.LicenseCommentPony,
+        new ponies.dlang.TravisPony,
     ];
     // dfmt on
 
