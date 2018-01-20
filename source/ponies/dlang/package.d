@@ -147,3 +147,45 @@ class LicenseCommentPony : DlangPony
 
     }
 }
+
+class TravisPony : DlangPony {
+    string name()
+    {
+        return "Setup travis build in .travis.yml";
+    }
+    bool check() {
+        return exists(".travis.yml");
+    }
+    void run() {
+        "Creating .travis.yml file".info;
+        "userinteraction:Please get gh repo token from https://github.com/settings/tokens".warning;
+        "userinteraction:Please enable travis build".warning;
+        "userinteraction:Please enable coverage on codecov".warning;
+        auto content = "language: d
+sudo: false
+addons:
+  apt:
+    packages:
+    - libevent-dev
+before_install: pip install --user codecov
+script:
+- dub test --compiler=${DC} --coverage
+- dub build --build=release
+- dub build --build=ddox
+after_success: codecov
+deploy:
+  provider: pages
+  skip-cleanup: true
+  local-dir: \"docs\"
+  github-token: \"$GH_REPO_TOKEN\"
+  verbose: true
+  keep-history: true
+  on:
+    branch: master
+env:
+  global:
+    secure: create this token with travis encrypt GH_REPO_TOKEN=key from https://github.com/settings/tokens
+";
+        std.file.write(".travis.yml", content);
+    }
+}

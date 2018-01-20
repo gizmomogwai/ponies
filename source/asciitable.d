@@ -70,5 +70,5 @@ struct AsciiTable
     auto table = AsciiTable(10, 3, 5);
     table.add("1", "2", "3");
     table.add("4", "5", "6");
-    table.toString.shouldEqual("1         2  3    \n" ~ "4         5  6    \n");
+    table.toString.shouldEqual("1         2  3    \n" ~ "4         5  6    ");
 }
