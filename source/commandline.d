@@ -55,6 +55,17 @@ auto toKv(ref string[] args)
 }
 
 alias ParseResult = Tuple!(string[string], "parsed", string[], "rest");
+
+bool isLongOption(string s)
+{
+    return s.startsWith("--");
+}
+
+bool isShortOption(string s)
+{
+    return s.startsWith("-");
+}
+
 /++
  + parses args (takes out all options and returns the rest).
  +/
@@ -70,19 +81,48 @@ ParseResult parse(Option[] options, string[] args)
     }
     while (!args.empty)
     {
-        auto kv = toKv(args);
-        if (kv == null)
+        auto arg = args.front;
+        if (arg.isLongOption)
         {
-            return ParseResult(keyValues, args);
+            arg = arg[2 .. $];
+            auto kv = arg.split("=");
+            auto option = options.find!(i => i.name == kv[0]);
+            if (option.empty)
+            {
+                throw new Exception("Illegal option '%s'".format(arg));
+            }
+            if (kv.length == 2)
+            {
+                keyValues[kv[0]] = kv[1];
+            }
+            else if (kv.length == 1)
+            {
+                keyValues[kv[0]] = "true";
+            }
+            args.popFront;
         }
-
-        if (kv.length == 2)
+        else if (arg.isShortOption)
         {
-            keyValues[kv[0]] = kv[1];
+            arg = arg[1 .. $];
+            auto option = options.find!(i => i.shortName == arg);
+            if (option.empty)
+            {
+                throw new Exception("Illegal option '%s'".format(arg));
+            }
+            args.popFront;
+            if (args.empty)
+            {
+                keyValues[option.front.name] = "true";
+            }
+            else
+            {
+                keyValues[option.front.name] = args.front;
+                args.popFront;
+            }
         }
         else
         {
-            throw new Exception("kv.length not 2");
+            break;
         }
     }
     return ParseResult(keyValues, args);
@@ -91,6 +131,7 @@ ParseResult parse(Option[] options, string[] args)
 struct Option
 {
     string name;
+    string shortName;
     string defaultValue;
     string description;
     static Option withName(string name)
@@ -98,19 +139,25 @@ struct Option
         return Option(name);
     }
 
+    Option withShortName(string shortName)
+    {
+        return Option(name, shortName, defaultValue, description);
+    }
+
     Option withDefault(string defaultValue)
     {
-        return Option(name, defaultValue, description);
+        return Option(name, shortName, defaultValue, description);
     }
 
     Option withDescription(string description)
     {
-        return Option(name, defaultValue, description);
+        return Option(name, shortName, defaultValue, description);
     }
 
     string help()
     {
-        return (this.name ~ "\t" ~ ((this.description != null) ? this.description : "no description"));
+        return (name ~ "\t" ~ (shortName != null ? shortName
+                : "") ~ "\t" ~ ((this.description != null) ? this.description : "no description"));
     }
 }
 
@@ -163,10 +210,11 @@ struct Command
 
     string help()
     {
-        auto table = AsciiTable(16, 80);
+        auto table = AsciiTable(1, 1, 1);
         foreach (option; options)
         {
-            table.add(option.name, option.description);
+            table.add("--" ~ option.name, option.shortName
+                    ? "-" ~ option.shortName : "", option.description);
         }
         auto res = "Options:\n" ~ table.toString("    ");
         if (!subCommands.empty)

@@ -126,18 +126,17 @@ auto setupCommandline(P)(P ponies)
     Command rootCommand =
         Command("root", rootDelegate,
         [
-            Option.withName("help").withDescription("show general help"),
-            Option.withName("verbose").withDescription("enable verbose logging").withDefault("false")],
+            Option.withName("help").withShortName("h").withDescription("show general help"),
+            Option.withName("verbose").withShortName("v").withDescription("enable verbose logging").withDefault("false")],
             [
                 Command("run", runDelegate,
-                         [Option.withName("help").withDescription("show run help")], []),
+                        [Option.withName("help").withShortName("h").withDescription("show run help")], []),
                 Command("version", versionDelegate,
-                         [Option.withName("help").withDescription("show version help")], []),
+                        [Option.withName("help").withShortName("h").withDescription("show version help")], []),
                 Command("list", listDelegate,
                          [
-                          Option.withName("help").withDescription("show list help"),
-                          Option
-                          .withName("set").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")], [])
+                          Option.withName("help").withShortName("h").withDescription("show list help"),
+                          Option.withName("set").withShortName("s").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")], [])
              ]);
     // dfmt on
 

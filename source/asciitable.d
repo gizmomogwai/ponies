@@ -4,6 +4,8 @@
 
 module asciitable;
 
+import std.string;
+
 struct Row
 {
     string[] columns;
@@ -15,23 +17,35 @@ struct Row
 
 struct AsciiTable
 {
-    int[] widths;
+    ulong[] minimumWidths;
     Row[] rows;
-    this(W...)(W widths)
+    this(W...)(W minimumWidths)
     {
-        this.widths = [widths];
+        this.minimumWidths = [minimumWidths];
     }
 
     AsciiTable add(V...)(V values)
     {
+        if (values.length != minimumWidths.length)
+        {
+            throw new Exception("All rows must have length %s".format(minimumWidths.length));
+        }
         rows ~= Row([values]);
         return this;
     }
 
     string toString(string linePrefix = "")
     {
+        import std.algorithm;
         import std.string;
 
+        foreach (row; rows)
+        {
+            foreach (idx, column; row.columns)
+            {
+                minimumWidths[idx] = max(minimumWidths[idx], column.length + 1);
+            }
+        }
         string res = "";
         foreach (row; rows)
         {
@@ -42,7 +56,7 @@ struct AsciiTable
             res ~= linePrefix;
             foreach (idx, column; row.columns)
             {
-                res ~= leftJustify(column, widths[idx], ' ');
+                res ~= leftJustify(column, minimumWidths[idx], ' ');
             }
         }
         return res;
