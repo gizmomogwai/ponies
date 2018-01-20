@@ -120,17 +120,18 @@ struct Command
     bool delegate(Command) runDelegate;
     Option[] options;
     Command[] subCommands;
-    ParseResult result;
+    string[string] parsed;
+    string[] rest;
     Command* subCommand;
     bool helpNeeded()
     {
-        return ("help" in result.parsed) != null;
+        return ("help" in parsed) != null;
     }
 
-    void parse(string[] args)
+    Command parse(string[] args)
     {
         "Parsing command %s".format(name).trace;
-        result = options.parse(args);
+        auto result = options.parse(args);
         auto wrongOptions = result.parsed.keys.filter!(
                 i => !options.canFind!("a.name == b")(i)).array;
         if (wrongOptions.length > 0)
@@ -138,6 +139,8 @@ struct Command
             throw new Exception("wrong options: %s".format(wrongOptions));
         }
         "Parsed %s".format(result).trace;
+        parsed = result.parsed;
+        rest = result.rest;
         if (result.rest.length > 0)
         {
             auto help = subCommands.find!("a.name == b")(result.rest.front);
@@ -155,6 +158,7 @@ struct Command
                 subCommand.parse(result.rest);
             }
         }
+        return this;
     }
 
     string help()
