@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>http://127.0.0.1/index.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.copyright.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.noCopyrightFiles.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.this.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.name.html</loc></url>
