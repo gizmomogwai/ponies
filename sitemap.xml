@@ -85,6 +85,14 @@
 <url><loc>http://127.0.0.1/ponies/ShieldPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/ShieldPony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/ShieldPony.userAndProject.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/GithubShieldPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/GithubShieldPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/GithubShieldPony.shield.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/GithubShieldPony.this.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.userAndProject.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/Pony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/Pony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/Pony.check.html</loc></url>
