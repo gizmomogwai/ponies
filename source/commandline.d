@@ -155,11 +155,6 @@ struct Option
         return Option(name, shortName, defaultValue, description);
     }
 
-    string help()
-    {
-        return (name ~ "\t" ~ (shortName != null ? shortName
-                : "") ~ "\t" ~ ((this.description != null) ? this.description : "no description"));
-    }
 }
 
 struct Command

@@ -1,4 +1,6 @@
 /++
+ + Asciitable to nicely format tables of strings.
+ +
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
@@ -16,6 +18,9 @@ struct Row
     }
 }
 
+/++
+ + The workhorse of the module.
+ +/
 struct AsciiTable
 {
     ulong[] minimumWidths;
@@ -25,6 +30,7 @@ struct AsciiTable
         this.minimumWidths = [minimumWidths];
     }
 
+    /// Add a row of strings
     AsciiTable add(V...)(V values)
     {
         if (values.length != minimumWidths.length)
@@ -35,6 +41,7 @@ struct AsciiTable
         return this;
     }
 
+    /// Convert to tabular presentation
     string toString(string linePrefix = "", string separator = "")
     {
         import std.algorithm;
@@ -64,12 +71,13 @@ struct AsciiTable
     }
 }
 
-@("asciitable") unittest
+///
+@("example") unittest
 {
     import unit_threaded;
 
-    AsciiTable(10, 3, 5).add("1", "2", "3").add("4", "5", "6")
-        .toString.shouldEqual("1         2  3    \n" ~ "4         5  6    ");
+    AsciiTable(1, 2, 3).add("1", "2", "3").add("4", "5", "6")
+        .toString("prefix", "|").shouldEqual("prefix|1|2 |3  |\n" ~ "prefix|4|5 |6  |");
 }
 
 @("wrong usage of ascii table") unittest
@@ -84,11 +92,4 @@ struct AsciiTable
     import unit_threaded;
 
     AsciiTable(1).add("test").toString.shouldEqual("test");
-}
-
-@("separator") unittest
-{
-    import unit_threaded;
-
-    AsciiTable(1, 1).add("1", "2").add("2", "4").toString("", "|").shouldEqual("|1|2|\n|2|4|");
 }
