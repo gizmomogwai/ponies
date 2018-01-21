@@ -69,7 +69,7 @@ class ShieldPony : Pony
 
     override bool check()
     {
-        return readText("readme.org").canFind(shield);
+        return readText("readme.org").canFind(shield.strip);
     }
     abstract string shield();
 
