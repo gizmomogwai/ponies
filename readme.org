@@ -1,7 +1,5 @@
-* Ponies [[https://gizmomogwai.github.io/ponies][https://img.shields.io/readthedocs/pip.svg]] [[https://travis-ci.org/gizmomogwai/ponies][https://travis-ci.org/gizmomogwai/ponies.svg?branch=master]]
+* Ponies [[https://github.com/gizmomogwai/ponies][https://img.shields.io/github/tag/gizmomogwai/ponies.svg?style=flat-square]] [[https://travis-ci.org/gizmomogwai/ponies][https://img.shields.io/travis/gizmomogwai/ponies/master.svg?style=flat-square]] [[https://gizmomogwai.github.io/ponies][https://img.shields.io/readthedocs/pip.svg?style=flat-square]]
 
 Speedup your project setup with some horsepowers.
 
 Each setup step is done by a pony (a small horse that should only be responsible for one thing).
-[[https://gizmomogwai.github.io/ponies][https://img.shields.io/readthedocs/pip.svg]]
-[[https://github.com/gizmomogwai/ponies][https://img.shields.io/github/tag/gizmomogwai/ponies.svg]]

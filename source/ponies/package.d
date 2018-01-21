@@ -87,7 +87,7 @@ class GithubShieldPony : ShieldPony {
     }
     override string shield()
     {
-        return "[[https://github.com/%1$s/%2$s][https://img.shields.io/github/tag/%1$s/%2$s.svg]]".format(userAndProject.user, userAndProject.project);
+        return "[[https://github.com/%1$s/%2$s][https://img.shields.io/github/tag/%1$s/%2$s.svg?style=flat-square]]\n".format(userAndProject.user, userAndProject.project);
     }
 }
 
@@ -100,7 +100,7 @@ class TravisCiShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[https://travis-ci.org/%1$s/%2$s][https://travis-ci.org/%1$s/%2$s.svg?branch=master]]".format(
+        return "[[https://travis-ci.org/%1$s/%2$s][https://img.shields.io/travis/%1$s/%2$s/master.svg?style=flat-square]]\n".format(
                 userAndProject.user, userAndProject.project);
     }
 }
@@ -114,7 +114,7 @@ class GithubPagesShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[https://%s.github.io/%s][https://img.shields.io/readthedocs/pip.svg]]\n".format(
+        return "[[https://%s.github.io/%s][https://img.shields.io/readthedocs/pip.svg?style=flat-square]]\n".format(
                 userAndProject.user, userAndProject.project);
     }
 }
