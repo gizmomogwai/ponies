@@ -162,6 +162,7 @@ int main(string[] args)
         new GithubPagesShieldPony,
         new TravisCiShieldPony,
         new GithubShieldPony,
+        new CodecovShieldPony,
     ];
     // dfmt on
 

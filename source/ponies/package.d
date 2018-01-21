@@ -96,6 +96,18 @@ class GithubShieldPony : ShieldPony
     }
 }
 
+class CodecovShieldPony : ShieldPony
+{
+    override string name()
+    {
+        return "Setup a link to codecov in readme.org";
+    }
+    override string shield()
+    {
+        return "[[https://codecov.io/gh/%1$s/%2$s][https://img.shields.io/codecov/c/github/%1$s/%2$s/master.svg?style=flat-square]]\n".format(userAndProject.user, userAndProject.project);
+    }
+}
+
 class TravisCiShieldPony : ShieldPony
 {
     override string name()
