@@ -65,7 +65,6 @@ var symbols = [
 {name: 'commandline.Option', kind: "structdeclaration", path: './commandline/Option.html', attributes: []},
 {name: 'commandline.Option.defaultValue', kind: "variabledeclaration", path: './commandline/Option.defaultValue.html', attributes: []},
 {name: 'commandline.Option.description', kind: "variabledeclaration", path: './commandline/Option.description.html', attributes: []},
-{name: 'commandline.Option.help', kind: "functiondeclaration", path: './commandline/Option.help.html', attributes: []},
 {name: 'commandline.Option.name', kind: "variabledeclaration", path: './commandline/Option.name.html', attributes: []},
 {name: 'commandline.Option.shortName', kind: "variabledeclaration", path: './commandline/Option.shortName.html', attributes: []},
 {name: 'commandline.Option.withDefault', kind: "functiondeclaration", path: './commandline/Option.withDefault.html', attributes: []},
