@@ -57,15 +57,20 @@ enum What
 
 void list(T)(T ponies, What what)
 {
+    import std.array;
+    import std.range;
+
     "list args: %s".format(what).info;
+
+    auto pony2string = (Pony pony) { return "%s - %s".format(pony, pony.name); };
 
     switch (what)
     {
     case What.all:
-        ("All ponies: " ~ ponies.map!(a => a.toString).join("\n  ")).writeln;
+        ("All ponies: " ~ ponies.map!(pony2string).join("\n  ")).writeln;
         return;
     case What.readyToRun:
-        ("Ready to run ponies: " ~ ponies.readyToRun.map!(a => a.toString)
+        ("Ready to run ponies: " ~ ponies.readyToRun.map!(pony2string)
                 .join("\n  ")).writeln;
         return;
     default:
@@ -152,8 +157,7 @@ int main(string[] args)
         new RakeFormatPony,
         new LicenseCommentPony,
         new TravisPony,
-        new ShieldsPony,
-
+        new GithubPagesShieldPony,
     ];
     // dfmt on
 

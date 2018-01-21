@@ -31,36 +31,60 @@ abstract class Pony
     public abstract void run();
 }
 
-class ShieldsPony : Pony {
-    auto getUserAndProject() {
+import std.typecons;
+
+class GithubPagesShieldPony : Pony
+{
+    alias UserAndProject = Tuple!(string, "user", string, "project");
+    UserAndProject userAndProject;
+    this()
+    {
+        userAndProject = getUserAndProject;
+    }
+
+    auto getUserAndProject()
+    {
         import std.process;
         import std.regex;
-        import std.typecons;
+        import std.string : replace;
+
         auto res = ["git", "remote", "get-url", "origin"].execute;
         auto pattern = "github.com:(?P<user>.*)/(?P<project>.*)";
         auto match = matchFirst(res.output, regex(pattern, "m"));
-        if (match) {
-            return tuple!("user", "project")(match["user"], match["project"]);
-        } else {
-            return tuple!("user", "project")(cast(string)null, cast(string)null);
+        if (match)
+        {
+            return UserAndProject(match["user"], match["project"].replace(".git", ""));
+        }
+        else
+        {
+            return UserAndProject(cast(string) null, cast(string) null);
         }
     }
 
     override bool applicable()
     {
-        auto userAndProject = getUserAndProject;
         return exists("readme.org") && userAndProject.user != null && userAndProject.project != null;
     }
 
     override string name()
     {
-        return "Setup shields in readme.org";
+        return "Setup github pages shields in readme.org";
     }
-    override bool check() {
-        return true;
+
+    string shield()
+    {
+        return "[[https://%s.github.io/%s][https://img.shields.io/readthedocs/pip.svg]]\n".format(
+                userAndProject.user, userAndProject.project);
     }
-    override void run() {
-        import std.experimental.logger;
-        "Add docs shield to readme.org".info;
+
+    override bool check()
+    {
+        return readText("readme.org").canFind(shield);
+    }
+
+    override void run()
+    {
+        append("readme.org", shield);
+
     }
 }

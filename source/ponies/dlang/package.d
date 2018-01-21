@@ -148,15 +148,20 @@ class LicenseCommentPony : DlangPony
     }
 }
 
-class TravisPony : DlangPony {
+class TravisPony : DlangPony
+{
     override string name()
     {
         return "Setup travis build in .travis.yml";
     }
-    override bool check() {
+
+    override bool check()
+    {
         return exists(".travis.yml");
     }
-    override void run() {
+
+    override void run()
+    {
         "Creating .travis.yml file".info;
         "userinteraction:Please get gh repo token from https://github.com/settings/tokens".warning;
         "userinteraction:Please enable travis build".warning;
@@ -189,4 +194,3 @@ env:
         std.file.write(".travis.yml", content);
     }
 }
-
