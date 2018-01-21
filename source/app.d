@@ -2,6 +2,7 @@
  + License: MIT
  +/
 
+import ponies;
 import ponies.dlang;
 import std.algorithm;
 import std.experimental.logger;
@@ -129,14 +130,14 @@ auto setupCommandline(P)(P ponies)
             Option.withName("help").withShortName("h").withDescription("show general help"),
             Option.withName("verbose").withShortName("v").withDescription("enable verbose logging").withDefault("false")],
             [
+                Command("list", listDelegate,
+                         [
+                          Option.withName("help").withShortName("h").withDescription("show list help"),
+                          Option.withName("set").withShortName("s").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")], []),
                 Command("run", runDelegate,
                         [Option.withName("help").withShortName("h").withDescription("show run help")], []),
                 Command("version", versionDelegate,
                         [Option.withName("help").withShortName("h").withDescription("show version help")], []),
-                Command("list", listDelegate,
-                         [
-                          Option.withName("help").withShortName("h").withDescription("show list help"),
-                          Option.withName("set").withShortName("s").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")], [])
              ]);
     // dfmt on
 
@@ -147,10 +148,12 @@ int main(string[] args)
 {
     // dfmt off
     auto ponies = [
-        new ponies.dlang.DDoxPony,
-        new ponies.dlang.RakeFormatPony,
-        new ponies.dlang.LicenseCommentPony,
-        new ponies.dlang.TravisPony,
+        new DDoxPony,
+        new RakeFormatPony,
+        new LicenseCommentPony,
+        new TravisPony,
+        new ShieldsPony,
+
     ];
     // dfmt on
 

@@ -24,7 +24,7 @@ enum ProtectionLevel
 
 abstract class DlangPony : Pony
 {
-    bool applicable()
+    override bool applicable()
     {
         return exists("dub.sdl");
     }
@@ -40,12 +40,12 @@ abstract class DlangPony : Pony
 
 class DDoxPony : DlangPony
 {
-    string name()
+    override string name()
     {
         return "Setup ddox in dub.sdl";
     }
 
-    bool check()
+    override bool check()
     {
         try
         {
@@ -58,7 +58,7 @@ class DDoxPony : DlangPony
         }
     }
 
-    void run()
+    override void run()
     {
         append("dub.sdl",
                 "x:ddoxFilterArgs \"--min-protection=%s\"\n".format(askFor!ProtectionLevel));
@@ -67,12 +67,12 @@ class DDoxPony : DlangPony
 
 class RakeFormatPony : DlangPony
 {
-    string name()
+    override string name()
     {
         return "Setup rake format";
     }
 
-    bool check()
+    override bool check()
     {
         try
         {
@@ -85,7 +85,7 @@ class RakeFormatPony : DlangPony
         }
     }
 
-    void run()
+    override void run()
     {
         append("rakefile.rb",
                 "desc 'format'\ntask :format do\n  sh 'find . -name \"*.d\" | xargs dfmt -i'\nend\n");
@@ -102,12 +102,12 @@ class LicenseCommentPony : DlangPony
         license = getFromDubSdl("license");
     }
 
-    string name()
+    override string name()
     {
         return "Setup license headers in .d files";
     }
 
-    bool check()
+    override bool check()
     {
         auto res = appender!(string[]);
         foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
@@ -124,7 +124,7 @@ class LicenseCommentPony : DlangPony
         return noLicenseFiles.length == 0;
     }
 
-    void run()
+    override void run()
     {
         "Fixing license for %s".format(noLicenseFiles).info;
 
@@ -149,14 +149,14 @@ class LicenseCommentPony : DlangPony
 }
 
 class TravisPony : DlangPony {
-    string name()
+    override string name()
     {
         return "Setup travis build in .travis.yml";
     }
-    bool check() {
+    override bool check() {
         return exists(".travis.yml");
     }
-    void run() {
+    override void run() {
         "Creating .travis.yml file".info;
         "userinteraction:Please get gh repo token from https://github.com/settings/tokens".warning;
         "userinteraction:Please enable travis build".warning;
@@ -189,3 +189,4 @@ env:
         std.file.write(".travis.yml", content);
     }
 }
+
