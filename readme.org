@@ -3,3 +3,6 @@
 Speedup your project setup with some horsepowers.
 
 Each setup step is done by a pony (a small horse that should only be responsible for one thing).
+
+** Running
+~dub -q run ponies -- --help~ or compile for yourself with ~dub build~.

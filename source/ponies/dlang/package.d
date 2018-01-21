@@ -99,7 +99,7 @@ class CopyrightCommentPony : DlangPony
     string copyright;
     this()
     {
-        copyright = getFromDubSdl("copyright");
+        copyright = applicable ? getFromDubSdl("copyright"):null;
     }
 
     override string name()
@@ -154,7 +154,7 @@ class LicenseCommentPony : DlangPony
 
     this()
     {
-        license = getFromDubSdl("license");
+        license = applicable ? getFromDubSdl("license"):null;
     }
 
     override string name()
