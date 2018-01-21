@@ -6,10 +6,12 @@ module ponies;
 
 import std.algorithm;
 import std.conv;
+import std.experimental.logger;
 import std.file;
 import std.stdio;
 import std.string;
 import std.traits;
+import std.typecons;
 
 auto possibleValues(E)() if (is(E == enum))
 {
@@ -31,34 +33,33 @@ abstract class Pony
     public abstract void run();
 }
 
-import std.typecons;
-
-class GithubPagesShieldPony : Pony
+alias UserAndProject = Tuple!(string, "user", string, "project");
+UserAndProject userAndProject;
+auto getUserAndProject()
 {
-    alias UserAndProject = Tuple!(string, "user", string, "project");
-    UserAndProject userAndProject;
+    import std.process;
+    import std.regex;
+    import std.string : replace;
+
+    auto res = ["git", "remote", "get-url", "origin"].execute;
+    auto pattern = "github.com:(?P<user>.*)/(?P<project>.*)";
+    auto match = matchFirst(res.output, regex(pattern, "m"));
+    if (match)
+    {
+        return UserAndProject(match["user"], match["project"].replace(".git", ""));
+    }
+    else
+    {
+        return UserAndProject(cast(string) null, cast(string) null);
+    }
+}
+
+class ShieldPony : Pony
+{
+    protected UserAndProject userAndProject;
     this()
     {
         userAndProject = getUserAndProject;
-    }
-
-    auto getUserAndProject()
-    {
-        import std.process;
-        import std.regex;
-        import std.string : replace;
-
-        auto res = ["git", "remote", "get-url", "origin"].execute;
-        auto pattern = "github.com:(?P<user>.*)/(?P<project>.*)";
-        auto match = matchFirst(res.output, regex(pattern, "m"));
-        if (match)
-        {
-            return UserAndProject(match["user"], match["project"].replace(".git", ""));
-        }
-        else
-        {
-            return UserAndProject(cast(string) null, cast(string) null);
-        }
     }
 
     override bool applicable()
@@ -66,25 +67,43 @@ class GithubPagesShieldPony : Pony
         return exists("readme.org") && userAndProject.user != null && userAndProject.project != null;
     }
 
-    override string name()
-    {
-        return "Setup github pages shields in readme.org";
-    }
-
-    string shield()
-    {
-        return "[[https://%s.github.io/%s][https://img.shields.io/readthedocs/pip.svg]]\n".format(
-                userAndProject.user, userAndProject.project);
-    }
-
     override bool check()
     {
         return readText("readme.org").canFind(shield);
     }
+    abstract string shield();
 
     override void run()
     {
+        "Please resort your readme.org to put the shield to the right place".warning;
         append("readme.org", shield);
+    }
+}
 
+class TravisCiShieldPony : ShieldPony
+{
+    override string name()
+    {
+        return "Setup a travis ci shield in readme.org";
+    }
+
+    override string shield()
+    {
+        return "[[https://travis-ci.org/%1$s/%2$s][https://travis-ci.org/%1$s/%2$s.svg?branch=master]]".format(
+                userAndProject.user, userAndProject.project);
+    }
+}
+
+class GithubPagesShieldPony : ShieldPony
+{
+    override string name()
+    {
+        return "Setup a documentation shield in readme.org";
+    }
+
+    override string shield()
+    {
+        return "[[https://%s.github.io/%s][https://img.shields.io/readthedocs/pip.svg]]\n".format(
+                userAndProject.user, userAndProject.project);
     }
 }

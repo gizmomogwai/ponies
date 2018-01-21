@@ -158,6 +158,7 @@ int main(string[] args)
         new LicenseCommentPony,
         new TravisPony,
         new GithubPagesShieldPony,
+        new TravisCiShieldPony,
     ];
     // dfmt on
 
