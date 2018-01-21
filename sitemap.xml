@@ -85,6 +85,14 @@
 <url><loc>http://127.0.0.1/commandline/toKv.html</loc></url>
 <url><loc>http://127.0.0.1/ponies.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/askFor.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/CodecovShieldPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/CodecovShieldPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/CodecovShieldPony.shield.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/CodecovShieldPony.this.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/ShieldPony.userAndProject.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/getUserAndProject.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/GithubPagesShieldPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/GithubPagesShieldPony.name.html</loc></url>
