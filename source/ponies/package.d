@@ -80,6 +80,17 @@ class ShieldPony : Pony
     }
 }
 
+class GithubShieldPony : ShieldPony {
+    override string name()
+    {
+        return "Setup a link to github in readme.org";
+    }
+    override string shield()
+    {
+        return "[[https://github.com/%1$s/%2$s][https://img.shields.io/github/tag/%1$s/%2$s.svg]]".format(userAndProject.user, userAndProject.project);
+    }
+}
+
 class TravisCiShieldPony : ShieldPony
 {
     override string name()
