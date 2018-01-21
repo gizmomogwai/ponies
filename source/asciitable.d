@@ -1,8 +1,5 @@
 /++
  + Copyright: Copyright © 2018, Christian Köstlin
- +/
-
-/++
  + License: MIT
  +/
 
@@ -38,7 +35,7 @@ struct AsciiTable
         return this;
     }
 
-    string toString(string linePrefix = "")
+    string toString(string linePrefix = "", string separator = "")
     {
         import std.algorithm;
         import std.string;
@@ -47,7 +44,7 @@ struct AsciiTable
         {
             foreach (idx, column; row.columns)
             {
-                minimumWidths[idx] = max(minimumWidths[idx], column.length + 1);
+                minimumWidths[idx] = max(minimumWidths[idx], column.length);
             }
         }
         string res = "";
@@ -57,10 +54,10 @@ struct AsciiTable
             {
                 res ~= "\n";
             }
-            res ~= linePrefix;
+            res ~= linePrefix ~ separator;
             foreach (idx, column; row.columns)
             {
-                res ~= leftJustify(column, minimumWidths[idx], ' ');
+                res ~= leftJustify(column, minimumWidths[idx], ' ') ~ separator;
             }
         }
         return res;
@@ -71,8 +68,27 @@ struct AsciiTable
 {
     import unit_threaded;
 
-    auto table = AsciiTable(10, 3, 5);
-    table.add("1", "2", "3");
-    table.add("4", "5", "6");
-    table.toString.shouldEqual("1         2  3    \n" ~ "4         5  6    ");
+    AsciiTable(10, 3, 5).add("1", "2", "3").add("4", "5", "6")
+        .toString.shouldEqual("1         2  3    \n" ~ "4         5  6    ");
+}
+
+@("wrong usage of ascii table") unittest
+{
+    import unit_threaded;
+
+    AsciiTable(1, 1, 1).add("1", "2").shouldThrow!Exception;
+}
+
+@("auto expand columns") unittest
+{
+    import unit_threaded;
+
+    AsciiTable(1).add("test").toString.shouldEqual("test");
+}
+
+@("separator") unittest
+{
+    import unit_threaded;
+
+    AsciiTable(1, 1).add("1", "2").add("2", "4").toString("", "|").shouldEqual("|1|2|\n|2|4|");
 }

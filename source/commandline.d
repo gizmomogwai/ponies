@@ -1,8 +1,5 @@
 /++
  + Copyright: Copyright © 2018, Christian Köstlin
- +/
-
-/++
  + License: MIT
  +/
 
@@ -214,7 +211,7 @@ struct Command
             table.add("--" ~ option.name, option.shortName
                     ? "-" ~ option.shortName : "", option.description);
         }
-        auto res = "Options:\n" ~ table.toString("    ");
+        auto res = "Options:\n" ~ table.toString("    ", " ");
         if (!subCommands.empty)
         {
             res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");

@@ -102,9 +102,11 @@ class CodecovShieldPony : ShieldPony
     {
         return "Setup a link to codecov in readme.org";
     }
+
     override string shield()
     {
-        return "[[https://codecov.io/gh/%1$s/%2$s][https://img.shields.io/codecov/c/github/%1$s/%2$s/master.svg?style=flat-square]]\n".format(userAndProject.user, userAndProject.project);
+        return "[[https://codecov.io/gh/%1$s/%2$s][https://img.shields.io/codecov/c/github/%1$s/%2$s/master.svg?style=flat-square]]\n"
+            .format(userAndProject.user, userAndProject.project);
     }
 }
 
