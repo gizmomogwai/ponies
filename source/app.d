@@ -1,4 +1,5 @@
 /++
+ + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
 
@@ -156,6 +157,7 @@ int main(string[] args)
         new DDoxPony,
         new RakeFormatPony,
         new LicenseCommentPony,
+        new CopyrightCommentPony,
         new TravisPony,
         new GithubPagesShieldPony,
         new TravisCiShieldPony,

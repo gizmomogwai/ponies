@@ -1,4 +1,5 @@
 /++
+ + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
 
@@ -89,6 +90,60 @@ class RakeFormatPony : DlangPony
     {
         append("rakefile.rb",
                 "desc 'format'\ntask :format do\n  sh 'find . -name \"*.d\" | xargs dfmt -i'\nend\n");
+    }
+}
+
+class CopyrightCommentPony : DlangPony
+{
+    string[] noCopyrightFiles;
+    string copyright;
+    this()
+    {
+        copyright = getFromDubSdl("copyright");
+    }
+
+    override string name()
+    {
+        return "Setup copyright headers in .d files";
+    }
+
+    override bool check()
+    {
+        auto res = appender!(string[]);
+        foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
+        {
+            auto content = readText(file);
+            auto pattern = "^ \\+ Copyright: %s$".format(copyright);
+            auto found = matchFirst(content, regex(pattern, "m"));
+            if (!found)
+            {
+                res.put(file);
+            }
+        }
+        noCopyrightFiles = res.data;
+        return noCopyrightFiles.length == 0;
+    }
+
+    override void run()
+    {
+        "Fixing copyright for %s".format(noCopyrightFiles).info;
+
+        foreach (file; noCopyrightFiles)
+        {
+            auto content = readText(file);
+            auto newContent = replaceFirst(content, regex("^ \\+ Copyright: .*?$",
+                    "m"), " + Copyright: %s".format(copyright));
+            if (content == newContent)
+            {
+                "Adding copyright %s to file %s".format(copyright, file).info;
+                newContent = "/++\n + Copyright: %s\n +/\n\n".format(copyright.to!string) ~ content;
+            }
+            else
+            {
+                "Change copyright to %s in file %s".format(copyright, file).info;
+            }
+            std.file.write(file, newContent);
+        }
     }
 }
 

@@ -1,4 +1,5 @@
 /++
+ + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
 
@@ -71,6 +72,7 @@ class ShieldPony : Pony
     {
         return readText("readme.org").canFind(shield.strip);
     }
+
     abstract string shield();
 
     override void run()
@@ -80,14 +82,17 @@ class ShieldPony : Pony
     }
 }
 
-class GithubShieldPony : ShieldPony {
+class GithubShieldPony : ShieldPony
+{
     override string name()
     {
         return "Setup a link to github in readme.org";
     }
+
     override string shield()
     {
-        return "[[https://github.com/%1$s/%2$s][https://img.shields.io/github/tag/%1$s/%2$s.svg?style=flat-square]]\n".format(userAndProject.user, userAndProject.project);
+        return "[[https://github.com/%1$s/%2$s][https://img.shields.io/github/tag/%1$s/%2$s.svg?style=flat-square]]\n"
+            .format(userAndProject.user, userAndProject.project);
     }
 }
 
@@ -100,8 +105,8 @@ class TravisCiShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[https://travis-ci.org/%1$s/%2$s][https://img.shields.io/travis/%1$s/%2$s/master.svg?style=flat-square]]\n".format(
-                userAndProject.user, userAndProject.project);
+        return "[[https://travis-ci.org/%1$s/%2$s][https://img.shields.io/travis/%1$s/%2$s/master.svg?style=flat-square]]\n"
+            .format(userAndProject.user, userAndProject.project);
     }
 }
 
