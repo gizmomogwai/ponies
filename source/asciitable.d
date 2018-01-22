@@ -76,8 +76,8 @@ struct AsciiTable
 {
     import unit_threaded;
 
-    AsciiTable(1, 2, 3).add("1", "2", "3").add("4", "5", "6")
-        .toString("prefix", "|").shouldEqual("prefix|1|2 |3  |\n" ~ "prefix|4|5 |6  |");
+    AsciiTable(1, 2, 3).add("1", "2", "3").add("4", "5", "6").toString("prefix",
+            "|").shouldEqual("prefix|1|2 |3  |\n" ~ "prefix|4|5 |6  |");
 }
 
 @("wrong usage of ascii table") unittest

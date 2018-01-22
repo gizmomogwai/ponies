@@ -20,7 +20,7 @@ void commit(string message)
     auto addCommand = ["git", "add", "-u"];
     auto res = addCommand.execute;
     "result of %s: %s".format(addCommand, res).info;
-    auto commitCommand = ["git", "commit", "--allow-empty", "-m", message];
+    auto commitCommand = ["git", "commit", "-m", message];
     res = commitCommand.execute;
     "result of %s: %s".format(commitCommand, res).info;
 }
@@ -155,7 +155,7 @@ int main(string[] args)
     // dfmt off
     auto ponies = [
         new DDoxPony,
-        new RakeFormatPony,
+        new FormatSourcesPony,
         new LicenseCommentPony,
         new CopyrightCommentPony,
         new TravisPony,

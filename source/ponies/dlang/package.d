@@ -66,30 +66,32 @@ class DDoxPony : DlangPony
     }
 }
 
-class RakeFormatPony : DlangPony
+class FormatSourcesPony : DlangPony
 {
     override string name()
     {
-        return "Setup rake format";
+        return "Formats sources with dfmt";
     }
 
     override bool check()
     {
-        try
-        {
-            auto content = readText("rakefile.rb");
-            return content.canFind("dfmt");
-        }
-        catch (FileException e)
-        {
-            return false;
-        }
+        return false; // we cannot know if dfmt will have to do some work
     }
 
     override void run()
     {
-        append("rakefile.rb",
-                "desc 'format'\ntask :format do\n  sh 'find . -name \"*.d\" | xargs dfmt -i'\nend\n");
+        foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
+        {
+            import std.process;
+
+            auto oldContent = readText(file);
+            ["dfmt", "-i", file].execute;
+            auto newContent = readText(file);
+            if (oldContent != newContent)
+            {
+                "FormatSources:%s changed by dfmt -i".format(file).warning;
+            }
+        }
     }
 }
 
@@ -99,7 +101,7 @@ class CopyrightCommentPony : DlangPony
     string copyright;
     this()
     {
-        copyright = applicable ? getFromDubSdl("copyright"):null;
+        copyright = applicable ? getFromDubSdl("copyright") : null;
     }
 
     override string name()
@@ -154,7 +156,7 @@ class LicenseCommentPony : DlangPony
 
     this()
     {
-        license = applicable ? getFromDubSdl("license"):null;
+        license = applicable ? getFromDubSdl("license") : null;
     }
 
     override string name()
