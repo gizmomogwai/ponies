@@ -2,6 +2,12 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>http://127.0.0.1/index.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.copyright.html</loc></url>
@@ -23,6 +29,12 @@
 <url><loc>http://127.0.0.1/ponies/Pony.name.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/Pony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.license.html</loc></url>
@@ -33,12 +45,6 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/ProtectionLevel.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/RakeFormatPony.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/RakeFormatPony.check.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/RakeFormatPony.name.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/RakeFormatPony.run.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.name.html</loc></url>
