@@ -107,7 +107,7 @@ class CopyrightCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup copyright headers in .d files";
+        return "Setup copyright headers in .d files (taken from dub.sdl)";
     }
 
     override bool check()
@@ -154,7 +154,7 @@ class AuthorsPony : DlangPony
 {
     override string name()
     {
-        return "Puts correct authors line in all .d files";
+        return "Setup correct authors line in all .d files (taken from git log)";
     }
 
     override bool check()
@@ -210,7 +210,7 @@ class LicenseCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup license headers in .d files";
+        return "Setup license headers in .d files (taken from dub.sdl)";
     }
 
     override bool check()
