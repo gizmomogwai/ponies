@@ -1,4 +1,5 @@
 /++
+ + Authors: Christian Koestlin
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
@@ -146,6 +147,54 @@ class CopyrightCommentPony : DlangPony
             }
             std.file.write(file, newContent);
         }
+    }
+}
+
+class AuthorsPony : DlangPony
+{
+    override string name()
+    {
+        return "Puts correct authors line in all .d files";
+    }
+
+    override bool check()
+    {
+        return false;
+    }
+
+    override void run()
+    {
+        foreach (file; dirEntries(".", "*.d", SpanMode.depth))
+        {
+            import std.process;
+
+            auto content = readText(file);
+            auto authors = ["git", "log", "--pretty=format:%an", file].execute.output.split("\n")
+                .sort.uniq.join(", ");
+            auto authorsRegex = regex("^ \\+ Authors: (.*)$", "m");
+            auto hasAuthorsLine = !content.matchFirst(authorsRegex).empty;
+            auto newContent = replaceFirst(content, authorsRegex,
+                    " + Authors: %s".format(authors));
+            if (hasAuthorsLine)
+            {
+                if (content == newContent)
+                {
+                    "No change of authors in file %s".format(file).info;
+                }
+                else
+                {
+                    "Change authors to %s in file %s".format(authors, file).info;
+                    std.file.write(file, newContent);
+                }
+            }
+            else
+            {
+                "Adding authors line %s to file %s".format(authors, file).warning;
+                newContent = "/++\n + Authors: %s\n +/\n\n".format(authors) ~ content;
+                std.file.write(file, newContent);
+            }
+        }
+
     }
 }
 

@@ -1,4 +1,5 @@
 /++
+ + Authors: Christian Koestlin
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
@@ -155,7 +156,7 @@ int main(string[] args)
     // dfmt off
     auto ponies = [
         new DDoxPony,
-        new FormatSourcesPony,
+        new AuthorsPony,
         new LicenseCommentPony,
         new CopyrightCommentPony,
         new TravisPony,
@@ -163,6 +164,7 @@ int main(string[] args)
         new TravisCiShieldPony,
         new GithubShieldPony,
         new CodecovShieldPony,
+        new FormatSourcesPony,
     ];
     // dfmt on
 
