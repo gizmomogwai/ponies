@@ -300,3 +300,56 @@ env:
         std.file.write(".travis.yml", content);
     }
 }
+
+class AddPackageVersionPony : DlangPony
+{
+    string preGenCommand;
+    auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
+    auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
+
+    this()
+    {
+
+        preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
+                getFromDubSdl("name")) : null;
+    }
+
+    override string name()
+    {
+        return "Add automatic generation of package version to dub.sdl";
+    }
+
+    override bool check()
+    {
+        auto content = readText("dub.sdl");
+        return content.canFind(sourcePaths) && content.canFind(importPaths)
+            && content.canFind(preGenCommand);
+    }
+
+    override void run()
+    {
+        auto oldContent = readText("dub.sdl");
+        auto content = oldContent;
+        if (!content.canFind(sourcePaths))
+        {
+            "Adding sourcePaths to dub.sdl".info;
+            content ~= sourcePaths;
+        }
+
+        if (!content.canFind(importPaths))
+        {
+            "Adding importPaths to dub.sdl".info;
+            content ~= importPaths;
+        }
+        if (!content.canFind(preGenCommand))
+        {
+            "Adding preGenCommand to dub.sdl".info;
+            content ~= preGenCommand;
+        }
+        if (content != oldContent)
+        {
+            "Writing new dub.sdl".info;
+            std.file.write("dub.sdl", content);
+        }
+    }
+}

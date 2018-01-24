@@ -166,6 +166,7 @@ int main(string[] args)
         new TravisCiShieldPony,
         new GithubShieldPony,
         new CodecovShieldPony,
+        new AddPackageVersionPony,
         new FormatSourcesPony,
     ];
     // dfmt on
