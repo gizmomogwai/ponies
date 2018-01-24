@@ -6,6 +6,11 @@ license "MIT"
 dependency "colored" version="~>0.0.8"
 dependency "androidlogger" version="~>0.0.3"
 
+preGenerateCommands "dub run packageversion -- --packageName=ponies"
+
+sourcePaths "source" "out/generated/packageversion"
+importPaths "source" "out/generated/packageversion"
+
 x:ddoxFilterArgs "--min-protection=Protected"
 
 configuration "application" {

@@ -114,6 +114,8 @@ auto setupCommandline(P)(P ponies)
             writeln(command.help);
             return false;
         }
+        import ponies.packageversion;
+        writeln(packageVersion);
         return true;
     };
     auto listDelegate = (Command command) {
