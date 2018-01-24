@@ -32,7 +32,7 @@ configuration "unittest" {
   targetPath "out/test"
 
   dependency "unit-threaded" version="~>0.7.36"
-  preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f out/gen/testsuite.d"
-  mainSourceFile "out/gen/testsuite.d"
+  preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f out/generated/unit-threaded/testsuite.d"
+  mainSourceFile "out/generated/unit-threaded/testsuite.d"
   excludedSourceFiles "source/app.d"
 }
