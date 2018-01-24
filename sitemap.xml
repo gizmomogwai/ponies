@@ -2,6 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url><loc>http://127.0.0.1/index.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.importPaths.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.name.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.preGenCommand.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.run.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.sourcePaths.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.this.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.name.html</loc></url>
@@ -51,6 +61,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/packageversion.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/packageversion/packageVersion.html</loc></url>
 <url><loc>http://127.0.0.1/asciitable.html</loc></url>
 <url><loc>http://127.0.0.1/asciitable/AsciiTable.html</loc></url>
 <url><loc>http://127.0.0.1/asciitable/AsciiTable.add.html</loc></url>
