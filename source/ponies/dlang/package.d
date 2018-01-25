@@ -81,7 +81,7 @@ class FormatSourcesPony : DlangPony
 
     override void run()
     {
-        foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
+        foreach (string file; dirEntries("source", "*.d", SpanMode.depth))
         {
             import std.process;
 
@@ -306,50 +306,80 @@ class AddPackageVersionPony : DlangPony
     string preGenCommand;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
-
+    auto dubFetchPackageVersion = "dub fetch packageversion";
+    auto travisYml = ".travis.yml";
+    auto dubSdl = "dub.sdl";
     this()
     {
-
         preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
                 getFromDubSdl("name")) : null;
     }
 
     override string name()
     {
-        return "Add automatic generation of package version to dub.sdl";
+        return "Add automatic generation of package version to %s".format(dubSdl);
     }
 
     override bool check()
     {
-        auto content = readText("dub.sdl");
-        return content.canFind(sourcePaths) && content.canFind(importPaths)
-            && content.canFind(preGenCommand);
+        auto dubSdlContent = readText(dubSdl);
+        auto travisYml = readText(travisYml);
+        return dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
+            && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(dubFetchPackageVersion);
     }
 
     override void run()
     {
-        auto oldContent = readText("dub.sdl");
+        auto oldContent = readText(dubSdl);
         auto content = oldContent;
         if (!content.canFind(sourcePaths))
         {
-            "Adding sourcePaths to dub.sdl".info;
+            "Adding sourcePaths to %s".format(dubSdl).info;
             content ~= sourcePaths;
         }
 
         if (!content.canFind(importPaths))
         {
-            "Adding importPaths to dub.sdl".info;
+            "Adding importPaths to %s".format(dubSdl).info;
             content ~= importPaths;
         }
         if (!content.canFind(preGenCommand))
         {
-            "Adding preGenCommand to dub.sdl".info;
+            "Adding preGenCommand to %s".format(dubSdl).info;
             content ~= preGenCommand;
         }
         if (content != oldContent)
         {
-            "Writing new dub.sdl".info;
-            std.file.write("dub.sdl", content);
+            "Writing new %s".format(dubSdl).info;
+            std.file.write(dubSdl, content);
+        }
+
+        import dyaml.all;
+
+        auto root = Loader(travisYml).load;
+        auto beforeInstall = root["before_install"];
+        if (beforeInstall.isScalar)
+        {
+            if (beforeInstall.as!string != dubFetchPackageVersion)
+            {
+                "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
+                root["before_install"] = Node([beforeInstall, Node(dubFetchPackageVersion)]);
+                Dumper(travisYml).dump(root);
+            }
+        }
+        else if (beforeInstall.isSequence)
+        {
+            if (!beforeInstall.sequence!string.canFind(dubFetchPackageVersion))
+            {
+                "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
+                beforeInstall.add(Node(dubFetchPackageVersion));
+                root["before_install"] = beforeInstall;
+                Dumper(travisYml).dump(root);
+            }
+        }
+        else
+        {
+            throw new Exception("cannot process %s".format(travisYml));
         }
     }
 }

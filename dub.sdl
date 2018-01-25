@@ -5,6 +5,7 @@ copyright "Copyright © 2018, Christian Köstlin"
 license "MIT"
 dependency "colored" version="~>0.0.8"
 dependency "androidlogger" version="~>0.0.3"
+dependency "dyaml" version="~>0.6.4"
 
 preGenerateCommands "dub run packageversion -- --packageName=ponies"
 sourcePaths "source" "out/generated/packageversion"

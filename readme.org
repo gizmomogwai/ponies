@@ -6,3 +6,6 @@ Each setup step is done by a pony (a small horse that should only be responsible
 
 ** Running
 ~dub -q run ponies -- --help~ or compile for yourself with ~dub build~.
+
+** TODOs
+*** TODO add dub fetch packageversion to .travis.yml

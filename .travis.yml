@@ -1,12 +1,12 @@
+﻿%YAML 1.1
+---
 language: d
 sudo: false
 addons:
   apt:
     packages:
     - libevent-dev
-before_install:
-- pip install --user codecov
-- dub fetch packageversion
+before_install: [pip install --user codecov, dub fetch packageversion]
 script:
 - dub test --compiler=${DC} --coverage
 - dub build --build=release
@@ -19,7 +19,7 @@ deploy:
   github-token: "$GH_REPO_TOKEN"
   verbose: true
   keep-history: true
-  on:
+  true:
     branch: master
 env:
   global:
