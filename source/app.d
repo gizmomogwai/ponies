@@ -18,6 +18,8 @@ void commit(string message)
 {
     import std.process;
 
+    "main:%s".format(message).info;
+
     auto addCommand = ["git", "add", "-u"];
     auto res = addCommand.execute;
     "result of %s: %s".format(addCommand, res).info;
@@ -34,17 +36,15 @@ auto readyToRun(P)(P ponies)
 void run(P)(P ponies)
 {
     "run".info;
+    "Before running ponies".commit;
     foreach (pony; ponies.readyToRun)
     {
-        "main:Checking %s".format(pony).info;
+        "main:Checking %s".format(pony.name).info;
         if (!pony.check)
         {
-            "main:Commit before %s".format(pony).info;
-            "Before %s".format(pony.name).commit;
-            "main:Running %s".format(pony).info;
+            "main:Running %s".format(pony.name).info;
             pony.run;
             "After %s".format(pony.name).commit;
-            "main:Commit after %s".format(pony).info;
         }
     }
 
@@ -64,7 +64,9 @@ void list(T)(T ponies, What what)
 
     "list args: %s".format(what).info;
 
-    auto pony2string = (Pony pony) { return "%s - %s".format(pony, pony.name); };
+    auto pony2string = (Pony pony) {
+        return "%s - %s (applicable=%s)".format(pony, pony.name, pony.applicable);
+    };
 
     switch (what)
     {

@@ -26,15 +26,17 @@ enum ProtectionLevel
 
 abstract class DlangPony : Pony
 {
+    protected auto dubSdl = "dub.sdl";
+
     override bool applicable()
     {
-        return exists("dub.sdl");
+        return exists(dubSdl);
     }
 
     protected auto getFromDubSdl(string what)
     {
         auto pattern = "^%1$s \"(?P<%1$s>.*)\"$".format(what);
-        auto text = readText("dub.sdl");
+        auto text = readText(dubSdl);
         auto match = matchFirst(text, regex(pattern, "m"));
         return match[what];
     }
@@ -44,14 +46,14 @@ class DDoxPony : DlangPony
 {
     override string name()
     {
-        return "Setup ddox in dub.sdl";
+        return "Setup ddox in %s".format(dubSdl);
     }
 
     override bool check()
     {
         try
         {
-            auto content = readText("dub.sdl");
+            auto content = readText(dubSdl);
             return content.canFind("x:ddoxFilterArgs");
         }
         catch (FileException e)
@@ -62,8 +64,7 @@ class DDoxPony : DlangPony
 
     override void run()
     {
-        append("dub.sdl",
-                "x:ddoxFilterArgs \"--min-protection=%s\"\n".format(askFor!ProtectionLevel));
+        append(dubSdl, "x:ddoxFilterArgs \"--min-protection=%s\"\n".format(askFor!ProtectionLevel));
     }
 }
 
@@ -107,7 +108,7 @@ class CopyrightCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup copyright headers in .d files (taken from dub.sdl)";
+        return "Setup copyright headers in .d files (taken from %s)".format(dubSdl);
     }
 
     override bool check()
@@ -210,7 +211,7 @@ class LicenseCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup license headers in .d files (taken from dub.sdl)";
+        return "Setup license headers in .d files (taken from %s)".format(dubSdl);
     }
 
     override bool check()
@@ -308,7 +309,6 @@ class AddPackageVersionPony : DlangPony
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
     auto travisYml = ".travis.yml";
-    auto dubSdl = "dub.sdl";
     this()
     {
         preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
