@@ -4,12 +4,15 @@
 <url><loc>http://127.0.0.1/ponies/dlang.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.check.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.dubFetchPackageVersion.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.importPaths.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.name.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.preGenCommand.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.sourcePaths.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.this.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.html</loc></url>
