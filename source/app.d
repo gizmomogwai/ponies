@@ -84,17 +84,17 @@ void list(T)(T ponies, What what)
 
 auto setupCommandline(P)(P ponies)
 {
-    // dfmt off
     bool delegate(Command) rootDelegate = (Command command) {
-        if (auto verbose = "verbose" in command.parsed)
-        {
-            auto androidLog = new AndroidLogger(true, (*verbose == "true") ? LogLevel.all : LogLevel.warning);
-            sharedLog = androidLog;
-        }
         if (command.helpNeeded)
         {
             writeln(command.help);
             return false;
+        }
+        if (auto verbose = "verbose" in command.parsed)
+        {
+            auto androidLog = new AndroidLogger(true, (*verbose == "true")
+                    ? LogLevel.all : LogLevel.warning);
+            sharedLog = androidLog;
         }
         return true;
     };
@@ -104,10 +104,7 @@ auto setupCommandline(P)(P ponies)
             writeln(command.help);
             return false;
         }
-        else
-        {
-            run(ponies);
-        }
+        run(ponies);
         return true;
     };
     bool delegate(Command) versionDelegate = (Command command) {
@@ -117,6 +114,7 @@ auto setupCommandline(P)(P ponies)
             return false;
         }
         import ponies.packageversion;
+
         writeln(packageVersion);
         return true;
     };
@@ -126,15 +124,11 @@ auto setupCommandline(P)(P ponies)
             writeln(command.help);
             return false;
         }
-        else
-        {
-            auto what = command.parsed["set"].to!What;
-            writeln(what);
-            list(ponies, what);
-        }
+        list(ponies, command.parsed["set"].to!What);
         return true;
     };
 
+    // dfmt off
     Command rootCommand =
         Command("root", rootDelegate,
         [
