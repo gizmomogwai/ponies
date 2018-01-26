@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Variable AddPackageVersionPony.travisYml</title>
+		<title>Function DlangPony.sources</title>
 		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
 		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
 		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
@@ -50,24 +50,12 @@ $('#symbolSearchPane').show();</script>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Variable AddPackageVersionPony.travisYml</h1><p></p>
+			<h1>Function DlangPony.sources</h1><p></p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">class</span> <a href="../../ponies/dlang/AddPackageVersionPony.html"><span class="typ">AddPackageVersionPony</span></a>
-			<br/>
-			<span class="pun">
-				{
-				<br/>
-			</span>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			&nbsp;&nbsp;<span class="typ">string</span> <span class="pln">travisYml</span>
-			 <span class="pun">=</span> <span class="str">".travis.yml"</span><span class="pun">;</span>
-			<br/>
-			&nbsp;&nbsp;<span class="com">// ...</span>
-			<br/>
-			<span class="pun">}</span>
+			<span class="kwd">auto </span><span class="pln">std<wbr/></span><span class="pun">.</span><span class="pln">algorithm<wbr/></span><span class="pun">.</span><span class="pln">iteration<wbr/></span><span class="pun">.</span><span class="typ">FilterResult</span>!(std.file.dirEntries(string,string,std.file.SpanMode,bool).f(std.file.DirEntry),std.file.DirIterator) <span class="pln">sources
+			<span class="pun">()</span><span class="pun">;</span>
 					</div>
 				</code>
 			</div>

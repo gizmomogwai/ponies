@@ -11,10 +11,11 @@
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.sourcePaths.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.this.html</loc></url>
-<url><loc>http://127.0.0.1/ponies/dlang/AddPackageVersionPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/AuthorsPony.name.html</loc></url>
@@ -22,6 +23,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/CopyrightCommentPony.copyright.html</loc></url>
@@ -32,6 +35,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DDoxPony.name.html</loc></url>
@@ -39,6 +44,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/Pony.check.html</loc></url>
@@ -46,6 +53,8 @@
 <url><loc>http://127.0.0.1/ponies/Pony.run.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/FormatSourcesPony.name.html</loc></url>
@@ -53,6 +62,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.check.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/LicenseCommentPony.license.html</loc></url>
@@ -63,6 +74,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/ProtectionLevel.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/TravisPony.check.html</loc></url>
@@ -71,6 +84,8 @@
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.applicable.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.dubSdl.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/dlang/DlangPony.getFromDubSdl.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.sources.html</loc></url>
+<url><loc>http://127.0.0.1/ponies/dlang/DlangPony.travisYml.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/packageversion.html</loc></url>
 <url><loc>http://127.0.0.1/ponies/packageversion/packageVersion.html</loc></url>
 <url><loc>http://127.0.0.1/asciitable.html</loc></url>
