@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<meta charset="UTF-8"/>
-		<title>Function LicenseCommentPony.check</title>
-		<link rel="stylesheet" type="text/css" href="../../styles/ddox.css"/>
-		<link rel="stylesheet" href="../../prettify/prettify.css" type="text/css"/>
-		<script type="text/javascript" src="../../scripts/jquery.js">/**/</script><script type="text/javascript" src="../../scripts/ddox.js">/**/</script>
+		<title>Enum CheckStatus</title>
+		<link rel="stylesheet" type="text/css" href="../styles/ddox.css"/>
+		<link rel="stylesheet" href="../prettify/prettify.css" type="text/css"/>
+		<script type="text/javascript" src="../scripts/jquery.js">/**/</script><script type="text/javascript" src="../scripts/ddox.js">/**/</script>
 	</head>
 	<body onload="setupDdox();">
 		<nav id="main-nav">
@@ -16,50 +16,76 @@
 				<form action="#" method="GET">
 					<input id="symbolSearch" type="text" name="q" placeholder="Search for symbols" autocomplete="off" onchange="performSymbolSearch(40);" onkeypress="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
 				</form>
-				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../../";
+				<ul id="symbolSearchResults" class="symbolList" style="display: none"></ul><script type="application/javascript" src="../symbols.js"></script><script type="application/javascript">var symbolSearchRootDir = "../";
 $('#symbolSearchPane').show();</script>
 			</div>
 			<ul class="tree-view">
 				<li class="tree-view ">
-					<div class="package ">
-						<a href="../../ponies.html">ponies</a>
+					<div class="package selected">
+						<a href="../ponies.html">ponies</a>
 					</div>
 			<ul class="tree-view">
 				<li>
-					<div class="module selected">
-						<a href="../../ponies/dlang.html">dlang</a>
+					<div class="module ">
+						<a href="../ponies/dlang.html">dlang</a>
 					</div>
 				</li>
 				<li>
 					<div class="module ">
-						<a href="../../ponies/packageversion.html">packageversion</a>
+						<a href="../ponies/packageversion.html">packageversion</a>
 					</div>
 				</li>
 			</ul>
 				</li>
 				<li>
 					<div class="module ">
-						<a href="../../asciitable.html">asciitable</a>
+						<a href="../asciitable.html">asciitable</a>
 					</div>
 				</li>
 				<li>
 					<div class="module ">
-						<a href="../../commandline.html">commandline</a>
+						<a href="../commandline.html">commandline</a>
 					</div>
 				</li>
 			</ul>
 		</nav>
 		<div id="main-contents">
-			<h1>Function LicenseCommentPony.check</h1><p></p>
+			<h1>Enum CheckStatus</h1><p></p>
 			<div class="prototype">
 				<code class="lang-d">
 					<div class="single-prototype">
-			<span class="kwd">override </span><a href="../../ponies/CheckStatus.html"><span class="typ">CheckStatus</span></a> <span class="pln">check
-			<span class="pun">()</span><span class="pun">;</span>
+			<span class="kwd">enum</span> <span class="typ">CheckStatus</span>
+			 <span class="pun">:</span> <span class="typ">int</span> <span class="pun">{ ... }</span>
 					</div>
 				</code>
 			</div>
 			
+			<section><h2>Enum members</h2>
+				<table>
+					<col class="caption"/>
+					<tr>
+						<th>Name</th><th>Description</th>
+					</tr>
+					<tr>
+						<td id="done">
+							<code>done</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td id="dont_know">
+							<code>dont_know</code>
+						</td>
+						<td></td>
+					</tr>
+					<tr>
+						<td id="todo">
+							<code>todo</code>
+						</td>
+						<td></td>
+					</tr>
+				</table>
+			</section>
 			
 			<footer>
 				<table class="license-info">
