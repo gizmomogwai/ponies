@@ -26,14 +26,18 @@ T askFor(T)() if (is(T == enum))
     auto line = readln.strip;
     return line.to!T;
 }
+
 enum CheckStatus
-    {
-        todo, done, dont_know
-    }
+{
+    todo,
+    done,
+    dont_know
+}
 
 @("bool to checkstatus") unittest
 {
     import unit_threaded;
+
     true.to!CheckStatus.shouldEqual(CheckStatus.done);
     false.to!CheckStatus.shouldEqual(CheckStatus.todo);
 }

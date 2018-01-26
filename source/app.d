@@ -65,7 +65,8 @@ void list(T)(T ponies, What what)
     "list args: %s".format(what).info;
 
     auto pony2string = (Pony pony) {
-        return "%s - %s (applicable=%s, check=%s)".format(pony, pony.name, pony.applicable, pony.applicable ? pony.check.to!string : "----");
+        return "%s - %s (applicable=%s, check=%s)".format(pony, pony.name,
+                pony.applicable, pony.applicable ? pony.check.to!string : "----");
     };
 
     switch (what)

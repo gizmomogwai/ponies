@@ -27,6 +27,7 @@ enum ProtectionLevel
 abstract class DlangPony : Pony
 {
     protected auto dubSdl = "dub.sdl";
+    protected auto travisYml = ".travis.yml";
 
     override bool applicable()
     {
@@ -39,6 +40,11 @@ abstract class DlangPony : Pony
         auto text = readText(dubSdl);
         auto match = matchFirst(text, regex(pattern, "m"));
         return match[what];
+    }
+
+    protected auto sources()
+    {
+        return dirEntries("source", "*.d", SpanMode.depth);
     }
 }
 
@@ -82,7 +88,7 @@ class FormatSourcesPony : DlangPony
 
     override void run()
     {
-        foreach (string file; dirEntries("source", "*.d", SpanMode.depth))
+        foreach (string file; sources)
         {
             import std.process;
 
@@ -114,7 +120,7 @@ class CopyrightCommentPony : DlangPony
     override CheckStatus check()
     {
         auto res = appender!(string[]);
-        foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
+        foreach (string file; sources)
         {
             auto content = readText(file);
             auto pattern = "^ \\+ Copyright: %s$".format(copyright);
@@ -165,7 +171,7 @@ class AuthorsPony : DlangPony
 
     override void run()
     {
-        foreach (file; dirEntries(".", "*.d", SpanMode.depth))
+        foreach (file; sources)
         {
             import std.process;
 
@@ -217,7 +223,7 @@ class LicenseCommentPony : DlangPony
     override CheckStatus check()
     {
         auto res = appender!(string[]);
-        foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
+        foreach (string file; sources)
         {
             auto content = readText(file);
             auto pattern = "^ \\+ License: %s$".format(license);
@@ -259,21 +265,24 @@ class TravisPony : DlangPony
 {
     override string name()
     {
-        return "Setup travis build in .travis.yml";
+        return "Setup travis build in %s".format(travisYml);
     }
 
     override CheckStatus check()
     {
-        return exists(".travis.yml").to!CheckStatus;
+        return exists(travisYml).to!CheckStatus;
     }
 
     override void run()
     {
-        "Creating .travis.yml file".info;
+        "Creating %s file".format(travisYml).info;
         "userinteraction:Please get gh repo token from https://github.com/settings/tokens".warning;
         "userinteraction:Please enable travis build".warning;
         "userinteraction:Please enable coverage on codecov".warning;
         auto content = "language: d
+d:
+  - dmd
+  - ldc
 sudo: false
 addons:
   apt:
@@ -298,7 +307,7 @@ env:
   global:
     secure: create this token with travis encrypt GH_REPO_TOKEN=key from https://github.com/settings/tokens
 ";
-        std.file.write(".travis.yml", content);
+        std.file.write(travisYml, content);
     }
 }
 
@@ -308,7 +317,6 @@ class AddPackageVersionPony : DlangPony
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
-    auto travisYml = ".travis.yml";
     this()
     {
         preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
@@ -325,7 +333,8 @@ class AddPackageVersionPony : DlangPony
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
         return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus.done;
+                && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(
+                    dubFetchPackageVersion)).to!CheckStatus.done;
     }
 
     override void run()
