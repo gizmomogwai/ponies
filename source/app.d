@@ -40,7 +40,7 @@ void run(P)(P ponies)
     foreach (pony; ponies.readyToRun)
     {
         "main:Checking %s".format(pony.name).info;
-        if (!pony.check)
+        if (pony.check != CheckStatus.done)
         {
             "main:Running %s".format(pony.name).info;
             pony.run;
@@ -65,7 +65,7 @@ void list(T)(T ponies, What what)
     "list args: %s".format(what).info;
 
     auto pony2string = (Pony pony) {
-        return "%s - %s (applicable=%s)".format(pony, pony.name, pony.applicable);
+        return "%s - %s (applicable=%s, check=%s)".format(pony, pony.name, pony.applicable, pony.applicable ? pony.check.to!string : "----");
     };
 
     switch (what)

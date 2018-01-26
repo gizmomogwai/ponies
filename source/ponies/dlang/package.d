@@ -49,16 +49,16 @@ class DDoxPony : DlangPony
         return "Setup ddox in %s".format(dubSdl);
     }
 
-    override bool check()
+    override CheckStatus check()
     {
         try
         {
             auto content = readText(dubSdl);
-            return content.canFind("x:ddoxFilterArgs");
+            return content.canFind("x:ddoxFilterArgs").to!CheckStatus;
         }
         catch (FileException e)
         {
-            return false;
+            return CheckStatus.todo;
         }
     }
 
@@ -75,9 +75,9 @@ class FormatSourcesPony : DlangPony
         return "Formats sources with dfmt";
     }
 
-    override bool check()
+    override CheckStatus check()
     {
-        return false; // we cannot know if dfmt will have to do some work
+        return CheckStatus.dont_know;
     }
 
     override void run()
@@ -111,7 +111,7 @@ class CopyrightCommentPony : DlangPony
         return "Setup copyright headers in .d files (taken from %s)".format(dubSdl);
     }
 
-    override bool check()
+    override CheckStatus check()
     {
         auto res = appender!(string[]);
         foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
@@ -125,7 +125,7 @@ class CopyrightCommentPony : DlangPony
             }
         }
         noCopyrightFiles = res.data;
-        return noCopyrightFiles.length == 0;
+        return (noCopyrightFiles.length == 0).to!CheckStatus;
     }
 
     override void run()
@@ -158,9 +158,9 @@ class AuthorsPony : DlangPony
         return "Setup correct authors line in all .d files (taken from git log)";
     }
 
-    override bool check()
+    override CheckStatus check()
     {
-        return false;
+        return CheckStatus.dont_know;
     }
 
     override void run()
@@ -214,7 +214,7 @@ class LicenseCommentPony : DlangPony
         return "Setup license headers in .d files (taken from %s)".format(dubSdl);
     }
 
-    override bool check()
+    override CheckStatus check()
     {
         auto res = appender!(string[]);
         foreach (string file; dirEntries(".", "*.d", SpanMode.depth))
@@ -228,7 +228,7 @@ class LicenseCommentPony : DlangPony
             }
         }
         noLicenseFiles = res.data;
-        return noLicenseFiles.length == 0;
+        return (noLicenseFiles.length == 0).to!CheckStatus;
     }
 
     override void run()
@@ -262,9 +262,9 @@ class TravisPony : DlangPony
         return "Setup travis build in .travis.yml";
     }
 
-    override bool check()
+    override CheckStatus check()
     {
-        return exists(".travis.yml");
+        return exists(".travis.yml").to!CheckStatus;
     }
 
     override void run()
@@ -320,12 +320,12 @@ class AddPackageVersionPony : DlangPony
         return "Add automatic generation of package version to %s".format(dubSdl);
     }
 
-    override bool check()
+    override CheckStatus check()
     {
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
-        return dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
-            && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(dubFetchPackageVersion);
+        return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
+                && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus.done;
     }
 
     override void run()

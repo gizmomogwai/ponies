@@ -26,12 +26,23 @@ T askFor(T)() if (is(T == enum))
     auto line = readln.strip;
     return line.to!T;
 }
+enum CheckStatus
+    {
+        todo, done, dont_know
+    }
+
+@("bool to checkstatus") unittest
+{
+    import unit_threaded;
+    true.to!CheckStatus.shouldEqual(CheckStatus.done);
+    false.to!CheckStatus.shouldEqual(CheckStatus.todo);
+}
 
 abstract class Pony
 {
     public abstract string name();
     public abstract bool applicable();
-    public abstract bool check();
+    public abstract CheckStatus check();
     public abstract void run();
 }
 
@@ -69,9 +80,9 @@ class ShieldPony : Pony
         return exists("readme.org") && userAndProject.user != null && userAndProject.project != null;
     }
 
-    override bool check()
+    override CheckStatus check()
     {
-        return readText("readme.org").canFind(shield.strip);
+        return readText("readme.org").canFind(shield.strip).to!CheckStatus;
     }
 
     abstract string shield();
