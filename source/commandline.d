@@ -36,7 +36,7 @@ class Everything : Matcher
 
     override string toString()
     {
-        return "Accept everything";
+        return "everything";
     }
 }
 
@@ -79,7 +79,7 @@ class Set : Matcher
 
     override string toString()
     {
-        return "Accept set from %s".format(values);
+        return "set from %s".format(values);
     }
 }
 
@@ -122,7 +122,7 @@ class One : Matcher
 
     override string toString()
     {
-        return "Accept one from %s".format(impl.values);
+        return "one from %s".format(impl.values);
     }
 }
 
@@ -260,9 +260,15 @@ struct Option
     string defaultValue;
     string description;
     Matcher matcher = new Everything;
+
+    static Option boolWithName(string name)
+    {
+        return withName(name).allow(One.of("true", "false")).withDefault("false");
+    }
+
     static Option withName(string name)
     {
-        return Option(name);
+        return Option(name).withShortName(name[0..1]);
     }
 
     Option withShortName(string shortName)
@@ -302,7 +308,7 @@ struct Command
     Command* subCommand;
     bool helpNeeded()
     {
-        return ("help" in parsed) != null;
+        return parsed["help"] == "true";
     }
 
     Command parse(string[] args)
@@ -314,10 +320,10 @@ struct Command
         rest = result.rest;
         if (result.rest.length > 0)
         {
-            auto help = subCommands.find!("a.name == b")(result.rest.front);
-            if (!help.empty)
+            auto h = subCommands.find!("a.name == b")(result.rest.front);
+            if (!h.empty)
             {
-                subCommand = &help.front;
+                subCommand = &h.front;
                 subCommand.parse(result.rest[1 .. $]);
             }
         }
@@ -338,7 +344,7 @@ struct Command
         foreach (option; options)
         {
             table.add("--" ~ option.name, option.shortName ? "-" ~ option.shortName
-                    : "", option.description, option.matcher.toString);
+                    : "", option.description, "Accept " ~ option.matcher.toString);
         }
         auto res = "Options:\n" ~ table.toString("    ", "  ");
         if (!subCommands.empty)

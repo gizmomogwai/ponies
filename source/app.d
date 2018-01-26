@@ -122,8 +122,7 @@ auto setupCommandline(P)(P ponies)
             return false;
         }
         import ponies.packageversion;
-
-        writeln(packageVersion);
+        writeln(PACKAGE_VERSION);
         return true;
     };
     auto listDelegate = (Command command) {
@@ -140,18 +139,20 @@ auto setupCommandline(P)(P ponies)
     Command rootCommand =
         Command("root", rootDelegate,
         [
-            Option.withName("help").withShortName("h").withDescription("show general help").allow(One.of("true", "false")),
-            Option.withName("verbose").withShortName("v").withDescription("enable verbose logging").withDefault("false").allow(One.of("true", "false"))],
+            Option.boolWithName("help").withDescription("show general help"),
+            Option.boolWithName("verbose").withDescription("enable verbose logging")],
             [
                 Command("list", listDelegate,
-                         [
-                          Option.withName("help").withShortName("h").withDescription("show list help").allow(One.of("true", "false")),
-                          Option.withName("set").withShortName("s").withDescription("which ponies to list").withDefault("readyToRun").allow(One.fromEnum!What)], []),
+                [
+                    Option.boolWithName("help").withDescription("show list help"),
+                    Option.withName("set").withDescription("which ponies to list").withDefault("readyToRun").allow(One.fromEnum!What)], []),
                 Command("run", runDelegate,
-                        [Option.withName("help").withShortName("h").withDescription("show run help").allow(One.of("true", "false")),
-                         Option.withName("set").withShortName("s").withDescription("set of ponies to run").withDefault("all").allow(Set.fromArray(["all"] ~ ponies.map!(a => a.to!string).array))], []),
+                [
+                    Option.boolWithName("help").withDescription("show run help"),
+                    Option.withName("set").withDescription("set of ponies to run").withDefault("all").allow(Set.fromArray(["all"] ~ ponies.map!(a => a.to!string).array))], []),
                 Command("version", versionDelegate,
-                        [Option.withName("help").withShortName("h").withDescription("show version help").allow(One.of("true", "false"))], []),
+                [
+                    Option.boolWithName("help").withDescription("show version help")], []),
              ]);
     // dfmt on
 
