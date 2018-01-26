@@ -334,7 +334,7 @@ class AddPackageVersionPony : DlangPony
         auto travisYml = readText(travisYml);
         return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
                 && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(
-                    dubFetchPackageVersion)).to!CheckStatus.done;
+                    dubFetchPackageVersion)).to!CheckStatus;
     }
 
     override void run()

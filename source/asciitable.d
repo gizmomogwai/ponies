@@ -26,6 +26,7 @@ struct AsciiTable
 {
     ulong[] minimumWidths;
     Row[] rows;
+
     this(W...)(W minimumWidths)
     {
         this.minimumWidths = [minimumWidths];

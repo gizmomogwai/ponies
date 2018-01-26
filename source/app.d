@@ -13,6 +13,8 @@ import std.string;
 import androidlogger;
 import commandline;
 import std.conv;
+import asciitable;
+import std.array;
 
 void commit(string message)
 {
@@ -30,15 +32,19 @@ void commit(string message)
 
 auto readyToRun(P)(P ponies)
 {
-    return ponies.filter!(a => a.applicable);
+    return ponies.filter!(a => a.applicable).array;
 }
 
-void run(P)(P ponies)
+void run(P)(P ponies, string what)
 {
     "run".info;
     "Before running ponies".commit;
     foreach (pony; ponies.readyToRun)
     {
+        if (!(what == "all" || what.canFind(pony.to!string)))
+        {
+            continue;
+        }
         "main:Checking %s".format(pony.name).info;
         if (pony.check != CheckStatus.done)
         {
@@ -47,8 +53,6 @@ void run(P)(P ponies)
             "After %s".format(pony.name).commit;
         }
     }
-
-    //return 0;
 }
 
 enum What
@@ -57,30 +61,33 @@ enum What
     readyToRun
 }
 
-void list(T)(T ponies, What what)
+auto select(T)(T ponies, What what)
 {
-    import std.array;
-    import std.range;
-
-    "list args: %s".format(what).info;
-
-    auto pony2string = (Pony pony) {
-        return "%s - %s (applicable=%s, check=%s)".format(pony, pony.name,
-                pony.applicable, pony.applicable ? pony.check.to!string : "----");
-    };
-
     switch (what)
     {
     case What.all:
-        ("All ponies: " ~ ponies.map!(pony2string).join("\n  ")).writeln;
-        return;
+        return ponies;
     case What.readyToRun:
-        ("Ready to run ponies: " ~ ponies.readyToRun.map!(pony2string)
-                .join("\n  ")).writeln;
-        return;
+        return ponies.readyToRun;
     default:
-        throw new Exception("unknown list option %s".format(what));
+        throw new Exception("nyi");
     }
+}
+
+void list(T)(T ponies, What what)
+{
+    "list args: %s".format(what).info;
+    writeln("%s ponies:".format(what));
+    auto table = AsciiTable(1, 1, 1, 1).add("class", "description", "applicable", "status");
+    // dfmt off
+    ponies
+        .select(what)
+        .fold!((table, pony) => table.add(pony.to!string,
+            pony.name, pony.applicable.to!string, pony.applicable ? pony.check.to!string : "----"))(
+            table)
+        .toString("    ", "  ")
+        .writeln;
+    // dfmt on
 }
 
 auto setupCommandline(P)(P ponies)
@@ -105,7 +112,7 @@ auto setupCommandline(P)(P ponies)
             writeln(command.help);
             return false;
         }
-        run(ponies);
+        run(ponies, command.parsed["set"]);
         return true;
     };
     bool delegate(Command) versionDelegate = (Command command) {
@@ -133,17 +140,18 @@ auto setupCommandline(P)(P ponies)
     Command rootCommand =
         Command("root", rootDelegate,
         [
-            Option.withName("help").withShortName("h").withDescription("show general help"),
-            Option.withName("verbose").withShortName("v").withDescription("enable verbose logging").withDefault("false")],
+            Option.withName("help").withShortName("h").withDescription("show general help").allow(One.of("true", "false")),
+            Option.withName("verbose").withShortName("v").withDescription("enable verbose logging").withDefault("false").allow(One.of("true", "false"))],
             [
                 Command("list", listDelegate,
                          [
-                          Option.withName("help").withShortName("h").withDescription("show list help"),
-                          Option.withName("set").withShortName("s").withDescription("which ponies to list (all|readyToRun)").withDefault("readyToRun")], []),
+                          Option.withName("help").withShortName("h").withDescription("show list help").allow(One.of("true", "false")),
+                          Option.withName("set").withShortName("s").withDescription("which ponies to list").withDefault("readyToRun").allow(One.fromEnum!What)], []),
                 Command("run", runDelegate,
-                        [Option.withName("help").withShortName("h").withDescription("show run help")], []),
+                        [Option.withName("help").withShortName("h").withDescription("show run help").allow(One.of("true", "false")),
+                         Option.withName("set").withShortName("s").withDescription("set of ponies to run").withDefault("all").allow(Set.fromArray(["all"] ~ ponies.map!(a => a.to!string).array))], []),
                 Command("version", versionDelegate,
-                        [Option.withName("help").withShortName("h").withDescription("show version help")], []),
+                        [Option.withName("help").withShortName("h").withDescription("show version help").allow(One.of("true", "false"))], []),
              ]);
     // dfmt on
 
@@ -168,7 +176,14 @@ int main(string[] args)
     ];
     // dfmt on
 
-    setupCommandline(ponies).parse(args[1 .. $]).run;
-
-    return 0;
+    try
+    {
+        setupCommandline(ponies).parse(args[1 .. $]).run;
+        return 0;
+    }
+    catch (Exception e)
+    {
+        e.message.writeln;
+        return 1;
+    }
 }

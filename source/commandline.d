@@ -13,6 +13,119 @@ import std.algorithm;
 import std.experimental.logger;
 import asciitable;
 
+class Matcher
+{
+    /++
+     + Checks if s is an accepted values.
+     + Params:
+     + v = what to check
+     + Throws: Exception if not accepted.
+     +/
+    abstract void accept(Option o, string v);
+    /++
+     + Deliver a description of what is accepted.
+     +/
+    override abstract string toString();
+}
+
+class Everything : Matcher
+{
+    override void accept(Option o, string v)
+    {
+    }
+
+    override string toString()
+    {
+        return "Accept everything";
+    }
+}
+
+class Set : Matcher
+{
+    private string[] values;
+    this(string[] values)
+    {
+        this.values = values;
+    }
+
+    static Matcher of(V...)(V values)
+    {
+        return fromArray([values]);
+    }
+
+    static Matcher fromArray(string[] values)
+    {
+        return new this(values);
+    }
+
+    static Matcher fromEnum(T)()
+    {
+        import std.traits;
+        import std.conv;
+
+        return fromArray([EnumMembers!T].map!(e => e.to!string).array);
+    }
+
+    override void accept(Option o, string givenValues)
+    {
+        import std.exception;
+
+        foreach (v; givenValues.split(","))
+        {
+            enforce(values.canFind(v),
+                    "%s is not in allowed values of option '%s': %s".format(v, o.name, values));
+        }
+    }
+
+    override string toString()
+    {
+        return "Accept set from %s".format(values);
+    }
+}
+
+class One : Matcher
+{
+    private Set impl;
+    bool done = false;
+    this(string[] values)
+    {
+        impl = new Set(values);
+    }
+
+    static Matcher of(V...)(V values)
+    {
+        return fromArray([values]);
+    }
+
+    static Matcher fromArray(string[] values)
+    {
+        return new this(values);
+    }
+
+    static Matcher fromEnum(T)()
+    {
+        import std.traits;
+        import std.conv;
+
+        return fromArray([EnumMembers!T].map!(e => e.to!string).array);
+    }
+
+    override void accept(Option o, string v)
+    {
+        if (done)
+        {
+            throw new Exception("Only one value allowed for option '%s'".format(o.name));
+        }
+        impl.accept(o, v);
+        done = true;
+    }
+
+    override string toString()
+    {
+        return "Accept one from %s".format(impl.values);
+    }
+}
+
 auto toKv(ref string[] args)
 {
     auto arg = args.front;
@@ -88,37 +201,47 @@ ParseResult parse(Option[] options, string[] args)
         {
             arg = arg[2 .. $];
             auto kv = arg.split("=");
-            auto option = options.find!(i => i.name == kv[0]);
-            if (option.empty)
+            auto f = options.find!(i => i.name == kv[0]);
+            if (f.empty)
             {
                 throw new Exception("Illegal option '%s'".format(arg));
             }
+            auto option = f.front;
             if (kv.length == 2)
             {
+                auto v = kv[1];
+                option.accept(v);
                 keyValues[kv[0]] = kv[1];
             }
             else if (kv.length == 1)
             {
-                keyValues[kv[0]] = "true";
+                auto v = "true";
+                option.accept(v);
+                keyValues[kv[0]] = v;
             }
             args.popFront;
         }
         else if (arg.isShortOption)
         {
             arg = arg[1 .. $];
-            auto option = options.find!(i => i.shortName == arg);
-            if (option.empty)
+            auto f = options.find!(i => i.shortName == arg);
+            if (f.empty)
             {
                 throw new Exception("Illegal option '%s'".format(arg));
             }
             args.popFront;
+            auto option = f.front;
             if (args.empty)
             {
-                keyValues[option.front.name] = "true";
+                auto v = "true";
+                option.accept(v);
+                keyValues[option.name] = v;
             }
             else
             {
-                keyValues[option.front.name] = args.front;
+                auto v = args.front;
+                option.accept(v);
+                keyValues[option.name] = v;
                 args.popFront;
             }
         }
@@ -136,6 +259,7 @@ struct Option
     string shortName;
     string defaultValue;
     string description;
+    Matcher matcher = new Everything;
     static Option withName(string name)
     {
         return Option(name);
@@ -143,19 +267,28 @@ struct Option
 
     Option withShortName(string shortName)
     {
-        return Option(name, shortName, defaultValue, description);
+        return Option(name, shortName, defaultValue, description, matcher);
     }
 
     Option withDefault(string defaultValue)
     {
-        return Option(name, shortName, defaultValue, description);
+        return Option(name, shortName, defaultValue, description, matcher);
     }
 
     Option withDescription(string description)
     {
-        return Option(name, shortName, defaultValue, description);
+        return Option(name, shortName, defaultValue, description, matcher);
     }
 
+    Option allow(Matcher matcher)
+    {
+        return Option(name, shortName, defaultValue, description, matcher);
+    }
+
+    void accept(string v)
+    {
+        matcher.accept(this, v);
+    }
 }
 
 struct Command
@@ -201,13 +334,13 @@ struct Command
 
     string help()
     {
-        auto table = AsciiTable(1, 1, 1);
+        auto table = AsciiTable(1, 1, 1, 1).add("long", "short", "description", "allowed values");
         foreach (option; options)
         {
-            table.add("--" ~ option.name, option.shortName
-                    ? "-" ~ option.shortName : "", option.description);
+            table.add("--" ~ option.name, option.shortName ? "-" ~ option.shortName
+                    : "", option.description, option.matcher.toString);
         }
-        auto res = "Options:\n" ~ table.toString("    ", " ");
+        auto res = "Options:\n" ~ table.toString("    ", "  ");
         if (!subCommands.empty)
         {
             res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");
