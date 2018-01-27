@@ -11,6 +11,7 @@ import std.conv;
 import std.experimental.logger;
 import std.file;
 import std.functional;
+import std.range;
 import std.regex;
 import std.stdio;
 import std.string;
@@ -44,7 +45,7 @@ auto string2selector(string s)
 
     auto r = regex(s);
     auto res = (string p) {
-        if (p.match(r) || s == "all")
+        if (p.match(r))
         {
             if (negate)
             {
@@ -90,12 +91,12 @@ bool selected(P)(P pony, string what)
 {
     import unit_threaded;
 
-    "test".selected("all").shouldBeTrue;
-    "test".selected("-all").shouldBeFalse;
+    "test".selected(".*").shouldBeTrue;
+    "test".selected("-.*").shouldBeFalse;
     "test".selected("test1,+test").shouldBeTrue;
     "test".selected("test1,-test").shouldBeFalse;
-    "test".selected("all,-test").shouldBeFalse;
-    "test".selected("-all,+test").shouldBeTrue;
+    "test".selected(".*,-test").shouldBeFalse;
+    "test".selected("-.*,+test").shouldBeTrue;
     "a.dlang.pony".selected(".*dlang.*").shouldBeTrue;
     "a.dlang.pony".selected("-.*dlang.*").shouldBeFalse;
 }

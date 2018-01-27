@@ -392,7 +392,7 @@ struct Command
         foreach (option; options)
         {
             table.add("--" ~ option.name, option.shortName ? "-" ~ option.shortName
-                    : "", option.description, "Accept " ~ option.matcher.toString);
+                    : "", option.description, option.matcher.toString);
         }
         auto res = "Options:\n" ~ table.toString("    ", "  ");
         if (!subCommands.empty)

@@ -120,7 +120,7 @@ auto setupCommandline(P)(P ponies)
                 Command("run", runDelegate,
                 [
                     Option.boolWithName("help").withDescription("show run help"),
-                    Option.withName("set").withDescription("set of ponies to run (regex on pony classes)").withDefault("all")], []),
+                    Option.withName("set").withDescription("set of ponies to run (+-set of regex on pony classes)").withDefault(".*")], []),
                 Command("version", versionDelegate,
                 [
                     Option.boolWithName("help").withDescription("show version help")], []),
