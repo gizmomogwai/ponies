@@ -3,176 +3,15 @@
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
-
 module commandline;
 
-import std.string;
-import std.range;
-import std.typecons;
+import asciitable;
 import std.algorithm;
 import std.experimental.logger;
-import asciitable;
-
-class Matcher
-{
-    /++
-     + Checks if s is an accepted values.
-     + Params:
-     + v = what to check
-     + Throws: Exception if not accepted.
-     +/
-    abstract void accept(Option o, string v);
-    /++
-     + Deliver a description of what is accepted.
-     +/
-    override abstract string toString();
-}
-
-class Everything : Matcher
-{
-    override void accept(Option o, string v)
-    {
-    }
-
-    override string toString()
-    {
-        return "everything";
-    }
-}
-
-class Set : Matcher
-{
-    private string[] values;
-    this(string[] values)
-    {
-        this.values = values;
-    }
-
-    static Matcher of(V...)(V values)
-    {
-        return fromArray([values]);
-    }
-
-    static Matcher fromArray(string[] values)
-    {
-        return new this(values);
-    }
-
-    static Matcher fromEnum(T)()
-    {
-        import std.traits;
-        import std.conv;
-
-        return fromArray([EnumMembers!T].map!(e => e.to!string).array);
-    }
-
-    override void accept(Option o, string givenValues)
-    {
-        import std.exception;
-
-        foreach (v; givenValues.split(","))
-        {
-            enforce(values.canFind(v),
-                    "%s is not in allowed values of option '%s': %s".format(v, o.name, values));
-        }
-    }
-
-    override string toString()
-    {
-        return "set from %s".format(values);
-    }
-}
-
-string trimPlusMinus(string s)
-{
-    if (s.length == 0)
-    {
-        return s;
-    }
-
-    auto first = s[0];
-    switch (first)
-    {
-    case '+':
-    case '-':
-        return s[1 .. $];
-    default:
-        return s;
-    }
-}
-
-class PlusMinusSet : Matcher
-{
-    private string[] values;
-    this(string[] values)
-    {
-        this.values = values;
-    }
-
-    static Matcher fromArray(string[] values)
-    {
-        return new this(values);
-    }
-
-    override void accept(Option o, string givenValues)
-    {
-        import std.exception;
-
-        foreach (v; givenValues.split(",").map!(a => a.trimPlusMinus))
-        {
-            enforce(values.canFind(v),
-                    "%s is not in allowed values of option '%s': %s".format(v, o.name, values));
-        }
-    }
-
-    override string toString()
-    {
-        return "+/- set from %s".format(values);
-    }
-}
-
-class One : Matcher
-{
-    private Set impl;
-    bool done = false;
-    this(string[] values)
-    {
-        impl = new Set(values);
-    }
-
-    static Matcher of(V...)(V values)
-    {
-        return fromArray([values]);
-    }
-
-    static Matcher fromArray(string[] values)
-    {
-        return new this(values);
-    }
-
-    static Matcher fromEnum(T)()
-    {
-        import std.traits;
-        import std.conv;
-
-        return fromArray([EnumMembers!T].map!(e => e.to!string).array);
-    }
-
-    override void accept(Option o, string v)
-    {
-        if (done)
-        {
-            throw new Exception("Only one value allowed for option '%s'".format(o.name));
-        }
-        impl.accept(o, v);
-        done = true;
-    }
-
-    override string toString()
-    {
-        return "one from %s".format(impl.values);
-    }
-}
+import std.range;
+import std.string;
+import std.typecons;
+public import matcher;
 
 auto toKv(ref string[] args)
 {
@@ -307,11 +146,11 @@ struct Option
     string shortName;
     string defaultValue;
     string description;
-    Matcher matcher = new Everything;
+    Matcher!string matcher = new Everything!string;
 
     static Option boolWithName(string name)
     {
-        return withName(name).allow(One.of("true", "false")).withDefault("false");
+        return withName(name).allow(One!string.of("true", "false")).withDefault("false");
     }
 
     static Option withName(string name)
@@ -334,14 +173,14 @@ struct Option
         return Option(name, shortName, defaultValue, description, matcher);
     }
 
-    Option allow(Matcher matcher)
+    Option allow(Matcher!string matcher)
     {
         return Option(name, shortName, defaultValue, description, matcher);
     }
 
     void accept(string v)
     {
-        matcher.accept(this, v);
+        matcher.accept(this.name, v);
     }
 }
 
@@ -392,7 +231,7 @@ struct Command
         foreach (option; options)
         {
             table.add("--" ~ option.name, option.shortName ? "-" ~ option.shortName
-                    : "", option.description, option.matcher.toString);
+                    : "", option.description, "Accept " ~ option.matcher.toString);
         }
         auto res = "Options:\n" ~ table.toString("    ", "  ");
         if (!subCommands.empty)
@@ -410,6 +249,14 @@ struct Command
             {
                 subCommand.run;
             }
+            else
+            {
+                if (rest.length > 0)
+                {
+                    throw new Exception("Cannot understand %s".format(rest));
+                }
+            }
+
         }
     }
 }

@@ -116,7 +116,7 @@ auto setupCommandline(P)(P ponies)
                 Command("list", listDelegate,
                 [
                     Option.boolWithName("help").withDescription("show list help"),
-                    Option.withName("set").withDescription("which ponies to list").withDefault("readyToRun").allow(One.fromEnum!What)], []),
+                    Option.withName("set").withDescription("which ponies to list").withDefault("readyToRun").allow(One!string.fromEnum!What)], []),
                 Command("run", runDelegate,
                 [
                     Option.boolWithName("help").withDescription("show run help"),
