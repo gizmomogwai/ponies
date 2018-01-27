@@ -6,6 +6,7 @@
 
 import ponies;
 import ponies.dlang;
+import ponies.dlang.travis;
 import std.algorithm;
 import std.experimental.logger;
 import std.stdio;
@@ -36,8 +37,9 @@ void run(P)(P ponies, string what)
     "Before running ponies".commit;
     foreach (pony; ponies.poniesToRun(what))
     {
-        "main:Checking %s".format(pony.name).info;
-        if (pony.check != CheckStatus.done)
+        auto check = pony.check;
+        "main:Checking %s -> %s".format(pony.name, check).info;
+        if (check != CheckStatus.done)
         {
             "main:Running %s".format(pony.name).info;
             pony.run;
@@ -138,7 +140,9 @@ int main(string[] args)
         new AuthorsPony,
         new LicenseCommentPony,
         new CopyrightCommentPony,
-        new TravisPony,
+        // new TravisPony,
+        new LanguageTravisDlangPony,
+        new CompilerTravisDlangPony,
         new GithubPagesShieldPony,
         new TravisCiShieldPony,
         new GithubShieldPony,

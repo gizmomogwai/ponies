@@ -6,6 +6,7 @@
 
 module ponies.dlang;
 
+import dyaml;
 import ponies;
 import std.algorithm;
 import std.array;
@@ -261,56 +262,6 @@ class LicenseCommentPony : DlangPony
     }
 }
 
-class TravisPony : DlangPony
-{
-    override string name()
-    {
-        return "Setup travis build in %s".format(travisYml);
-    }
-
-    override CheckStatus check()
-    {
-        return exists(travisYml).to!CheckStatus;
-    }
-
-    override void run()
-    {
-        "Creating %s file".format(travisYml).info;
-        "userinteraction:Please get gh repo token from https://github.com/settings/tokens".warning;
-        "userinteraction:Please enable travis build".warning;
-        "userinteraction:Please enable coverage on codecov".warning;
-        auto content = "language: d
-d:
-  - dmd
-  - ldc
-sudo: false
-addons:
-  apt:
-    packages:
-    - libevent-dev
-before_install: pip install --user codecov
-script:
-- dub test --compiler=${DC} --coverage
-- dub build --build=release
-- dub build --build=ddox
-after_success: codecov
-deploy:
-  provider: pages
-  skip-cleanup: true
-  local-dir: \"docs\"
-  github-token: \"$GH_REPO_TOKEN\"
-  verbose: true
-  keep-history: true
-  on:
-    branch: master
-env:
-  global:
-    secure: create this token with travis encrypt GH_REPO_TOKEN=key from https://github.com/settings/tokens
-";
-        std.file.write(travisYml, content);
-    }
-}
-
 class AddPackageVersionPony : DlangPony
 {
     string preGenCommand;
@@ -362,8 +313,6 @@ class AddPackageVersionPony : DlangPony
             "Writing new %s".format(dubSdl).info;
             std.file.write(dubSdl, content);
         }
-
-        import dyaml.all;
 
         auto root = Loader(travisYml).load;
         auto beforeInstall = root["before_install"];

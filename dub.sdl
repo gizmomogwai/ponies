@@ -3,15 +3,17 @@ description "Helps you to setup nice projects."
 authors "Christian Köstlin"
 copyright "Copyright © 2018, Christian Köstlin"
 license "MIT"
+
 dependency "colored" version="~>0.0.8"
 dependency "androidlogger" version="~>0.0.3"
 dependency "dyaml" version="~>0.6.4"
+dependency "asciitable" version="~>0.0.1"
 
 preGenerateCommands "dub run packageversion -- --packageName=ponies"
 sourcePaths "source" "out/generated/packageversion"
 importPaths "source" "out/generated/packageversion"
 
-x:ddoxFilterArgs "--min-protection=Protected"
+x:ddoxFilterArgs "--min-protection=Private"
 
 configuration "application" {
   targetType "executable"
