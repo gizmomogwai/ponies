@@ -25,66 +25,79 @@ enum Vote
     dontCare
 }
 
-auto string2selector(string s)
+auto removePlusMinusPrefix(string s)
 {
-    if (s.length == 0)
-    {
-        return (string p) { return Vote.dontCare; }.toDelegate;
-    }
-
-    bool negate = false;
+    auto negate = false;
     if (s[0] == '-')
     {
         negate = true;
         s = s[1 .. $];
     }
-    if (s[0] == '+')
+    else if (s[0] == '+')
     {
         s = s[1 .. $];
     }
+    return tuple!("negative", "string")(negate, s);
+}
 
-    auto r = regex(s);
-    auto res = (string p) {
-        if (p.match(r))
+@("check remove plusminusprefix") unittest
+{
+    import unit_threaded;
+
+    "-test".removePlusMinusPrefix.shouldEqual(tuple(true, "test"));
+    "test".removePlusMinusPrefix.shouldEqual(tuple(false, "test"));
+    "+test".removePlusMinusPrefix.shouldEqual(tuple(false, "test"));
+}
+
+auto voteByPlusMinusRegex(string pony, string plusMinusRegex)
+{
+    if (plusMinusRegex.length == 0)
+    {
+        return Vote.dontCare;
+    }
+
+    auto pm = removePlusMinusPrefix(plusMinusRegex);
+
+    auto r = regex(pm.string);
+    if (pony.match(r))
+    {
+        if (pm.negative)
         {
-            if (negate)
-            {
-                return Vote.down;
-            }
-            else
-            {
-                return Vote.up;
-            }
+            return Vote.down;
         }
         else
         {
-            return Vote.dontCare;
+            return Vote.up;
         }
-    };
-    return res;
+    }
+    else
+    {
+        return Vote.dontCare;
+    }
+}
+
+bool vote(P)(P pony, bool old, string pattern)
+{
+    auto h = voteByPlusMinusRegex(pony.to!string, pattern);
+    switch (h)
+    {
+    case Vote.up:
+        return true;
+    case Vote.down:
+        return false;
+    default:
+        return old;
+    }
 }
 
 bool selected(P)(P pony, string what)
 {
-    auto selectors = what.split(",").map!(string2selector);
-
-    bool res = false;
-    foreach (selector; selectors)
-    {
-        auto h = selector(pony.to!string);
-        switch (h)
-        {
-        case Vote.up:
-            res = true;
-            break;
-        case Vote.down:
-            res = false;
-            break;
-        default:
-            break;
-        }
-    }
-    return res;
+    // dfmt off
+    return what
+        .split(",")
+        .fold!((result, pattern) => pony.vote(result, pattern))
+        (false);
+    // dfmt on
 }
 
 @("select a pony") unittest
