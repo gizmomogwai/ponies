@@ -10,10 +10,124 @@ import std.algorithm;
 import std.conv;
 import std.experimental.logger;
 import std.file;
+import std.functional;
+import std.regex;
 import std.stdio;
 import std.string;
 import std.traits;
 import std.typecons;
+
+enum Vote
+{
+    up,
+    down,
+    dontCare
+}
+
+auto string2selector(string s)
+{
+    if (s.length == 0)
+    {
+        return (string p) { return Vote.dontCare; }.toDelegate;
+    }
+
+    bool negate = false;
+    if (s[0] == '-')
+    {
+        negate = true;
+        s = s[1 .. $];
+    }
+    if (s[0] == '+')
+    {
+        s = s[1 .. $];
+    }
+
+    auto r = regex(s);
+    auto res = (string p) {
+        if (p.match(r) || s == "all")
+        {
+            if (negate)
+            {
+                return Vote.down;
+            }
+            else
+            {
+                return Vote.up;
+            }
+        }
+        else
+        {
+            return Vote.dontCare;
+        }
+    };
+    return res;
+}
+
+bool selected(P)(P pony, string what)
+{
+    auto selectors = what.split(",").map!(string2selector);
+
+    bool res = false;
+    foreach (selector; selectors)
+    {
+        auto h = selector(pony.to!string);
+        switch (h)
+        {
+        case Vote.up:
+            res = true;
+            break;
+        case Vote.down:
+            res = false;
+            break;
+        default:
+            break;
+        }
+    }
+    return res;
+}
+
+@("select a pony") unittest
+{
+    import unit_threaded;
+
+    "test".selected("all").shouldBeTrue;
+    "test".selected("-all").shouldBeFalse;
+    "test".selected("test1,+test").shouldBeTrue;
+    "test".selected("test1,-test").shouldBeFalse;
+    "test".selected("all,-test").shouldBeFalse;
+    "test".selected("-all,+test").shouldBeTrue;
+    "a.dlang.pony".selected(".*dlang.*").shouldBeTrue;
+    "a.dlang.pony".selected("-.*dlang.*").shouldBeFalse;
+}
+
+auto readyToRun(P)(P ponies)
+{
+    return ponies.filter!(a => a.applicable).array;
+}
+
+auto poniesToRun(P)(P ponies, string what)
+{
+    return ponies.readyToRun.filter!(a => a.selected(what));
+}
+
+enum What
+{
+    all,
+    readyToRun
+}
+
+auto select(T)(T ponies, What what)
+{
+    switch (what)
+    {
+    case What.all:
+        return ponies;
+    case What.readyToRun:
+        return ponies.readyToRun;
+    default:
+        throw new Exception("nyi");
+    }
+}
 
 auto possibleValues(E)() if (is(E == enum))
 {
@@ -55,7 +169,6 @@ UserAndProject userAndProject;
 auto getUserAndProject()
 {
     import std.process;
-    import std.regex;
     import std.string : replace;
 
     auto res = ["git", "remote", "get-url", "origin"].execute;

@@ -30,21 +30,12 @@ void commit(string message)
     "result of %s: %s".format(commitCommand, res).info;
 }
 
-auto readyToRun(P)(P ponies)
-{
-    return ponies.filter!(a => a.applicable).array;
-}
-
 void run(P)(P ponies, string what)
 {
     "run".info;
     "Before running ponies".commit;
-    foreach (pony; ponies.readyToRun)
+    foreach (pony; ponies.poniesToRun(what))
     {
-        if (!(what == "all" || what.canFind(pony.to!string)))
-        {
-            continue;
-        }
         "main:Checking %s".format(pony.name).info;
         if (pony.check != CheckStatus.done)
         {
@@ -55,30 +46,11 @@ void run(P)(P ponies, string what)
     }
 }
 
-enum What
-{
-    all,
-    readyToRun
-}
-
-auto select(T)(T ponies, What what)
-{
-    switch (what)
-    {
-    case What.all:
-        return ponies;
-    case What.readyToRun:
-        return ponies.readyToRun;
-    default:
-        throw new Exception("nyi");
-    }
-}
-
 void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
-    auto table = AsciiTable(1, 1, 1, 1).add("class", "description", "applicable", "status");
+    auto table = AsciiTable(1, 1, 1, 1).add("class", "description", "applicable", "status");// dfmt off
     // dfmt off
     ponies
         .select(what)
@@ -122,6 +94,7 @@ auto setupCommandline(P)(P ponies)
             return false;
         }
         import ponies.packageversion;
+
         writeln(PACKAGE_VERSION);
         return true;
     };
@@ -133,9 +106,7 @@ auto setupCommandline(P)(P ponies)
         }
         list(ponies, command.parsed["set"].to!What);
         return true;
-    };
-
-    // dfmt off
+    };// dfmt off
     Command rootCommand =
         Command("root", rootDelegate,
         [
@@ -149,7 +120,7 @@ auto setupCommandline(P)(P ponies)
                 Command("run", runDelegate,
                 [
                     Option.boolWithName("help").withDescription("show run help"),
-                    Option.withName("set").withDescription("set of ponies to run").withDefault("all").allow(Set.fromArray(["all"] ~ ponies.map!(a => a.to!string).array))], []),
+                    Option.withName("set").withDescription("set of ponies to run (regex on pony classes)").withDefault("all")], []),
                 Command("version", versionDelegate,
                 [
                     Option.boolWithName("help").withDescription("show version help")], []),

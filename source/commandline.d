@@ -83,6 +83,54 @@ class Set : Matcher
     }
 }
 
+string trimPlusMinus(string s)
+{
+    if (s.length == 0)
+    {
+        return s;
+    }
+
+    auto first = s[0];
+    switch (first)
+    {
+    case '+':
+    case '-':
+        return s[1 .. $];
+    default:
+        return s;
+    }
+}
+
+class PlusMinusSet : Matcher
+{
+    private string[] values;
+    this(string[] values)
+    {
+        this.values = values;
+    }
+
+    static Matcher fromArray(string[] values)
+    {
+        return new this(values);
+    }
+
+    override void accept(Option o, string givenValues)
+    {
+        import std.exception;
+
+        foreach (v; givenValues.split(",").map!(a => a.trimPlusMinus))
+        {
+            enforce(values.canFind(v),
+                    "%s is not in allowed values of option '%s': %s".format(v, o.name, values));
+        }
+    }
+
+    override string toString()
+    {
+        return "+/- set from %s".format(values);
+    }
+}
+
 class One : Matcher
 {
     private Set impl;
@@ -268,7 +316,7 @@ struct Option
 
     static Option withName(string name)
     {
-        return Option(name).withShortName(name[0..1]);
+        return Option(name).withShortName(name[0 .. 1]);
     }
 
     Option withShortName(string shortName)
