@@ -2,7 +2,7 @@
 	"fileVersion": 1,
 	"versions": {
 		"androidlogger": "0.0.3",
-		"asciitable": "0.0.1",
+		"asciitable": "0.0.2",
 		"colored": "0.0.8",
 		"docopt": "0.6.1-b.6",
 		"dyaml": "0.6.4",
