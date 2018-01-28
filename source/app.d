@@ -144,6 +144,7 @@ int main(string[] args)
         new LanguageTravisDlangPony,
         new CompilerTravisDlangPony,
         new NoSudoTravisDlangPony,
+        new GhPagesTravisDlangPony,
         new GithubPagesShieldPony,
         new TravisCiShieldPony,
         new GithubShieldPony,

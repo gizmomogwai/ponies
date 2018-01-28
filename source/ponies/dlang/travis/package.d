@@ -112,26 +112,152 @@ class CompilerTravisDlangPony : TravisDlangPony
         }
     }
 }
+
 class NoSudoTravisDlangPony : TravisDlangPony
 {
-    override string name() {
+    override string name()
+    {
         return "Setup travis to not run as sudo";
     }
+
     override bool change(ref Node root)
     {
         auto sudo = "sudo" in root;
-        if (sudo) {
-            if (sudo.as!string != "false") {
+        if (sudo)
+        {
+            if (sudo.as!string != "false")
+            {
                 root["sudo"] = false;
                 return true;
             }
             return false;
-        } else {
+        }
+        else
+        {
             root["sudo"] = false;
             return true;
         }
     }
 }
+
+class GhPagesTravisDlangPony : TravisDlangPony
+{
+    override string name()
+    {
+        return "Setup travis to autodeploy ddox to ghpages";
+    }
+
+    override bool change(ref Node root)
+    {
+        return addNeededPackages(root) || addDdoxBuildScript(root) || addDeployNode(root);
+    }
+
+    private bool addDeployNode(ref Node root)
+    {
+        auto deploy = "deploy" in root;
+        if (!deploy)
+        {
+            "Adding deploy node".warning;
+            // dfmt off
+            root["deploy"] =
+                Node(["provider" : Node("pages"),
+                      "skip-cleanup" : Node(true),
+                      "local-dir" : Node("docs"),
+                      "github-token" : Node("$GH_REPO_TOKEN"),
+                      "verbose" : Node(true),
+                      "keep-history" : Node(true),
+                      "on" : Node(["branch" : "master"])]);
+            // dfmt on
+            return true;
+        }
+        return false;
+    }
+
+    private bool addDdoxBuildScript(ref Node root)
+    {
+        auto script = "script" in root;
+        if (!script)
+        {
+            "Adding ddox build script".warning;
+            root["script"] = Node(["dub build --compiler=${DC} --build=ddox"]);
+            return true;
+        }
+
+        if (script.isScalar)
+        {
+            "Changing script node".warning;
+            root["script"] = Node(["dub build --compiler=${DC} --build=ddox"]);
+            return true;
+        }
+
+        if (!script.sequence!string.canFind("dub build --compiler=${DC} --build=ddox"))
+        {
+            "Adding ddox script".warning;
+            script.add("dub build --compiler=${DC} --build=ddox");
+            root["script"] = *script;
+            return true;
+        }
+        return false;
+    }
+
+    private bool addNeededPackages(ref Node root)
+    {
+        auto addons = "addons" in root;
+        if (!addons)
+        {
+            "Adding addons node".warning;
+            root["addons"] = Node(["apt" : Node(["packages" : Node(["libevent-dev"])])]);
+            return true;
+        }
+
+        if (addons.isScalar)
+        {
+            "Changing addons node".warning;
+            root["addons"] = Node(["apt" : Node(["packages" : Node(["libevent-dev"])])]);
+            return true;
+        }
+
+        auto apt = "apt" in root["addons"];
+        if (!apt)
+        {
+            root["addons"]["apt"] = Node(["packages" : Node(["libevent-dev"])]);
+            return true;
+        }
+
+        if (apt.isScalar)
+        {
+            "Changing addons.apt node".warning;
+            root["addons"]["apt"] = Node(["packages" : Node(["libevent-dev"])]);
+            return true;
+        }
+
+        auto packages = "packages" in root["addons"]["apt"];
+        if (!packages)
+        {
+            "Adding packages to addons.apt".warning;
+            root["addons"]["apt"]["packages"] = Node(["libevent-dev"]);
+            return true;
+        }
+
+        if (packages.isScalar)
+        {
+            "Changing addons.apt.packages".warning;
+            root["addons"]["apt"]["packages"] = Node(["libevent-dev"]);
+            return true;
+        }
+
+        if (!packages.sequence!string.canFind("libevent-dev"))
+        {
+            "Adding libevent-dev to addons.apt.packages".warning;
+            packages.add("libevent-dev");
+            root["addons"]["apt"]["packages"] = *packages;
+            return true;
+        }
+
+        return false;
+    }
+}
+
 /+
 class TravisPony : DlangPony
 {
