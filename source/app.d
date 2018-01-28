@@ -143,6 +143,7 @@ int main(string[] args)
         // new TravisPony,
         new LanguageTravisDlangPony,
         new CompilerTravisDlangPony,
+        new NoSudoTravisDlangPony,
         new GithubPagesShieldPony,
         new TravisCiShieldPony,
         new GithubShieldPony,

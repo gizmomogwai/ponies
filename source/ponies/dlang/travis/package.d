@@ -1,11 +1,7 @@
 /++
- + Authors: Christian Koestlin
- +/
-
-/++
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
- + Authors:
+ + Authors: Christian Koestlin
  +/
 
 module ponies.dlang.travis;
@@ -116,6 +112,26 @@ class CompilerTravisDlangPony : TravisDlangPony
         }
     }
 }
+class NoSudoTravisDlangPony : TravisDlangPony
+{
+    override string name() {
+        return "Setup travis to not run as sudo";
+    }
+    override bool change(ref Node root)
+    {
+        auto sudo = "sudo" in root;
+        if (sudo) {
+            if (sudo.as!string != "false") {
+                root["sudo"] = false;
+                return true;
+            }
+            return false;
+        } else {
+            root["sudo"] = false;
+            return true;
+        }
+    }
+}
 /+
 class TravisPony : DlangPony
 {
@@ -139,7 +155,6 @@ class TravisPony : DlangPony
 d:
   - dmd
   - ldc
-sudo: false
 addons:
   apt:
     packages:
