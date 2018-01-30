@@ -175,18 +175,27 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
     private bool addDdoxBuildScript(ref Node root)
     {
+        const buildDdox = "dub build --compiler=${DC} --build=ddox";
         auto script = "script" in root;
         if (!script)
         {
             "Adding ddox build script".warning;
-            root["script"] = Node(["dub build --compiler=${DC} --build=ddox"]);
+            root["script"] = Node([buildDdox]);
             return true;
         }
 
         if (script.isScalar)
         {
             "Changing script node".warning;
-            root["script"] = Node(["dub build --compiler=${DC} --build=ddox"]);
+
+            if (script.as!string != buildDdox)
+            {
+                root["script"] = Node([script.as!string, buildDdox]);
+            }
+            else
+            {
+                root["script"] = Node([buildDdox]);
+            }
             return true;
         }
 

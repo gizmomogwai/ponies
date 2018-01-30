@@ -145,10 +145,10 @@ int main(string[] args)
         new CompilerTravisDlangPony,
         new NoSudoTravisDlangPony,
         new GhPagesTravisDlangPony,
-        new GithubPagesShieldPony,
-        new TravisCiShieldPony,
         new GithubShieldPony,
+        new TravisCiShieldPony,
         new CodecovShieldPony,
+        new GithubPagesShieldPony,
         new AddPackageVersionPony,
         new FormatSourcesPony,
     ];
