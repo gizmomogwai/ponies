@@ -355,8 +355,8 @@ class GeneratePackageDependenciesPony : DlangPony
         std.file.write("out/dependencies.dot", dot);
 
         import std.process;
-        ["dot", "out/dependencies.dot", "-Tpng", "-o", "out/dependencies.png"].execute;
-        ["dot", "out/dependencies.dot", "-Tsvg", "-o", "out/dependencies.svg"].execute;
+        ["dot", "out/dependencies.dot", "-Tpng", "-o", "docs/images/dependencies.png"].execute;
+        ["dot", "out/dependencies.dot", "-Tsvg", "-o", "docs/images/dependencies.svg"].execute;
 
     }
 
