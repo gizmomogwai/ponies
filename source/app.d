@@ -95,9 +95,14 @@ auto setupCommandline(P)(P ponies)
             writeln(command.help);
             return false;
         }
-        import ponies.packageversion;
 
-        writeln(PACKAGE_VERSION);
+        import packageversion;
+        // dfmt off
+        auto table = packageversion
+            .getPackages.sort!("a.name < b. name")
+            .fold!((table, p) => table.add(p.name, p.semVer, p.license))(AsciiTable(0, 0, 0));
+        // dfmt on
+        writeln("Packages:\n", table.toString("   ", " "));
         return true;
     };
     auto listDelegate = (Command command) {
@@ -138,6 +143,7 @@ int main(string[] args)
     auto ponies = [
         new DDoxPony,
         new AuthorsPony,
+        new GeneratePackageDependenciesPony,
         new LicenseCommentPony,
         new CopyrightCommentPony,
         // new TravisPony,

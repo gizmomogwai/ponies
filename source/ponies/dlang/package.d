@@ -262,12 +262,114 @@ class LicenseCommentPony : DlangPony
     }
 }
 
+class GeneratePackageDependenciesPony : DlangPony
+{
+    override string name()
+    {
+        return "Generate dependency diagrams.";
+    }
+    override CheckStatus check()
+    {
+        return CheckStatus.dont_know;
+    }
+    override void run()
+    {
+        import std.conv;
+        import std.file;
+        import std.json;
+        import std.stdio;
+        import std.string;
+
+        class Package {
+            string name;
+            Package[] dependencies;
+            bool visited;
+            this(string name) {
+                this.name = name;
+            }
+            auto addDependency(Package p) {
+                dependencies ~= p;
+            }
+            override string toString() {
+                return toString("");
+            }
+            string toString(string indent) {
+                string res = indent;
+                res ~= name ~ "\n";
+                foreach (p; dependencies) {
+                    res ~= p.toString(indent ~ "  ");
+                }
+                return res;
+            }
+                    Package setVisited(bool value) {
+            visited = value;
+            foreach (d; dependencies) {
+                d.setVisited(value);
+            }
+            return this;
+        }
+        string toDot(string indent="") {
+            auto res = "";
+            visited = true;
+            foreach (d; dependencies) {
+                res ~= "\n%s->%s".format(name, d.name);
+                if (d.visited == false) {
+                    res ~= d.toDot(indent ~ "  ");
+                }
+            }
+            return res;
+        }
+
+        }
+        struct Packages {
+            Package[string] packages;
+            Package addOrGet(string name) {
+                if (name !in packages) {
+                    auto newPackage = new Package(name);
+                    packages[name] = newPackage;
+                }
+                return packages[name];
+            }
+        }
+
+        import std.process;
+        "dub describe > out/dependencies.json".executeShell;
+
+
+        auto json = parseJSON(readText("out/dependencies.json"));
+        auto packages = Packages();
+        auto rootPackage = json["rootPackage"].str;
+        writeln(rootPackage);
+
+        foreach (size_t index, value; json["packages"]) {
+            auto packageName = value["name"];
+            auto newPackage = packages.addOrGet(packageName.str);
+            foreach (size_t index, value; value["dependencies"]) {
+                auto dep = packages.addOrGet(value.str);
+                newPackage.addDependency(dep);
+            }
+        }
+
+        stderr.writeln(packages.addOrGet(rootPackage).to!string);
+        auto dot = "digraph G {%s\n}\n".format(packages.addOrGet(rootPackage).setVisited(false).toDot);
+        std.file.write("out/dependencies.dot", dot);
+
+        import std.process;
+        ["dot", "out/dependencies.dot", "-Tpng", "-o", "out/dependencies.png"].execute;
+        ["dot", "out/dependencies.dot", "-Tsvg", "-o", "out/dependencies.svg"].execute;
+
+    }
+
+}
 class AddPackageVersionPony : DlangPony
 {
     string preGenCommand;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
+    auto addPackageVersionDependency = `dependency "packageversion" version="~>0.0.12"
+subConfiguration "packageversion" "library"
+`;
     this()
     {
         preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
@@ -283,9 +385,10 @@ class AddPackageVersionPony : DlangPony
     {
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
-        return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preGenCommand) && travisYml.canFind(
-                    dubFetchPackageVersion)).to!CheckStatus;
+        return (dubSdlContent.canFind(sourcePaths)
+                && dubSdlContent.canFind(importPaths) && dubSdlContent.canFind(preGenCommand)
+                && dubSdlContent.canFind(addPackageVersionDependency)
+                && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
     }
 
     override void run()
@@ -307,6 +410,12 @@ class AddPackageVersionPony : DlangPony
         {
             "Adding preGenCommand to %s".format(dubSdl).info;
             content ~= preGenCommand;
+        }
+
+        if (!content.canFind(addPackageVersionDependency))
+        {
+            "Adding packageversion dependency to %s".format(dubSdl).info;
+            content ~= addPackageVersionDependency;
         }
         if (content != oldContent)
         {

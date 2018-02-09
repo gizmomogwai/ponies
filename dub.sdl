@@ -4,12 +4,14 @@ authors "Christian Köstlin"
 copyright "Copyright © 2018, Christian Köstlin"
 license "MIT"
 
+dependency "packageversion" version="~>0.0.10"
+subConfiguration "packageversion" "library"
 dependency "colored" version="~>0.0.8"
 dependency "androidlogger" version="~>0.0.3"
 dependency "dyaml" version="~>0.6.4"
 dependency "asciitable" version="~>0.0.1"
 
-preGenerateCommands "dub run packageversion -- --packageName=ponies"
+preBuildCommands "dub run packageversion -- --packageName=ponies"
 sourcePaths "source" "out/generated/packageversion"
 importPaths "source" "out/generated/packageversion"
 
@@ -17,6 +19,7 @@ x:ddoxFilterArgs "--min-protection=Private"
 
 configuration "application" {
   targetType "executable"
+  targetPath "out/main"
 }
 
 configuration "ut" {
@@ -39,3 +42,9 @@ configuration "unittest" {
   mainSourceFile "out/generated/unit-threaded/testsuite.d"
   excludedSourceFiles "source/app.d"
 }
+
+/*
+buildType "ddox" {
+  postBuildCommands "echo Hello World"
+}
+*/

@@ -1,9 +1,11 @@
-/++
+/++ Ponies main module.
+ +
+ + Dependencies <img src="images/dependencies.svg" />
+ +
  + Authors: Christian Koestlin
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
-
 module ponies;
 
 import std.algorithm;

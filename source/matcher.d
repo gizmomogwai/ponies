@@ -73,7 +73,7 @@ class Set(T) : Matcher!T
 
     static auto fromArray(T[] values)
     {
-        return new this(values);
+        return new Set(values);
     }
 
     static auto fromEnum(E)()
@@ -127,7 +127,7 @@ class PlusMinusSet(T) : Matcher!T
 
     static auto fromArray(string[] values)
     {
-        return new this(values);
+        return new PlusMinuxSet(values);
     }
 
     override void accept(string context, T givenValues)
@@ -163,7 +163,7 @@ class One(T) : Matcher!T
 
     static auto fromArray(T[] values)
     {
-        return new this(values);
+        return new One(values);
     }
 
     static auto fromEnum(E)()
