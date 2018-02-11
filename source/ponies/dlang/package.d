@@ -363,7 +363,9 @@ class GeneratePackageDependenciesPony : DlangPony
 }
 class AddPackageVersionPony : DlangPony
 {
-    string preGenCommand;
+    string packageName;
+    string preBuildCommands;
+    string sourceFiles;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
@@ -372,8 +374,9 @@ subConfiguration "packageversion" "library"
 `;
     this()
     {
-        preGenCommand = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n".format(
-                getFromDubSdl("name")) : null;
+        packageName = getFromDubSdl("name");
+        preBuildCommands = applicable ? "preBuildCommands \"dub run packageversion -- --packageName=%s\"\n".format(packageName) : null;
+        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName) : null;
     }
 
     override string name()
@@ -386,7 +389,9 @@ subConfiguration "packageversion" "library"
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
         return (dubSdlContent.canFind(sourcePaths)
-                && dubSdlContent.canFind(importPaths) && dubSdlContent.canFind(preGenCommand)
+                && dubSdlContent.canFind(importPaths)
+                && dubSdlContent.canFind(preBuildCommands)
+                && dubSdlContent.canFind(sourceFiles)
                 && dubSdlContent.canFind(addPackageVersionDependency)
                 && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
     }
@@ -406,11 +411,16 @@ subConfiguration "packageversion" "library"
             "Adding importPaths to %s".format(dubSdl).info;
             content ~= importPaths;
         }
-        if (!content.canFind(preGenCommand))
+        if (!content.canFind(preBuildCommands))
         {
-            "Adding preGenCommand to %s".format(dubSdl).info;
-            content ~= preGenCommand;
+            "Adding preBuildCommands to %s".format(dubSdl).info;
+            content ~= preBuildCommands;
         }
+        if (!content.canFind(sourceFiles))
+            {
+                "Adding sourceFiles to %s".format(dubSdl).info;
+                content ~= sourceFiles;
+            }
 
         if (!content.canFind(addPackageVersionDependency))
         {
