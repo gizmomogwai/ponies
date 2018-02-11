@@ -268,10 +268,12 @@ class GeneratePackageDependenciesPony : DlangPony
     {
         return "Generate dependency diagrams.";
     }
+
     override CheckStatus check()
     {
         return CheckStatus.dont_know;
     }
+
     override void run()
     {
         import std.conv;
@@ -280,51 +282,71 @@ class GeneratePackageDependenciesPony : DlangPony
         import std.stdio;
         import std.string;
 
-        class Package {
+        class Package
+        {
             string name;
             Package[] dependencies;
             bool visited;
-            this(string name) {
+            this(string name)
+            {
                 this.name = name;
             }
-            auto addDependency(Package p) {
+
+            auto addDependency(Package p)
+            {
                 dependencies ~= p;
             }
-            override string toString() {
+
+            override string toString()
+            {
                 return toString("");
             }
-            string toString(string indent) {
+
+            string toString(string indent)
+            {
                 string res = indent;
                 res ~= name ~ "\n";
-                foreach (p; dependencies) {
+                foreach (p; dependencies)
+                {
                     res ~= p.toString(indent ~ "  ");
                 }
                 return res;
             }
-                    Package setVisited(bool value) {
-            visited = value;
-            foreach (d; dependencies) {
-                d.setVisited(value);
-            }
-            return this;
-        }
-        string toDot(string indent="") {
-            auto res = "";
-            visited = true;
-            foreach (d; dependencies) {
-                res ~= "\n%s->%s".format(name, d.name);
-                if (d.visited == false) {
-                    res ~= d.toDot(indent ~ "  ");
+
+            Package setVisited(bool value)
+            {
+                visited = value;
+                foreach (d; dependencies)
+                {
+                    d.setVisited(value);
                 }
+                return this;
             }
-            return res;
-        }
+
+            string toDot(string indent = "")
+            {
+                auto res = "";
+                visited = true;
+                foreach (d; dependencies)
+                {
+                    res ~= "\n%s->%s".format(name, d.name);
+                    if (d.visited == false)
+                    {
+                        res ~= d.toDot(indent ~ "  ");
+                    }
+                }
+                return res;
+            }
 
         }
-        struct Packages {
+
+        struct Packages
+        {
             Package[string] packages;
-            Package addOrGet(string name) {
-                if (name !in packages) {
+            Package addOrGet(string name)
+            {
+                if (name !in packages)
+                {
                     auto newPackage = new Package(name);
                     packages[name] = newPackage;
                 }
@@ -333,34 +355,39 @@ class GeneratePackageDependenciesPony : DlangPony
         }
 
         import std.process;
-        "dub describe > out/dependencies.json".executeShell;
 
+        "dub describe > out/dependencies.json".executeShell;
 
         auto json = parseJSON(readText("out/dependencies.json"));
         auto packages = Packages();
         auto rootPackage = json["rootPackage"].str;
         writeln(rootPackage);
 
-        foreach (size_t index, value; json["packages"]) {
+        foreach (size_t index, value; json["packages"])
+        {
             auto packageName = value["name"];
             auto newPackage = packages.addOrGet(packageName.str);
-            foreach (size_t index, value; value["dependencies"]) {
+            foreach (size_t index, value; value["dependencies"])
+            {
                 auto dep = packages.addOrGet(value.str);
                 newPackage.addDependency(dep);
             }
         }
 
         stderr.writeln(packages.addOrGet(rootPackage).to!string);
-        auto dot = "digraph G {%s\n}\n".format(packages.addOrGet(rootPackage).setVisited(false).toDot);
+        auto dot = "digraph G {%s\n}\n".format(packages.addOrGet(rootPackage)
+                .setVisited(false).toDot);
         std.file.write("out/dependencies.dot", dot);
 
         import std.process;
+
         ["dot", "out/dependencies.dot", "-Tpng", "-o", "docs/images/dependencies.png"].execute;
         ["dot", "out/dependencies.dot", "-Tsvg", "-o", "docs/images/dependencies.svg"].execute;
 
     }
 
 }
+
 class AddPackageVersionPony : DlangPony
 {
     string packageName;
@@ -375,8 +402,10 @@ subConfiguration "packageversion" "library"
     this()
     {
         packageName = getFromDubSdl("name");
-        preBuildCommands = applicable ? "preBuildCommands \"dub run packageversion -- --packageName=%s\"\n".format(packageName) : null;
-        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName) : null;
+        preBuildCommands = applicable ? "preBuildCommands \"dub run packageversion -- --packageName=%s\"\n".format(
+                packageName) : null;
+        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
+            : null;
     }
 
     override string name()
@@ -388,10 +417,8 @@ subConfiguration "packageversion" "library"
     {
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
-        return (dubSdlContent.canFind(sourcePaths)
-                && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preBuildCommands)
-                && dubSdlContent.canFind(sourceFiles)
+        return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
+                && dubSdlContent.canFind(preBuildCommands) && dubSdlContent.canFind(sourceFiles)
                 && dubSdlContent.canFind(addPackageVersionDependency)
                 && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
     }
@@ -417,10 +444,10 @@ subConfiguration "packageversion" "library"
             content ~= preBuildCommands;
         }
         if (!content.canFind(sourceFiles))
-            {
-                "Adding sourceFiles to %s".format(dubSdl).info;
-                content ~= sourceFiles;
-            }
+        {
+            "Adding sourceFiles to %s".format(dubSdl).info;
+            content ~= sourceFiles;
+        }
 
         if (!content.canFind(addPackageVersionDependency))
         {
