@@ -14,7 +14,7 @@ dependency "androidlogger" version="~>0.0.8"
 dependency "dyaml" version="~>0.6.5"
 dependency "asciitable" version="~>0.0.3"
 
-preBuildCommands "packageversion --packageName=ponies || dub run packageversion -- --packageName=ponies"
+preGenerateCommands "packageversion --packageName=ponies || dub run packageversion -- --packageName=ponies"
 sourceFiles "out/generated/packageversion/ponies/packageversion.d"
 sourcePaths "source" "out/generated/packageversion"
 importPaths "source" "out/generated/packageversion"
