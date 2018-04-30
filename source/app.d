@@ -97,6 +97,7 @@ auto setupCommandline(P)(P ponies)
         }
 
         import packageversion;
+
         // dfmt off
         auto table = packageversion
             .getPackages.sort!("a.name < b. name")

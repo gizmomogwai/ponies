@@ -401,7 +401,7 @@ subConfiguration "packageversion" "library"
 `;
     this()
     {
-        packageName = getFromDubSdl("name");
+        packageName = applicable ? getFromDubSdl("name") : null;
         preGenerateCommands = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n"
             .format(packageName) : null;
         sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
