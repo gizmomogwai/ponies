@@ -391,7 +391,7 @@ class GeneratePackageDependenciesPony : DlangPony
 class AddPackageVersionPony : DlangPony
 {
     string packageName;
-    string preBuildCommands;
+    string preGenerateCommands;
     string sourceFiles;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
@@ -402,8 +402,8 @@ subConfiguration "packageversion" "library"
     this()
     {
         packageName = getFromDubSdl("name");
-        preBuildCommands = applicable ? "preBuildCommands \"dub run packageversion -- --packageName=%s\"\n".format(
-                packageName) : null;
+        preGenerateCommands = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n"
+            .format(packageName) : null;
         sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
             : null;
     }
@@ -418,7 +418,7 @@ subConfiguration "packageversion" "library"
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
         return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preBuildCommands) && dubSdlContent.canFind(sourceFiles)
+                && dubSdlContent.canFind(preGenerateCommands) && dubSdlContent.canFind(sourceFiles)
                 && dubSdlContent.canFind(addPackageVersionDependency)
                 && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
     }
@@ -438,10 +438,10 @@ subConfiguration "packageversion" "library"
             "Adding importPaths to %s".format(dubSdl).info;
             content ~= importPaths;
         }
-        if (!content.canFind(preBuildCommands))
+        if (!content.canFind(preGenerateCommands))
         {
-            "Adding preBuildCommands to %s".format(dubSdl).info;
-            content ~= preBuildCommands;
+            "Adding preGenerateCommands to %s".format(dubSdl).info;
+            content ~= preGenerateCommands;
         }
         if (!content.canFind(sourceFiles))
         {
