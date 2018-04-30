@@ -155,6 +155,7 @@ int main(string[] args)
         new TravisCiShieldPony,
         new CodecovShieldPony,
         new GithubPagesShieldPony,
+        new MelpaShieldPony,
         new AddPackageVersionPony,
         new FormatSourcesPony,
     ];

@@ -284,3 +284,29 @@ class GithubPagesShieldPony : ShieldPony
                 userAndProject.user, userAndProject.project);
     }
 }
+
+class MelpaShieldPony : ShieldPony
+{
+    protected UserAndProject userAndProject;
+
+    this()
+    {
+        userAndProject = getUserAndProject;
+    }
+
+    override string name()
+    {
+        return "Setup a melpa shield in readme.org";
+    }
+
+    override bool applicable()
+    {
+        return super.applicable() && exists("Cask");
+    }
+
+    override string shield()
+    {
+        return "[[https://melpa.org/#/%1$s][https://melpa.org/packages/%1$s-badge.svg]]".format(
+                userAndProject.project);
+    }
+}
