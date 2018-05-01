@@ -285,6 +285,11 @@ class GithubPagesShieldPony : ShieldPony
     }
 }
 
+bool mightBeEmacs()
+{
+    return exists("Cask");
+}
+
 class MelpaShieldPony : ShieldPony
 {
     protected UserAndProject userAndProject;
@@ -301,7 +306,7 @@ class MelpaShieldPony : ShieldPony
 
     override bool applicable()
     {
-        return super.applicable() && exists("Cask");
+        return super.applicable() && mightBeEmacs;
     }
 
     override string shield()

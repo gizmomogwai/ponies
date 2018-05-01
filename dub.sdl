@@ -11,7 +11,7 @@ subConfiguration "packageversion" "library"
 
 dependency "colored" version="~>0.0.11"
 dependency "androidlogger" version="~>0.0.8"
-dependency "dyaml" version="~>0.6.5"
+dependency "dyaml" version="~master"
 dependency "asciitable" version="~>0.0.3"
 
 preGenerateCommands "packageversion --packageName=ponies || dub run packageversion -- --packageName=ponies"
