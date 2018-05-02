@@ -15,7 +15,6 @@ dependency "dyaml" version="~master"
 dependency "asciitable" version="~>0.0.3"
 
 preGenerateCommands "packageversion --packageName=ponies || dub run packageversion -- --packageName=ponies"
-sourceFiles "out/generated/packageversion/ponies/packageversion.d"
 sourcePaths "source" "out/generated/packageversion"
 importPaths "source" "out/generated/packageversion"
 

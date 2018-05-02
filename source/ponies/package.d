@@ -41,7 +41,7 @@ auto removePlusMinusPrefix(string s)
     {
         s = s[1 .. $];
     }
-    return tuple!("negative", "string")(negate, s);
+    return tuple!("negative", "text")(negate, s);
 }
 
 @("check remove plusminusprefix") unittest
@@ -62,7 +62,7 @@ auto voteByPlusMinusRegex(string pony, string plusMinusRegex)
 
     auto pm = removePlusMinusPrefix(plusMinusRegex);
 
-    auto r = regex(pm.string);
+    auto r = regex(pm.text);
     if (pony.match(r))
     {
         if (pm.negative)
