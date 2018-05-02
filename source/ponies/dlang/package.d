@@ -31,22 +31,27 @@ enum ProtectionLevel
     Public
 }
 
+const dubSdl = "dub.sdl";
+auto dubSdlAvailable()
+{
+    return exists(dubSdl);
+}
+
+auto getFromDubSdl(string what)
+{
+    auto pattern = "^%1$s \"(?P<%1$s>.*)\"$".format(what);
+    auto text = readText(dubSdl);
+    auto match = matchFirst(text, regex(pattern, "m"));
+    return match[what];
+}
+
 abstract class DlangPony : Pony
 {
-    protected auto dubSdl = "dub.sdl";
     protected auto travisYml = ".travis.yml";
 
     override bool applicable()
     {
-        return exists(dubSdl);
-    }
-
-    protected auto getFromDubSdl(string what)
-    {
-        auto pattern = "^%1$s \"(?P<%1$s>.*)\"$".format(what);
-        auto text = readText(dubSdl);
-        auto match = matchFirst(text, regex(pattern, "m"));
-        return match[what];
+        return dubSdlAvailable();
     }
 
     protected auto sources()
@@ -419,8 +424,8 @@ subConfiguration "packageversion" "library"
         packageName = applicable ? getFromDubSdl("name") : null;
         preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
             : null;
-        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
-            : null;
+        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d\n".format(
+                packageName) : null;
     }
 
     override string name()
@@ -505,5 +510,81 @@ subConfiguration "packageversion" "library"
         {
             throw new Exception("cannot process %s".format(travisYml));
         }
+    }
+}
+
+class DubRegistryShieldPony : ShieldPony
+{
+    string dubPackageName;
+    string what;
+    this(string what)
+    {
+        dubPackageName = applicable ? getFromDubSdl("name") : null;
+        this.what = what;
+    }
+
+    override bool applicable()
+    {
+        return dubSdlAvailable() && super.applicable;
+    }
+
+    override string[] doctor()
+    {
+        string[] hints;
+        if (!exists("readme.org"))
+        {
+            hints ~= "Please add readme.org";
+        }
+        if (!dubSdlAvailable)
+        {
+            hints ~= "Please add dub.sdl";
+        }
+        return hints;
+    }
+
+    override string shield()
+    {
+        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg]]".format(
+                dubPackageName, what);
+    }
+
+}
+
+class DubLicenseShieldPony : DubRegistryShieldPony
+{
+    this()
+    {
+        super("l");
+    }
+
+    override string name()
+    {
+        return "Setup dub registry license shield in readme.org";
+    }
+}
+
+class DubVersionShieldPony : DubRegistryShieldPony
+{
+    this()
+    {
+        super("v");
+    }
+
+    override string name()
+    {
+        return "Setup dub registry license shield in readme.org";
+    }
+}
+
+class DubWeeklyDownloadsShieldPony : DubRegistryShieldPony
+{
+    this()
+    {
+        super("dw");
+    }
+
+    override string name()
+    {
+        return "Setup dub registry weekly downloads shield in readme.org";
     }
 }
