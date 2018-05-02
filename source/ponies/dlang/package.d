@@ -17,6 +17,12 @@ import std.regex;
 import std.stdio;
 import std.string;
 import std.traits;
+import ponies.utils;
+
+bool dfmtAvailable()
+{
+    return works(["dfmt", "--version"]);
+}
 
 enum ProtectionLevel
 {
@@ -101,6 +107,15 @@ class FormatSourcesPony : DlangPony
                 "FormatSources:%s changed by dfmt -i".format(file).warning;
             }
         }
+    }
+
+    override string[] doctor()
+    {
+        if (!dfmtAvailable)
+        {
+            return ["Please install dfmt"];
+        }
+        return [];
     }
 }
 
@@ -402,8 +417,10 @@ subConfiguration "packageversion" "library"
     this()
     {
         packageName = applicable ? getFromDubSdl("name") : null;
-        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n" : null;
-        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName) : null;
+        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
+            : null;
+        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
+            : null;
     }
 
     override string name()

@@ -16,31 +16,7 @@ import commandline;
 import std.conv;
 import asciitable;
 import std.array;
-
-bool works(string[] cmd)
-{
-    import std.process;
-
-    try
-    {
-        auto res = cmd.execute;
-        return res.status == 0;
-    }
-    catch (Exception e)
-    {
-        return false;
-    }
-}
-
-bool gitAvailable()
-{
-    return works(["git", "--version"]);
-}
-
-bool dfmtAvailable()
-{
-    return works(["dfmt", "--version"]);
-}
+import ponies.utils;
 
 void commit(string message)
 {
@@ -113,10 +89,6 @@ void doctor(T)(T ponies)
     if (!gitAvailable())
     {
         hints["Please install git"] = ["general"];
-    }
-    if (!dfmtAvailable())
-    {
-        hints["Please install dfmt"] = ["general"];
     }
 
     foreach (k, v; hints)
