@@ -3,9 +3,9 @@
 [[https://travis-ci.org/gizmomogwai/ponies][https://img.shields.io/travis/gizmomogwai/ponies/master.svg?style=flat-square]]
 [[https://codecov.io/gh/gizmomogwai/ponies][https://img.shields.io/codecov/c/github/gizmomogwai/ponies/master.svg?style=flat-square]]
 [[https://gizmomogwai.github.io/ponies][https://img.shields.io/readthedocs/pip.svg?style=flat-square]]
-[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/v/ponies.svg]]
-[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/l/ponies.svg]]
-[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/dw/ponies.svg]]
+[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/v/ponies.svg?style=flat-square]]
+[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/l/ponies.svg?style=flat-square]]
+[[http://code.dlang.org/packages/ponies][https://img.shields.io/dub/dw/ponies.svg?style=flat-square]]
 
 Speedup your project setup with some horsepower's.
 

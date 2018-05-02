@@ -544,7 +544,7 @@ class DubRegistryShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg]]".format(
+        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg?style=flat-square]]".format(
                 dubPackageName, what);
     }
 
