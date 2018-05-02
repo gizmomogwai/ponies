@@ -424,7 +424,7 @@ subConfiguration "packageversion" "library"
         packageName = applicable ? getFromDubSdl("name") : null;
         preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
             : null;
-        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d\n".format(
+        sourceFiles = applicable ? "sourceFiles \"out/generated/packageversion/%s/packageversion.d\n".format(
                 packageName) : null;
     }
 
