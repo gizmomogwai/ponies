@@ -1,7 +1,7 @@
 /++
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
- + Authors: Christian Koestlin
+ + Authors: Christian Koestlin, Christian Köstlin
  +/
 
 module ponies.dlang.travis;

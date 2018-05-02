@@ -2,7 +2,7 @@
  +
  + <img src="images/dependencies.svg" />
  +
- + Authors: Christian Koestlin
+ + Authors: Christian Koestlin, Christian Köstlin
  + Copyright: Copyright © 2018, Christian Köstlin
  + License: MIT
  +/
