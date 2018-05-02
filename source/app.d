@@ -17,6 +17,31 @@ import std.conv;
 import asciitable;
 import std.array;
 
+bool works(string[] cmd)
+{
+    import std.process;
+
+    try
+    {
+        auto res = cmd.execute;
+        return res.status == 0;
+    }
+    catch (Exception e)
+    {
+        return false;
+    }
+}
+
+bool gitAvailable()
+{
+    return works(["git", "--version"]);
+}
+
+bool dfmtAvailable()
+{
+    return works(["dfmt", "--version"]);
+}
+
 void commit(string message)
 {
     import std.process;
@@ -62,6 +87,42 @@ void list(T)(T ponies, What what)
         .toString("    ", "  ")
         .writeln;
     // dfmt on
+}
+
+void doctor(T)(T ponies)
+{
+    string[][string] hints;
+    foreach (pony; ponies)
+    {
+        foreach (hint; pony.doctor)
+        {
+            auto h = pony.to!string;
+            if (hint !in hints)
+            {
+                hints[hint] = [];
+            }
+            hints[hint] ~= h;
+        }
+    }
+    import std.file;
+
+    if (!exists(".git"))
+    {
+        hints["Please create a git repository"] = ["general"];
+    }
+    if (!gitAvailable())
+    {
+        hints["Please install git"] = ["general"];
+    }
+    if (!dfmtAvailable())
+    {
+        hints["Please install dfmt"] = ["general"];
+    }
+
+    foreach (k, v; hints)
+    {
+        "%s:\n    %s".format(k, v.join("\n    ")).writeln;
+    }
 }
 
 auto setupCommandline(P)(P ponies)
@@ -114,13 +175,27 @@ auto setupCommandline(P)(P ponies)
         }
         list(ponies, command.parsed["set"].to!What);
         return true;
-    };// dfmt off
+    };
+    auto doctorDelegate = (Command command) {
+        if (command.helpNeeded)
+        {
+            writeln(command.help);
+            return false;
+        }
+        doctor(ponies);
+        return true;
+    };
+    // dfmt off
     Command rootCommand =
         Command("root", rootDelegate,
         [
             Option.boolWithName("help").withDescription("show general help"),
             Option.boolWithName("verbose").withDescription("enable verbose logging")],
             [
+                Command("doctor", doctorDelegate,
+                [
+                    Option.boolWithName("help").withDescription("show doctor help"),
+                ]),
                 Command("list", listDelegate,
                 [
                     Option.boolWithName("help").withDescription("show list help"),

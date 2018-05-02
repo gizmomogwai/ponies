@@ -402,10 +402,8 @@ subConfiguration "packageversion" "library"
     this()
     {
         packageName = applicable ? getFromDubSdl("name") : null;
-        preGenerateCommands = applicable ? "preGenerateCommands \"dub run packageversion -- --packageName=%s\"\n"
-            .format(packageName) : null;
-        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName)
-            : null;
+        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n" : null;
+        sourceFiles = applicable ? "sourceFile \"out/generated/packageversion/%s/packageversion.d".format(packageName) : null;
     }
 
     override string name()
@@ -417,10 +415,14 @@ subConfiguration "packageversion" "library"
     {
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
-        return (dubSdlContent.canFind(sourcePaths) && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preGenerateCommands) && dubSdlContent.canFind(sourceFiles)
+        // dfmt off
+        return (dubSdlContent.canFind(sourcePaths)
+                && dubSdlContent.canFind(importPaths)
+                && dubSdlContent.canFind(preGenerateCommands)
+                && dubSdlContent.canFind(sourceFiles)
                 && dubSdlContent.canFind(addPackageVersionDependency)
                 && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
+        // dfmt on
     }
 
     override void run()
@@ -443,6 +445,7 @@ subConfiguration "packageversion" "library"
             "Adding preGenerateCommands to %s".format(dubSdl).info;
             content ~= preGenerateCommands;
         }
+
         if (!content.canFind(sourceFiles))
         {
             "Adding sourceFiles to %s".format(dubSdl).info;

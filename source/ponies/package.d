@@ -179,6 +179,11 @@ abstract class Pony
     public abstract string name();
     public abstract bool applicable();
     public abstract CheckStatus check();
+    public string[] doctor()
+    {
+        return [];
+    }
+
     public abstract void run();
 }
 
@@ -218,6 +223,15 @@ class ShieldPony : Pony
     override CheckStatus check()
     {
         return readText("readme.org").canFind(shield.strip).to!CheckStatus;
+    }
+
+    override string[] doctor()
+    {
+        if (!exists("readme.org"))
+        {
+            return ["Please create a readme.org file"];
+        }
+        return [];
     }
 
     abstract string shield();

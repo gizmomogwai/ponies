@@ -4,7 +4,7 @@
 [[https://codecov.io/gh/gizmomogwai/ponies][https://img.shields.io/codecov/c/github/gizmomogwai/ponies/master.svg?style=flat-square]]
 [[https://gizmomogwai.github.io/ponies][https://img.shields.io/readthedocs/pip.svg?style=flat-square]]
 
-Speedup your project setup with some horsepowers.
+Speedup your project setup with some horsepower's.
 
 Each setup step is done by a pony (a small horse that should only be
 responsible for one thing).
@@ -19,13 +19,13 @@ backup.
 
 ** Long story
 Each pony tries to enhance your project in a specific way.
-There is e.g. a source code formatter pony, ponies that add travis-ci
+There is e.g. a source code formatter pony, ponies that add Travis-Ci
 or gh-pages badges to your readme, and so on.
 Before a pony makes a change it will make a git commit, if it did the
 change, it will make another one. With this you should never loose
 data by reckless ponies.
 
-** Walkthrough tutorial
+** Walk-through tutorial
 Please run ~git clone git@github.com:gizmomogwai/ponies-helloworld.git~ and cd to ponies-helloworld.
 #+BEGIN_SRC
 > dub -q run ponies -- --help
@@ -51,7 +51,7 @@ Packages:
     ponies         v0.0.3-33-g19dbfb9-dirty MIT
 #+END_SRC
 
-Try to do some system analytics iall dependencies have been properly installed.
+Try to do some system analytics if all dependencies have been properly installed.
 #+BEGIN_SRC
 > dub -q run ponies -- doctor
 #+END_SRC
