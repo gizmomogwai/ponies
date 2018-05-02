@@ -180,7 +180,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
         if (!script)
         {
             "Adding ddox build script".warning;
-            root["script"] = Node([buildDdox]);
+            root["script"] = Node(buildDdox);
             return true;
         }
 
@@ -190,22 +190,15 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
             if (script.as!string != buildDdox)
             {
-                root["script"] = Node([script.as!string, buildDdox]);
+                root["script"] = Node(script.as!string ~ " && " ~ buildDdox);
             }
             else
             {
-                root["script"] = Node([buildDdox]);
+                root["script"] = Node(buildDdox);
             }
             return true;
         }
 
-        if (!script.sequence!string.canFind("dub build --compiler=${DC} --build=ddox"))
-        {
-            "Adding ddox script".warning;
-            script.add("dub build --compiler=${DC} --build=ddox");
-            root["script"] = *script;
-            return true;
-        }
         return false;
     }
 
