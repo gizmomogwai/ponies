@@ -43,7 +43,7 @@ void run(P)(P ponies, string what)
         {
             "main:Running %s".format(pony.name).info;
             pony.run;
-            "After %s".format(pony.name).commit;
+            pony.name.commit;
         }
     }
 }

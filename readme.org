@@ -6,7 +6,8 @@
 
 Speedup your project setup with some horsepowers.
 
-Each setup step is done by a pony (a small horse that should only be responsible for one thing).
+Each setup step is done by a pony (a small horse that should only be
+responsible for one thing).
 
 ** Running
 ~dub -q run ponies -- --help~ or compile for yourself with ~dub build~.
@@ -15,3 +16,114 @@ Each setup step is done by a pony (a small horse that should only be responsible
 Ponies will trample over your source. Ponies will create git commits
 before and after changing files. Just in case be sure to have a
 backup.
+
+** Long story
+Each pony tries to enhance your project in a specific way.
+There is e.g. a source code formatter pony, ponies that add travis-ci
+or gh-pages badges to your readme, and so on.
+Before a pony makes a change it will make a git commit, if it did the
+change, it will make another one. With this you should never loose
+data by reckless ponies.
+
+** Walkthrough tutorial
+Please run ~git clone git@github.com:gizmomogwai/ponies-helloworld.git~ and cd to ponies-helloworld.
+#+BEGIN_SRC
+> dub -q run ponies -- --help
+Options:
+      long       short  description             allowed values
+      --help     -h     show general help       Accept one from ["true", "false"]
+      --verbose  -v     enable verbose logging  Accept one from ["true", "false"]
+Subcommands:
+    doctor
+    list
+    run
+    version
+#+END_SRC
+
+Lets look at the version subcommand.
+#+BEGIN_SRC
+> dub -q run ponies -- version
+Packages:
+    androidlogger  0.0.9                    MIT
+    asciitable     0.0.3                    MIT
+    colored        v0.0.13-3-g4b84611       MIT
+    packageversion 0.0.17                   MIT
+    ponies         v0.0.3-33-g19dbfb9-dirty MIT
+#+END_SRC
+
+Try to do some system analytics iall dependencies have been properly installed.
+#+BEGIN_SRC
+> dub -q run ponies -- doctor
+#+END_SRC
+
+Lets see what ponies there are:
+#+BEGIN_SRC
+> dub -q run ponies -- list
+readyToRun ponies:
+      class  description  applicable  status
+#+END_SRC
+
+Because we work in an empty folder, no pony thinks it can do anything useful.
+Let's see what ponies are included:
+#+BEGIN_SRC
+> dub -q run ponies -- list --set=all
+all ponies:
+      class                                         description                                                      applicable  status
+      ponies.dlang.DDoxPony                         Setup ddox in dub.sdl                                            false       ----
+      ponies.dlang.AuthorsPony                      Setup correct authors line in all .d files (taken from git log)  false       ----
+      ponies.dlang.GeneratePackageDependenciesPony  Generate dependency diagrams.                                    false       ----
+      ponies.dlang.LicenseCommentPony               Setup license headers in .d files (taken from dub.sdl)           false       ----
+      ponies.dlang.CopyrightCommentPony             Setup copyright headers in .d files (taken from dub.sdl)         false       ----
+      ponies.dlang.travis.LanguageTravisDlangPony   Setup travis to work with language d                             false       ----
+      ponies.dlang.travis.CompilerTravisDlangPony   Setup dmd and ldc as compilers                                   false       ----
+      ponies.dlang.travis.NoSudoTravisDlangPony     Setup travis to not run as sudo                                  false       ----
+      ponies.dlang.travis.GhPagesTravisDlangPony    Setup travis to autodeploy ddox to ghpages                       false       ----
+      ponies.GithubShieldPony                       Setup a link to github in readme.org                             false       ----
+      ponies.TravisCiShieldPony                     Setup a travis ci shield in readme.org                           false       ----
+      ponies.CodecovShieldPony                      Setup a link to codecov in readme.org                            false       ----
+      ponies.GithubPagesShieldPony                  Setup a documentation shield in readme.org                       false       ----
+      ponies.MelpaShieldPony                        Setup a melpa shield in readme.org                               false       ----
+      ponies.dlang.AddPackageVersionPony            Add automatic generation of package version to dub.sdl           false       ----
+      ponies.dlang.FormatSourcesPony                Formats sources with dfmt                                        false       ----
+#+END_SRC
+
+    Let's add an readme.org file:
+#+BEGIN_SRC
+> touch readme.org
+> git add readme.org
+> git commit -m "Add readme.org"
+> dub run -q ponies -- list
+readyToRun ponies:
+      class                         description                                 applicable  status
+      ponies.GithubShieldPony       Setup a link to github in readme.org        true        todo
+      ponies.TravisCiShieldPony     Setup a travis ci shield in readme.org      true        todo
+      ponies.CodecovShieldPony      Setup a link to codecov in readme.org       true        todo
+      ponies.GithubPagesShieldPony  Setup a documentation shield in readme.org  true        todo
+#+END_SRC
+
+This looks better.
+Lets run only the GithubShieldPony
+#+BEGIN_SRC
+> dub run -q ponies -- run --set='.*GithubShield.*'
+> git log -1 -p
+...
++[[https://github.com/gizmomogwai/ponies-helloworld][https://img.shields.io/github/tag/gizmomogwai/ponies-helloworld.svg?style=flat-square]]
+#+END_SRC
+This shows that you now have a commit in git, that adds a badge to your readme.
+
+Listing the ponies again shows
+#+BEGIN_SRC
+> dub run -q ponies -- list
+readyToRun ponies:
+      class                         description                                 applicable  status
+      ponies.GithubShieldPony       Setup a link to github in readme.org        true        done
+      ponies.TravisCiShieldPony     Setup a travis ci shield in readme.org      true        todo
+      ponies.CodecovShieldPony      Setup a link to codecov in readme.org       true        todo
+      ponies.GithubPagesShieldPony  Setup a documentation shield in readme.org  true        todo
+#+END_SRC
+Shows, that GithubShield is already applied.
+
+Running ~dub run -q ponies -- run~ applies all ponies, that are
+applicable and not yet done. Beware, that some ponies always run,
+because they cannot check beforehand in a cheap way, if there is
+something todo or not.
