@@ -7,10 +7,7 @@ addons:
   apt:
     packages: [libevent-dev]
 before_install: [pip install --user codecov, dub fetch packageversion]
-script:
-- dub test --compiler=${DC} --coverage
-- dub build --compiler=${DC} --build=release
-- dub build --compiler=${DC} --build=ddox
+script: dub build --compiler=${DC} --build=release && dub test --compiler=${DC} --coverage -- -s -t -d && dub build --compiler=${DC} --build=ddox
 after_success: codecov
 deploy:
   github-token: $GH_REPO_TOKEN
