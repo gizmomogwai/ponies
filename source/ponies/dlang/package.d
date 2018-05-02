@@ -416,7 +416,7 @@ class AddPackageVersionPony : DlangPony
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
-    auto addPackageVersionDependency = `dependency "packageversion" version="~>0.0.12"
+    auto addPackageVersionDependency = `dependency "packageversion" version="~>0.0.17"
 subConfiguration "packageversion" "library"
 `;
     this()
@@ -424,7 +424,7 @@ subConfiguration "packageversion" "library"
         packageName = applicable ? getFromDubSdl("name") : null;
         preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
             : null;
-        sourceFiles = applicable ? "sourceFiles \"out/generated/packageversion/%s/packageversion.d\n".format(
+        sourceFiles = applicable ? "sourceFiles \"out/generated/packageversion/%s/packageversion.d\"\n".format(
                 packageName) : null;
     }
 
