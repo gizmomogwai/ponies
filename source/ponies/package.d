@@ -229,7 +229,7 @@ class ShieldPony : Pony
     {
         if (!exists("readme.org"))
         {
-            return ["Please create a readme.org file"];
+            return ["Please add readme.org"];
         }
         return [];
     }

@@ -54,11 +54,15 @@ Packages:
     ponies         v0.0.3-33-g19dbfb9-dirty MIT
 #+END_SRC
 
-Try to do some system analytics if all dependencies have been properly installed.
+Try to do some system analytics to see that all dependencies have been properly installed.
 #+BEGIN_SRC
 > dub -q run ponies -- doctor
+...
 #+END_SRC
-
+Depending on your system you may see a lot of things here. In general
+you should have git installed, work in a git repository have your dfmt
+in place. Also the ponies like to have a readme.org file along with
+dub.sdl. Try to fix all this, by creating
 Lets see what ponies there are:
 #+BEGIN_SRC
 > dub -q run ponies -- list

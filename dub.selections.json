@@ -1,12 +1,12 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"androidlogger": "0.0.11",
-		"asciitable": "0.0.5",
-		"colored": "0.0.16",
+		"androidlogger": "0.0.12",
+		"asciitable": "0.0.6",
+		"colored": "0.0.17",
 		"dyaml": "~master",
-		"packageversion": "0.0.17",
-		"tinyendian": "0.1.2",
-		"unit-threaded": "0.7.45"
+		"packageversion": "0.0.18",
+		"tinyendian": "0.2.0",
+		"unit-threaded": "0.7.52"
 	}
 }

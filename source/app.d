@@ -220,6 +220,7 @@ int main(string[] args)
     catch (Exception e)
     {
         e.message.writeln;
+        e.to!string.writeln;
         return 1;
     }
 }
