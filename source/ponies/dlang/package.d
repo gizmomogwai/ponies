@@ -486,7 +486,7 @@ subConfiguration "packageversion" "library"
             std.file.write(dubSdl, content);
         }
 
-        auto root = Loader(travisYml).load;
+        auto root = Loader.fromFile(travisYml).load;
         auto beforeInstall = root["before_install"];
         if (beforeInstall.isScalar)
         {
@@ -494,7 +494,7 @@ subConfiguration "packageversion" "library"
             {
                 "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
                 root["before_install"] = Node([beforeInstall, Node(dubFetchPackageVersion)]);
-                Dumper(travisYml).dump(root);
+                dumper(File(travisYml, "w").lockingTextWriter).dump(root);
             }
         }
         else if (beforeInstall.isSequence)
@@ -504,7 +504,7 @@ subConfiguration "packageversion" "library"
                 "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
                 beforeInstall.add(Node(dubFetchPackageVersion));
                 root["before_install"] = beforeInstall;
-                Dumper(travisYml).dump(root);
+                dumper(File(travisYml, "w").lockingTextWriter).dump(root);
             }
         }
         else
@@ -545,8 +545,8 @@ class DubRegistryShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg?style=flat-square]]".format(
-                dubPackageName, what);
+        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg?style=flat-square]]"
+            .format(dubPackageName, what);
     }
 
 }

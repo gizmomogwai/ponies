@@ -12,6 +12,7 @@ import ponies;
 import std.algorithm;
 import std.conv;
 import std.experimental.logger;
+import std.stdio;
 import std.string;
 
 abstract class TravisDlangPony : DlangPony
@@ -27,7 +28,7 @@ abstract class TravisDlangPony : DlangPony
 
     override CheckStatus check()
     {
-        root = Loader(travisYml).load;
+        root = Loader.fromFile(travisYml).load;
         upToDate = !change(root);
         return upToDate.to!CheckStatus;
     }
@@ -37,7 +38,7 @@ abstract class TravisDlangPony : DlangPony
         if (!upToDate)
         {
             "Writing new %s".format(travisYml).warning;
-            Dumper(travisYml).dump(root);
+            dumper(File(travisYml, "w").lockingTextWriter).dump(root);
         }
     }
 }

@@ -107,8 +107,8 @@ auto setupCommandline(P)(P ponies)
         }
         if (auto verbose = "verbose" in command.parsed)
         {
-            auto androidLog = new AndroidLogger(true, (*verbose == "true")
-                    ? LogLevel.all : LogLevel.warning);
+            auto androidLog = new AndroidLogger(stderr, true,
+                    (*verbose == "true") ? LogLevel.all : LogLevel.warning);
             sharedLog = androidLog;
         }
         return true;
