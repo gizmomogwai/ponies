@@ -3,7 +3,7 @@
 	"versions": {
 		"androidlogger": "0.0.12",
 		"asciitable": "0.0.6",
-		"colored": "0.0.17",
+		"colored": "0.0.16",
 		"dyaml": "0.7.0",
 		"packageversion": "0.0.18",
 		"tinyendian": "0.2.0",

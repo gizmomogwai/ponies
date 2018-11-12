@@ -417,9 +417,7 @@ class AddPackageVersionPony : DlangPony
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
-    auto addPackageVersionDependency = `dependency "packageversion" version="~>0.0.17"
-subConfiguration "packageversion" "library"
-`;
+    auto addPackageVersionDependency = "dependency \"packageversion\" version=\"~>0.0.17\"\n";
     this()
     {
         packageName = applicable ? getFromDubSdl("name") : null;
@@ -573,7 +571,7 @@ class DubVersionShieldPony : DubRegistryShieldPony
 
     override string name()
     {
-        return "Setup dub registry license shield in readme.org";
+        return "Setup dub registry version shield in readme.org";
     }
 }
 
