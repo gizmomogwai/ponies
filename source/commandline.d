@@ -227,18 +227,22 @@ struct Command
 
     string help()
     {
-        auto table = AsciiTable(1, 1, 1, 1).add("long", "short", "description", "allowed values");
-        foreach (option; options)
-        {
-            table.add("--" ~ option.name, option.shortName ? "-" ~ option.shortName
-                    : "", option.description, "Accept " ~ option.matcher.toString);
-        }
-        auto res = "Options:\n" ~ table.toString("    ", "  ");
-        if (!subCommands.empty)
-        {
-            res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");
-        }
-        return res;
+      auto table = new AsciiTable(4).header.add("long").add("short").add("description").add("allowed values");
+      foreach (option; options)
+      {
+      table
+        .row
+        .add("--" ~ option.name)
+        .add(option.shortName ? "-" ~ option.shortName : "")
+        .add(option.description)
+        .add("Accept " ~ option.matcher.toString);
+      }
+      auto res = "Options:\n" ~ table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).toString;
+      if (!subCommands.empty)
+      {
+        res ~= "\nSubcommands:\n    " ~ subCommands.map!("a.name").join("\n    ");
+      }
+      return res;
     }
 
     void run()

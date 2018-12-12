@@ -53,15 +53,14 @@ void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
-    auto table = AsciiTable(1, 1, 1, 1).add("class", "description", "applicable", "status");// dfmt off
+    auto table = new AsciiTable(4).header.add("class").add("description").add("applicable").add("status");
     // dfmt off
     ponies
         .select(what)
-        .fold!((table, pony) => table.add(pony.to!string,
-            pony.name, pony.applicable.to!string, pony.applicable ? pony.check.to!string : "----"))(
-            table)
-        .toString("    ", "  ")
-        .writeln;
+      .fold!((table, pony) => table.row.add(pony.to!string).add(pony.name).add(pony.applicable.to!string).add(pony.applicable ? pony.check.to!string : "----"))(
+        table)
+      .table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string
+      .writeln;
     // dfmt on
 }
 
@@ -134,9 +133,9 @@ auto setupCommandline(P)(P ponies)
         // dfmt off
         auto table = packageversion
             .getPackages.sort!("a.name < b. name")
-            .fold!((table, p) => table.add(p.name, p.semVer, p.license))(AsciiTable(0, 0, 0));
+        .fold!((table, p) => table.row.add(p.name).add(p.semVer).add(p.license).table)(new AsciiTable(3));
         // dfmt on
-        writeln("Packages:\n", table.toString("   ", " "));
+        writeln("Packages:\n", table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string);
         return true;
     };
     auto listDelegate = (Command command) {

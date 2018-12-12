@@ -7,8 +7,6 @@ license "MIT"
 x:ddoxFilterArgs "--min-protection=Private"
 
 dependency "packageversion" version="~>0.0.17"
-subConfiguration "packageversion" "library"
-
 dependency "colored" version="~>0.0.11"
 dependency "androidlogger" version="~>0.0.8"
 dependency "dyaml" version="~>0.7.0"

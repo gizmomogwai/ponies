@@ -91,7 +91,7 @@ class FormatSourcesPony : DlangPony
 {
     override string name()
     {
-        return "Formats sources with dfmt";
+        return "Format sources with dfmt";
     }
 
     override CheckStatus check()
@@ -413,103 +413,93 @@ class AddPackageVersionPony : DlangPony
 {
     string packageName;
     string preGenerateCommands;
-    string sourceFiles;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
-    auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
-    auto dubFetchPackageVersion = "dub fetch packageversion";
-    auto addPackageVersionDependency = "dependency \"packageversion\" version=\"~>0.0.17\"\n";
-    this()
-    {
-        packageName = applicable ? getFromDubSdl("name") : null;
-        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
-            : null;
-        sourceFiles = applicable ? "sourceFiles \"out/generated/packageversion/%s/packageversion.d\"\n".format(
-                packageName) : null;
-    }
+  auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
+  auto dubFetchPackageVersion = "dub fetch packageversion";
+  auto addPackageVersionDependency = "dependency \"packageversion\" version=\"~>0.0.17\"\n";
+  this()
+  {
+    packageName = applicable ? getFromDubSdl("name") : null;
+    preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
+      : null;
+}
 
-    override string name()
-    {
-        return "Add automatic generation of package version to %s".format(dubSdl);
-    }
+  override string name()
+  {
+    return "Add automatic generation of package version to %s".format(dubSdl);
+  }
 
-    override CheckStatus check()
-    {
-        auto dubSdlContent = readText(dubSdl);
-        auto travisYml = readText(travisYml);
-        // dfmt off
-        return (dubSdlContent.canFind(sourcePaths)
-                && dubSdlContent.canFind(importPaths)
-                && dubSdlContent.canFind(preGenerateCommands)
-                && dubSdlContent.canFind(sourceFiles)
-                && dubSdlContent.canFind(addPackageVersionDependency)
-                && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
-        // dfmt on
-    }
+  override CheckStatus check()
+  {
+    auto dubSdlContent = readText(dubSdl);
+    auto travisYml = readText(travisYml);
+    // dfmt off
+    return (dubSdlContent.canFind(sourcePaths)
+            && dubSdlContent.canFind(importPaths)
+            && dubSdlContent.canFind(preGenerateCommands)
+            && dubSdlContent.canFind(addPackageVersionDependency)
+            && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
+    // dfmt on
+  }
 
-    override void run()
-    {
-        auto oldContent = readText(dubSdl);
-        auto content = oldContent;
-        if (!content.canFind(sourcePaths))
-        {
-            "Adding sourcePaths to %s".format(dubSdl).info;
-            content ~= sourcePaths;
-        }
+  override void run()
+  {
+    auto oldContent = readText(dubSdl);
+    auto content = oldContent;
+    if (!content.canFind(sourcePaths))
+      {
+        "Adding sourcePaths to %s".format(dubSdl).info;
+        content ~= sourcePaths;
+      }
 
-        if (!content.canFind(importPaths))
-        {
-            "Adding importPaths to %s".format(dubSdl).info;
-            content ~= importPaths;
-        }
-        if (!content.canFind(preGenerateCommands))
-        {
-            "Adding preGenerateCommands to %s".format(dubSdl).info;
-            content ~= preGenerateCommands;
-        }
+    if (!content.canFind(importPaths))
+      {
+        "Adding importPaths to %s".format(dubSdl).info;
+        content ~= importPaths;
+      }
+    if (!content.canFind(preGenerateCommands))
+      {
+        "Adding preGenerateCommands to %s".format(dubSdl).info;
+        content ~= preGenerateCommands;
+      }
 
-        if (!content.canFind(sourceFiles))
-        {
-            "Adding sourceFiles to %s".format(dubSdl).info;
-            content ~= sourceFiles;
-        }
+    if (!content.canFind(addPackageVersionDependency))
+      {
+        "Adding packageversion dependency to %s".format(dubSdl).info;
+        content ~= addPackageVersionDependency;
+      }
+    if (content != oldContent)
+      {
+        "Writing new %s".format(dubSdl).info;
+        std.file.write(dubSdl, content);
+      }
 
-        if (!content.canFind(addPackageVersionDependency))
-        {
-            "Adding packageversion dependency to %s".format(dubSdl).info;
-            content ~= addPackageVersionDependency;
-        }
-        if (content != oldContent)
-        {
-            "Writing new %s".format(dubSdl).info;
-            std.file.write(dubSdl, content);
-        }
-
-        auto root = Loader.fromFile(travisYml).load;
-        auto beforeInstall = root["before_install"];
-        if (beforeInstall.isScalar)
-        {
-            if (beforeInstall.as!string != dubFetchPackageVersion)
-            {
-                "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
-                root["before_install"] = Node([beforeInstall, Node(dubFetchPackageVersion)]);
-                dumper(File(travisYml, "w").lockingTextWriter).dump(root);
-            }
-        }
-        else if (beforeInstall.isSequence)
-        {
-            if (!beforeInstall.sequence!string.canFind(dubFetchPackageVersion))
-            {
-                "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
-                beforeInstall.add(Node(dubFetchPackageVersion));
-                root["before_install"] = beforeInstall;
-                dumper(File(travisYml, "w").lockingTextWriter).dump(root);
-            }
-        }
-        else
-        {
-            throw new Exception("cannot process %s".format(travisYml));
-        }
-    }
+    auto root = Loader.fromFile(travisYml).load;
+    auto beforeInstall = root["before_install"];
+    if (beforeInstall.isScalar)
+      {
+        if (beforeInstall.as!string != dubFetchPackageVersion)
+          {
+            "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
+            root["before_install"] = Node([beforeInstall, Node(dubFetchPackageVersion)]);
+            dumper(File(travisYml, "w").lockingTextWriter).dump(root);
+          }
+      }
+    else if (beforeInstall.isSequence)
+      {
+        if (!beforeInstall.sequence!string.canFind(dubFetchPackageVersion))
+          {
+            "adding %s to %s".format(dubFetchPackageVersion, travisYml).info;
+            beforeInstall.add(Node(dubFetchPackageVersion));
+            root["before_install"] = beforeInstall;
+            dumper(File(travisYml, "w").lockingTextWriter).dump(root);
+          }
+      }
+    else
+      {
+        throw new Exception("cannot process %s".format(travisYml));
+      }
+  }
 }
 
 class DubRegistryShieldPony : ShieldPony
