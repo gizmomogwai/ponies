@@ -6,11 +6,11 @@ license "MIT"
 
 x:ddoxFilterArgs "--min-protection=Private"
 
-dependency "packageversion" version="~>0.0.17"
-dependency "colored" version="~>0.0.11"
-dependency "androidlogger" version="~>0.0.8"
+dependency "packageversion" version="~>0.0.18"
+dependency "colored" version="~>0.0.19"
+dependency "androidlogger" version="~>0.0.14"
 dependency "dyaml" version="~>0.7.0"
-dependency "asciitable" version="~>0.0.3"
+dependency "asciitable" version="~>0.0.9"
 
 preGenerateCommands "packageversion || dub run packageversion"
 sourceFiles "out/generated/packageversion/ponies/packageversion.d"
@@ -28,7 +28,7 @@ configuration "ut" {
   targetPath "out/test"
 
   versions "unitThreadedLight"
-  dependency "unit-threaded" version="~>0.7.38"
+  dependency "unit-threaded" version="~>0.8.0"
   excludedSourceFiles "source/app.d"
 }
 
@@ -37,7 +37,7 @@ configuration "unittest" {
   targetName "unittest"
   targetPath "out/test"
 
-  dependency "unit-threaded" version="~>0.7.38"
+  dependency "unit-threaded" version="~>0.8.0"
   preBuildCommands "dub run unit-threaded -c gen_ut_main -- -f out/generated/unit-threaded/testsuite.d"
   mainSourceFile "out/generated/unit-threaded/testsuite.d"
   excludedSourceFiles "source/app.d"

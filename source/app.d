@@ -4,19 +4,20 @@
  + License: MIT
  +/
 
-import ponies;
-import ponies.dlang;
+import androidlogger;
+import asciitable;
+import colored;
+import commandline;
 import ponies.dlang.travis;
+import ponies.dlang;
+import ponies.utils;
+import ponies;
 import std.algorithm;
+import std.array;
+import std.conv;
 import std.experimental.logger;
 import std.stdio;
 import std.string;
-import androidlogger;
-import commandline;
-import std.conv;
-import asciitable;
-import std.array;
-import ponies.utils;
 
 void commit(string message)
 {
@@ -53,14 +54,13 @@ void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
-    auto table = new AsciiTable(4).header.add("class").add("description").add("applicable").add("status");
+    auto table = new AsciiTable(4).header.add("class".bold).add("description".bold).add("applicable".bold).add("status".bold);
     // dfmt off
     ponies
         .select(what)
-      .fold!((table, pony) => table.row.add(pony.to!string).add(pony.name).add(pony.applicable.to!string).add(pony.applicable ? pony.check.to!string : "----"))(
-        table)
-      .table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string
-      .writeln;
+        .fold!((table, pony) => table.row.add(pony.to!string).add(pony.name).add(pony.applicable.to!string).add(pony.applicable ? pony.check.to!string : "----"))(table)
+        .table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string
+        .writeln;
     // dfmt on
 }
 
@@ -129,11 +129,12 @@ auto setupCommandline(P)(P ponies)
         }
 
         import packageversion;
-
         // dfmt off
         auto table = packageversion
-            .getPackages.sort!("a.name < b. name")
-        .fold!((table, p) => table.row.add(p.name).add(p.semVer).add(p.license).table)(new AsciiTable(3));
+            .getPackages
+            .sort!("a.name < b.name")
+            .fold!((table, p) => table.row.add(p.name.white).add(p.semVer.lightGray).add(p.license.lightGray).table)
+            (new AsciiTable(3).header.add("Package".bold).add("Version".bold).add("License".bold).table);
         // dfmt on
         writeln("Packages:\n", table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string);
         return true;
