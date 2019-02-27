@@ -1,7 +1,7 @@
 name "ponies"
 description "Helps you to setup nice projects."
-authors "Christian Köstlin"
-copyright "Copyright © 2018, Christian Köstlin"
+authors "Christian Koestlin"
+copyright "Copyright (c) 2018, Christian Koestlin"
 license "MIT"
 
 x:ddoxFilterArgs "--min-protection=Private"
