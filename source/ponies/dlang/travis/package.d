@@ -209,28 +209,32 @@ class GhPagesTravisDlangPony : TravisDlangPony
         if (!addons)
         {
             "Adding addons node".warning;
-            root["addons"] = Node(["apt" : Node(["packages" : Node(["libevent-dev"])])]);
+            root["addons"] = Node([
+                    "apt": Node(["packages": Node(["libevent-dev"])])
+                    ]);
             return true;
         }
 
         if (addons.isScalar)
         {
             "Changing addons node".warning;
-            root["addons"] = Node(["apt" : Node(["packages" : Node(["libevent-dev"])])]);
+            root["addons"] = Node([
+                    "apt": Node(["packages": Node(["libevent-dev"])])
+                    ]);
             return true;
         }
 
         auto apt = "apt" in root["addons"];
         if (!apt)
         {
-            root["addons"]["apt"] = Node(["packages" : Node(["libevent-dev"])]);
+            root["addons"]["apt"] = Node(["packages": Node(["libevent-dev"])]);
             return true;
         }
 
         if (apt.isScalar)
         {
             "Changing addons.apt node".warning;
-            root["addons"]["apt"] = Node(["packages" : Node(["libevent-dev"])]);
+            root["addons"]["apt"] = Node(["packages": Node(["libevent-dev"])]);
             return true;
         }
 

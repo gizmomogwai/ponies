@@ -54,7 +54,8 @@ void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
-    auto table = new AsciiTable(4).header.add("class".bold).add("description".bold).add("applicable".bold).add("status".bold);
+    auto table = new AsciiTable(4).header.add("class".bold)
+        .add("description".bold).add("applicable".bold).add("status".bold);
     // dfmt off
     ponies
         .select(what)
@@ -129,6 +130,7 @@ auto setupCommandline(P)(P ponies)
         }
 
         import packageversion;
+
         // dfmt off
         auto table = packageversion
             .getPackages
@@ -136,7 +138,8 @@ auto setupCommandline(P)(P ponies)
             .fold!((table, p) => table.row.add(p.name.white).add(p.semVer.lightGray).add(p.license.lightGray).table)
             (new AsciiTable(3).header.add("Package".bold).add("Version".bold).add("License".bold).table);
         // dfmt on
-        writeln("Packages:\n", table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string);
+        writeln("Packages:\n", table.format.parts(new UnicodeParts)
+                .headerSeparator(true).columnSeparator(true).to!string);
         return true;
     };
     auto listDelegate = (Command command) {
