@@ -17,6 +17,18 @@ bool dfmtAvailable()
     return works(["dub", "run", "dfmt", "--", "--version"]);
 }
 
+void sh(string command)
+{
+    auto result = command.executeShell;
+    (result.status == 0).enforce("Cannot execute '%s' (%s)".format(command,
+                                                                   result.output.strip));
+}
+
+void sh(string[] command) {
+    auto result = command.execute;
+    (result.status == 0).enforce("Cannot execute %s (%s)".format(command, result.output.strip));
+}
+
 enum ProtectionLevel
 {
     Private,
@@ -99,7 +111,7 @@ class FormatSourcesPony : DlangPony
             import std.process;
 
             auto oldContent = readText(file);
-            ["dfmt", "-i", file].execute;
+            sh(["dub", "run", "dfmt", "--", "-i", file]);
             auto newContent = readText(file);
             if (oldContent != newContent)
             {
@@ -370,15 +382,8 @@ class GeneratePackageDependenciesPony : DlangPony
 
         import std.process;
 
-        void enforce(string command)
-        {
-            auto result = command.executeShell;
-            (result.status == 0).enforce("Cannot execute '%s' (%s)".format(command,
-                    result.output.strip));
-        }
-
-        enforce("mkdir -p out");
-        enforce("dub describe > out/dependencies.json");
+        sh("mkdir -p out");
+        sh("dub describe > out/dependencies.json");
 
         auto json = parseJSON(readText("out/dependencies.json"));
         auto packages = Packages();
@@ -401,9 +406,9 @@ class GeneratePackageDependenciesPony : DlangPony
         std.file.write("out/dependencies.dot", dot);
         import std.process;
 
-        enforce("mkdir -p docs/images");
-        enforce("dot out/dependencies.dot -Tpng -o docs/images/dependencies.png");
-        enforce("dot out/dependencies.dot -Tsvg -o docs/images/dependencies.svg");
+        sh("mkdir -p docs/images");
+        sh("dot out/dependencies.dot -Tpng -o docs/images/dependencies.png");
+        sh("dot out/dependencies.dot -Tsvg -o docs/images/dependencies.svg");
     }
 
 }
@@ -433,12 +438,12 @@ class AddPackageVersionPony : DlangPony
         auto dubSdlContent = readText(dubSdl);
         auto travisYml = readText(travisYml);
         // dfmt off
-    return (dubSdlContent.canFind(sourcePaths)
-            && dubSdlContent.canFind(importPaths)
-            && dubSdlContent.canFind(preGenerateCommands)
-            && dubSdlContent.canFind(addPackageVersionDependency)
-            && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
-    // dfmt on
+        return (dubSdlContent.canFind(sourcePaths)
+                && dubSdlContent.canFind(importPaths)
+                && dubSdlContent.canFind(preGenerateCommands)
+                && dubSdlContent.canFind(addPackageVersionDependency)
+                && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
+        // dfmt on
     }
 
     override void run()
