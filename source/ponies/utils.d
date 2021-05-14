@@ -1,12 +1,6 @@
 /++
  + Authors: Christian Köstlin
- +/
-
-/++
  + Copyright: Copyright © 2018, Christian Köstlin
- +/
-
-/++
  + License: MIT
  +/
 

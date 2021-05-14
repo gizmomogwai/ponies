@@ -8,20 +8,13 @@ module ponies.dlang;
 
 import dyaml;
 import ponies;
-import std.algorithm;
-import std.array;
-import std.conv;
+import std;
 import std.experimental.logger;
-import std.file;
-import std.regex;
-import std.stdio;
-import std.string;
-import std.traits;
 import ponies.utils;
 
 bool dfmtAvailable()
 {
-    return works(["dfmt", "--version"]);
+    return works(["dub", "run", "dfmt", "--", "--version"]);
 }
 
 enum ProtectionLevel
@@ -350,7 +343,7 @@ class GeneratePackageDependenciesPony : DlangPony
                 visited = true;
                 foreach (d; dependencies)
                 {
-                    res ~= "\n%s->%s".format(name, d.name);
+                    res ~= "\n\"%s\"->\"%s\"".format(name, d.name);
                     if (d.visited == false)
                     {
                         res ~= d.toDot(indent ~ "  ");
@@ -377,20 +370,25 @@ class GeneratePackageDependenciesPony : DlangPony
 
         import std.process;
 
-        "dub describe > out/dependencies.json".executeShell;
+        void enforce(string command) {
+            auto result = command.executeShell;
+            (result.status == 0).enforce("Cannot execute '%s' (%s)".format(command, result.output.strip));
+        }
+
+        enforce("mkdir -p out");
+        enforce("dub describe > out/dependencies.json");
 
         auto json = parseJSON(readText("out/dependencies.json"));
         auto packages = Packages();
         auto rootPackage = json["rootPackage"].str;
-        writeln(rootPackage);
 
         foreach (size_t index, value; json["packages"])
         {
             auto packageName = value["name"];
             auto newPackage = packages.addOrGet(packageName.str);
-            foreach (size_t index, value; value["dependencies"])
+            foreach (size_t i, v; value["dependencies"])
             {
-                auto dep = packages.addOrGet(value.str);
+                auto dep = packages.addOrGet(v.str);
                 newPackage.addDependency(dep);
             }
         }
@@ -399,12 +397,11 @@ class GeneratePackageDependenciesPony : DlangPony
         auto dot = "digraph G {%s\n}\n".format(packages.addOrGet(rootPackage)
                 .setVisited(false).toDot);
         std.file.write("out/dependencies.dot", dot);
-
         import std.process;
 
-        ["dot", "out/dependencies.dot", "-Tpng", "-o", "docs/images/dependencies.png"].execute;
-        ["dot", "out/dependencies.dot", "-Tsvg", "-o", "docs/images/dependencies.svg"].execute;
-
+        enforce("mkdir -p docs/images");
+        enforce("dot out/dependencies.dot -Tpng -o docs/images/dependencies.png");
+        enforce("dot out/dependencies.dot -Tsvg -o docs/images/dependencies.svg");
     }
 
 }
