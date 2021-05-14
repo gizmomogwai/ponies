@@ -28,7 +28,7 @@ abstract class TravisDlangPony : DlangPony
 
     override CheckStatus check()
     {
-        root = Loader.fromFile(travisYml).load;
+        root = Loader.fromFile(travisYaml).load;
         upToDate = !change(root);
         return upToDate.to!CheckStatus;
     }
@@ -37,9 +37,12 @@ abstract class TravisDlangPony : DlangPony
     {
         if (!upToDate)
         {
-            "Writing new %s".format(travisYml).warning;
-            dumper(File(travisYml, "w").lockingTextWriter).dump(root);
+            "Writing new %s".format(travisYaml).warning;
+            dumper(File(travisYaml, "w").lockingTextWriter).dump(root);
         }
+    }
+    override bool applicable() {
+        return super.applicable && travisYamlAvailable;
     }
 }
 
