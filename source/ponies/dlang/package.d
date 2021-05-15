@@ -412,7 +412,7 @@ class AddPackageVersionPony : DlangPony
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
     auto dubFetchPackageVersion = "dub fetch packageversion";
-    auto packageVersionDependency = "depdendency \"packageversion\" version=";
+    auto packageVersionDependency = "dependency \"packageversion\" version=";
     auto addPackageVersionDependency = "dependency \"packageversion\" version=\"~>0.0.17\"\n";
     this()
     {
