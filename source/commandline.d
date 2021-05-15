@@ -1,6 +1,6 @@
 /++
  + Authors: Christian Koestlin
- + Copyright: Copyright © 2018, Christian Köstlin
+ + Copyright: Copyright (c) 2018, Christian Koestlin
  + License: MIT
  +/
 module commandline;
