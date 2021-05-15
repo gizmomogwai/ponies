@@ -13,7 +13,6 @@ class DubRegistryCache
     private static JSONValue json = false;
     bool includes(string name)
     {
-        writeln("includes");
         if (!parsed)
         {
             json = getData();
@@ -34,9 +33,9 @@ class DubRegistryCache
             {
                 path.mkdir;
             }
-            "Parsing %s".format(cachePath).writeln;
+            "Parsing %s".format(cachePath).info;
             std.file.write(cachePath, url.getContent.data);
-            "Parsing %s done".format(cachePath).writeln;
+            "Parsing %s done".format(cachePath).info;
         }
 
         return cachePath.readText.parseJSON;
@@ -45,17 +44,20 @@ class DubRegistryCache
 
 class DubRegistryShieldPony : ShieldPony
 {
+    DubRegistryCache cache;
     string dubPackageName;
     string what;
-    this(string what)
+    this(DubRegistryCache cache, string what)
     {
+        this.cache = cache;
         dubPackageName = applicable ? getFromDubSdl("name") : null;
         this.what = what;
     }
 
     override bool applicable()
     {
-        return dubSdlAvailable() && super.applicable;
+        if (dubPackageName == null) return false;
+        return cache.includes(dubPackageName) && dubSdlAvailable() && super.applicable;
     }
 
     override string[] doctor()
@@ -82,9 +84,9 @@ class DubRegistryShieldPony : ShieldPony
 
 class DubLicenseShieldPony : DubRegistryShieldPony
 {
-    this()
+    this(DubRegistryCache cache)
     {
-        super("l");
+        super(cache, "l");
     }
 
     override string name()
@@ -95,9 +97,9 @@ class DubLicenseShieldPony : DubRegistryShieldPony
 
 class DubVersionShieldPony : DubRegistryShieldPony
 {
-    this()
+    this(DubRegistryCache cache)
     {
-        super("v");
+        super(cache, "v");
     }
 
     override string name()
@@ -108,9 +110,9 @@ class DubVersionShieldPony : DubRegistryShieldPony
 
 class DubWeeklyDownloadsShieldPony : DubRegistryShieldPony
 {
-    this()
+    this(DubRegistryCache cache)
     {
-        super("dw");
+        super(cache, "dw");
     }
 
     override string name()

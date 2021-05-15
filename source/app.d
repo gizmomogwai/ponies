@@ -193,7 +193,6 @@ auto setupCommandline(P)(P ponies)
 int main(string[] args)
 {
     auto dubRegistry = new DubRegistryCache;
-    writeln(dubRegistry.includes("colored"));
     // new TravisPony,
     // dfmt off
     auto ponies = [
@@ -203,9 +202,9 @@ int main(string[] args)
         new ponies.dlang.DDoxPony,
         new ponies.dlang.GeneratePackageDependenciesPony,
         new ponies.dlang.LicenseCommentPony,
-        new ponies.dlang.dub.registry.DubLicenseShieldPony,
-        new ponies.dlang.dub.registry.DubVersionShieldPony,
-        new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony,
+        new ponies.dlang.dub.registry.DubLicenseShieldPony(dubRegistry),
+        new ponies.dlang.dub.registry.DubVersionShieldPony(dubRegistry),
+        new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony(dubRegistry),
         new ponies.dlang.travis.CompilerTravisDlangPony,
         new ponies.dlang.travis.GhPagesTravisDlangPony,
         new ponies.dlang.travis.LanguageTravisDlangPony,
