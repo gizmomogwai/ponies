@@ -467,6 +467,8 @@ class AddPackageVersionPony : DlangPony
 
         if (!content.canFind(packageVersionDependency))
         {
+            writeln("content: ", content);
+            writeln("searched for: ", packageVersionDependency);
             "Adding packageversion dependency to %s".format(dubSdl).info;
             content ~= addPackageVersionDependency;
         }
