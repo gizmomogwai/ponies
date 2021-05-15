@@ -56,7 +56,8 @@ class DubRegistryShieldPony : ShieldPony
 
     override bool applicable()
     {
-        if (dubPackageName == null) return false;
+        if (dubPackageName == null)
+            return false;
         return cache.includes(dubPackageName) && dubSdlAvailable() && super.applicable;
     }
 
