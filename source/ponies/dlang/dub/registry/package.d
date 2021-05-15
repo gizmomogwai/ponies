@@ -1,3 +1,7 @@
+/++
+ + Authors: Christian Koestlin
+ +/
+
 module ponies.dlang.dub.registry;
 
 import ponies.shields;

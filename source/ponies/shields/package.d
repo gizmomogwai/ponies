@@ -1,3 +1,7 @@
+/++
+ + Authors: Christian Koestlin
+ +/
+
 module ponies.shields;
 
 import ponies;
