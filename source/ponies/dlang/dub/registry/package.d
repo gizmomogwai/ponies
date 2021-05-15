@@ -3,7 +3,39 @@ module ponies.dlang.dub.registry;
 import ponies.shields;
 import ponies.dlang.dub;
 import std;
+import std.experimental.logger;
+import requests;
+import mir.ion.deser.json;
 
+class DubRegistryCache {
+    private static bool parsed;
+    private static JSONValue json = false;
+    bool includes(string name) {
+        writeln("includes");
+        if (!parsed) {
+            json = getData();
+            parsed = true;
+        }
+        return json.array.any!(v => v["name"].str == name);
+    }
+
+    private auto getData() {
+         const path = "%s/.ponies".format(environment.get("HOME"));
+        const cachePath = "%s/dub-registry.cache".format(path);
+        if (!cachePath.exists) {
+             const url = "https://code.dlang.org/api/packages/dump";
+            "Downloading %s to %s".format(url, cachePath).info;
+            if (!path.exists) {
+                path.mkdir;
+            }
+            "Parsing %s".format(cachePath).writeln;
+            std.file.write(cachePath, url.getContent.data);
+            "Parsing %s done".format(cachePath).writeln;
+        }
+ 
+        return cachePath.readText.parseJSON;
+    }
+}
 class DubRegistryShieldPony : ShieldPony
 {
     string dubPackageName;

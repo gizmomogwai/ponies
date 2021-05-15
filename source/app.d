@@ -8,6 +8,7 @@ import androidlogger;
 import asciitable;
 import colored;
 import commandline;
+import ponies.dlang.dub.registry;
 import ponies.dlang.travis;
 import ponies.dlang;
 import ponies.shields;
@@ -191,6 +192,8 @@ auto setupCommandline(P)(P ponies)
 
 int main(string[] args)
 {
+    auto dubRegistry = new DubRegistryCache;
+    writeln(dubRegistry.includes("colored"));
     // new TravisPony,
     // dfmt off
     auto ponies = [

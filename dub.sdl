@@ -6,11 +6,13 @@ license "MIT"
 
 x:ddoxFilterArgs "--min-protection=Private"
 
-dependency "packageversion" version="~>0.0.18"
-dependency "colored" version="~>0.0.19"
 dependency "androidlogger" version="~>0.0.14"
-dependency "dyaml" version="~>0.7.1"
 dependency "asciitable" version="~>0.0.9"
+dependency "colored" version="~>0.0.19"
+dependency "dyaml" version="~>0.7.1"
+dependency "mir-ion" version="~master"
+dependency "packageversion" version="~>0.0.18"
+dependency "requests" version="~master"
 
 preGenerateCommands "packageversion || dub run packageversion"
 sourceFiles "out/generated/packageversion/ponies/packageversion.d"
