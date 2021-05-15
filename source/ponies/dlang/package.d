@@ -411,13 +411,12 @@ class AddPackageVersionPony : DlangPony
     string preGenerateCommands;
     auto sourcePaths = "sourcePaths \"source\" \"out/generated/packageversion\"\n";
     auto importPaths = "importPaths \"source\" \"out/generated/packageversion\"\n";
-    auto dubFetchPackageVersion = "dub fetch packageversion";
     auto packageVersionDependency = "dependency \"packageversion\" version=";
     auto addPackageVersionDependency = "dependency \"packageversion\" version=\"~>0.0.17\"\n";
     this()
     {
         packageName = applicable ? getFromDubSdl("name") : null;
-        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run packageversion\"\n"
+        preGenerateCommands = applicable ? "preGenerateCommands \"packageversion || dub run --yes packageversion\"\n"
             : null;
     }
 
@@ -439,8 +438,7 @@ class AddPackageVersionPony : DlangPony
         return (dubSdlContent.canFind(sourcePaths)
                 && dubSdlContent.canFind(importPaths)
                 && dubSdlContent.canFind(preGenerateCommands)
-                && dubSdlContent.canFind(addPackageVersionDependency)
-                && travisYml.canFind(dubFetchPackageVersion)).to!CheckStatus;
+                && dubSdlContent.canFind(addPackageVersionDependency)).to!CheckStatus;
         // dfmt on
     }
 
@@ -476,34 +474,6 @@ class AddPackageVersionPony : DlangPony
         {
             "Writing new %s".format(dubSdl).info;
             std.file.write(dubSdl, content);
-        }
-
-        auto root = Loader.fromFile(travisYaml).load;
-        auto beforeInstall = root["before_install"];
-        if (beforeInstall.isScalar)
-        {
-            if (beforeInstall.as!string != dubFetchPackageVersion)
-            {
-                "adding %s to %s".format(dubFetchPackageVersion, travisYaml).info;
-                root["before_install"] = Node([
-                        beforeInstall, Node(dubFetchPackageVersion)
-                        ]);
-                dumper(File(travisYaml, "w").lockingTextWriter).dump(root);
-            }
-        }
-        else if (beforeInstall.isSequence)
-        {
-            if (!beforeInstall.sequence!string.canFind(dubFetchPackageVersion))
-            {
-                "adding %s to %s".format(dubFetchPackageVersion, travisYaml).info;
-                beforeInstall.add(Node(dubFetchPackageVersion));
-                root["before_install"] = beforeInstall;
-                dumper(File(travisYaml, "w").lockingTextWriter).dump(root);
-            }
-        }
-        else
-        {
-            throw new Exception("cannot process %s".format(travisYaml));
         }
     }
 }
