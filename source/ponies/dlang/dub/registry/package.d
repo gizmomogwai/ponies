@@ -59,18 +59,21 @@ class DubRegistryShieldPony : ShieldPony
     DubRegistryCache cache;
     string dubPackageName;
     string what;
+
     this(DubRegistryCache cache, string what)
     {
         this.cache = cache;
-        dubPackageName = applicable ? getFromDubSdl("name") : null;
+        this.dubPackageName = getFromDubSdl("name");
         this.what = what;
     }
 
     override bool applicable()
     {
         if (dubPackageName == null)
+        {
             return false;
-        return cache.includes(dubPackageName) && dubSdlAvailable() && super.applicable;
+        }
+        return dubSdlAvailable && cache.includes(dubPackageName) && super.applicable;
     }
 
     override string[] doctor()
@@ -83,6 +86,9 @@ class DubRegistryShieldPony : ShieldPony
         if (!dubSdlAvailable)
         {
             hints ~= "Please add dub.sdl";
+        }
+        if (!cache.includes(dubPackageName)) {
+            hints ~= "Please upload you package to the https://code.dlang.org";
         }
         return hints;
     }
