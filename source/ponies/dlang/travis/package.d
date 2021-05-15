@@ -41,7 +41,9 @@ abstract class TravisDlangPony : DlangPony
             dumper(File(travisYaml, "w").lockingTextWriter).dump(root);
         }
     }
-    override bool applicable() {
+
+    override bool applicable()
+    {
         return super.applicable && travisYamlAvailable;
     }
 }

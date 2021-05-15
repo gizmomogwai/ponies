@@ -10,6 +10,7 @@ import colored;
 import commandline;
 import ponies.dlang.travis;
 import ponies.dlang;
+import ponies.shields;
 import ponies.utils;
 import ponies;
 import std.algorithm;
@@ -190,29 +191,29 @@ auto setupCommandline(P)(P ponies)
 
 int main(string[] args)
 {
+    // new TravisPony,
     // dfmt off
     auto ponies = [
-        new DDoxPony,
-        new AuthorsPony,
-        new GeneratePackageDependenciesPony,
-        new LicenseCommentPony,
-        new CopyrightCommentPony,
-        // new TravisPony,
-        new LanguageTravisDlangPony,
-        new CompilerTravisDlangPony,
-        new NoSudoTravisDlangPony,
-        new GhPagesTravisDlangPony,
-        new GithubShieldPony,
-        new TravisCiShieldPony,
-        new CodecovShieldPony,
-        new GithubPagesShieldPony,
-        new DubVersionShieldPony,
-        new DubLicenseShieldPony,
-        new DubWeeklyDownloadsShieldPony,
-        new MelpaShieldPony,
-        new AddPackageVersionPony,
-        new FormatSourcesPony,
-    ];
+        new ponies.dlang.AddPackageVersionPony,
+        new ponies.dlang.AuthorsPony,
+        new ponies.dlang.CopyrightCommentPony,
+        new ponies.dlang.DDoxPony,
+        new ponies.dlang.GeneratePackageDependenciesPony,
+        new ponies.dlang.LicenseCommentPony,
+        new ponies.dlang.dub.registry.DubLicenseShieldPony,
+        new ponies.dlang.dub.registry.DubVersionShieldPony,
+        new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony,
+        new ponies.dlang.travis.CompilerTravisDlangPony,
+        new ponies.dlang.travis.GhPagesTravisDlangPony,
+        new ponies.dlang.travis.LanguageTravisDlangPony,
+        new ponies.dlang.travis.NoSudoTravisDlangPony,
+        new ponies.shields.CodecovShieldPony,
+        new ponies.shields.GithubPagesShieldPony,
+        new ponies.shields.GithubShieldPony,
+        new ponies.shields.MelpaShieldPony,
+        new ponies.shields.TravisCiShieldPony,
+        new ponies.dlang.FormatSourcesPony,
+    ].sort!((v1, v2) => v1.to!string < v2.to!string).array;
     // dfmt on
 
     try
