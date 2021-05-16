@@ -4,6 +4,7 @@
 		"androidlogger": "0.0.14",
 		"asciitable": "0.0.10",
 		"asdf": "0.7.8",
+		"bolts": "1.3.1",
 		"cachetools": "0.3.1",
 		"colored": "0.0.21",
 		"dyaml": "0.7.1",
@@ -11,9 +12,12 @@
 		"mir-core": "1.1.69",
 		"mir-cpuid": "1.2.7",
 		"mir-ion": "0.1.19",
+		"optional": "1.2.1",
 		"packageversion": "0.0.19",
 		"requests": "~master",
+		"stdx-allocator": "2.77.5",
 		"tinyendian": "0.2.0",
-		"unit-threaded": "0.8.0"
+		"unit-threaded": "0.8.0",
+		"vibe-d": "0.9.3"
 	}
 }

@@ -192,10 +192,11 @@ auto setupCommandline(P)(P ponies)
 
 int main(string[] args)
 {
-    auto androidLog = new AndroidLogger(stderr, true,LogLevel.all);
+    auto androidLog = new AndroidLogger(stderr, true, LogLevel.all);
     sharedLog = androidLog;
 
     auto dubRegistry = new DubRegistryCache;
+
     // new TravisPony,
     // dfmt off
     auto ponies = [

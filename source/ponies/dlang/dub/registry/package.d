@@ -13,52 +13,83 @@ import requests;
 import std.experimental.logger;
 import std;
 import std.datetime.stopwatch;
+import optional;
 
-struct Package {
+Optional!Result timed(Argument, Result)(Optional!Argument argument,
+        string message, Result delegate(Argument) operation)
+{
+    message.info;
+    auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
+    scope (exit)
+    {
+        (message ~ " took %s").format(sw.peek).info;
+    }
+    // dfmt off
+    return argument.match!(
+        () => no!Result,
+        (Argument argument) => operation(argument).some.ifThrown(no!Result),
+    );
+    // dfmt on
+}
+
+struct Package
+{
     string name;
 }
+
+/++ Caching is done on two levels.
+ + 1. http request is processed into ~/.ponies/dub-registry.cache
+ + 2. reading of ~/.ponies/dub-registry.cache is memoized
+ +/
 class DubRegistryCache
 {
-    private static bool packagesRead;
-
-    private static Package[] packages;
-
     bool includes(string name)
     {
-        if (!packagesRead)
-        {
-            packages = getPackages();
-            packagesRead = true;
-        }
-        return packages.any!(v => v.name == name);
+        return (memoize!(() => getPackages())).any!(v => v.name == name);
     }
 
-
-    private auto getPackages()
+    private Package[] getPackages()
     {
         const path = "%s/.ponies".format(environment.get("HOME"));
         const cachePath = "%s/dub-registry.cache".format(path);
-        if (!cachePath.exists)
-        {
-            "Populating cache %s".format(cachePath).info;
-            const url = "https://code.dlang.org/api/packages/dump";
-            auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
-            auto content = url.getContent;
-            "Downloading took %s".format(sw.peek).info;
-            sw.reset;
-            auto packages = content.to!string.deserialize!(Package[]);
-            "Parsing took %s".format(sw.peek).info;
-            if (!path.exists)
-            {
-                path.mkdir;
-            }
-            std.file.write(cachePath, packages.map!(v => v.name).join("\n"));
-            return packages;
-        }
-        auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
-        auto result = cachePath.readText.splitter("\n").map!(v => Package(v)).array;
-        "Loading cache took %s".format(sw.peek).info;
-        return result;
+
+        return loadFromCache(cachePath).or(populateCache(path, cachePath)).front;
+    }
+
+    private auto loadFromCache(string cachePath)
+    {
+        // dfmt off
+        return cachePath
+            .some
+            .timed("Loading cache",
+                   (string path) => path.readText.splitter("\n").map!(v => Package(v)).array);
+        // dfmt on
+    }
+
+    private auto populateCache(string path, string cachePath)
+    {
+        "Initialize cache %s".format(cachePath).info;
+        // dfmt off
+        return "https://code.dlang.org/api/packages/dump"
+            .some
+            .timed("Downloading",
+                   (string url) => url.getContent.to!string)
+            .timed("Parsing",
+                   (string content) => content.deserialize!(Package[]))
+            .timed("Storing cache",
+                (Package[] packages) {
+                       if (!packages.empty)
+                       {
+                           if (!path.exists)
+                           {
+                               path.mkdir;
+                           }
+                           std.file.write(cachePath, packages.map!(v => v.name).join("\n"));
+                       }
+                       return packages.array;
+                   })
+            ;
+        // dfmt on
     }
 }
 
@@ -95,7 +126,8 @@ class DubRegistryShieldPony : ShieldPony
         {
             hints ~= "Please add dub.sdl";
         }
-        if (!cache.includes(dubPackageName)) {
+        if (!cache.includes(dubPackageName))
+        {
             hints ~= "Please upload you package to the https://code.dlang.org";
         }
         return hints;
