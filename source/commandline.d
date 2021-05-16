@@ -200,9 +200,9 @@ struct Command
 
     Command parse(string[] args)
     {
-        "Parsing command %s".format(name).trace;
+        // "Parsing command %s".format(name).trace;
         auto result = options.parse(args);
-        "Parsed %s".format(result).trace;
+        // "Parsed %s".format(result).trace;
         parsed = result.parsed;
         rest = result.rest;
         if (result.rest.length > 0)

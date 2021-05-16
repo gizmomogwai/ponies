@@ -1,7 +1,7 @@
 /++
- + Authors: Christian Koestlin, Christian Köstlin
- + Copyright: Copyright (c) 2018, Christian Koestlin
  + License: MIT
+ + Copyright: Copyright (c) 2018, Christian Koestlin
+ + Authors: Christian Koestlin, Christian Köstlin
  +/
 
 import androidlogger;
@@ -192,6 +192,9 @@ auto setupCommandline(P)(P ponies)
 
 int main(string[] args)
 {
+    auto androidLog = new AndroidLogger(stderr, true,LogLevel.all);
+    sharedLog = androidLog;
+
     auto dubRegistry = new DubRegistryCache;
     // new TravisPony,
     // dfmt off

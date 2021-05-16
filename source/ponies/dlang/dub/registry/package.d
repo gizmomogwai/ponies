@@ -1,56 +1,64 @@
 /++
  + License: MIT
- +/
-
-/++
  + Copyright: Copyright (c) 2018, Christian Koestlin
- +/
-
-/++
  + Authors: Christian Koestlin
  +/
 
 module ponies.dlang.dub.registry;
 
-import ponies.shields;
+import asdf;
 import ponies.dlang.dub;
-import std;
-import std.experimental.logger;
+import ponies.shields;
 import requests;
-import mir.ion.deser.json;
+import std.experimental.logger;
+import std;
+import std.datetime.stopwatch;
 
+struct Package {
+    string name;
+}
 class DubRegistryCache
 {
-    private static bool parsed;
-    private static JSONValue json = false;
+    private static bool packagesRead;
+
+    private static Package[] packages;
+
     bool includes(string name)
     {
-        if (!parsed)
+        if (!packagesRead)
         {
-            json = getData();
-            parsed = true;
+            packages = getPackages();
+            packagesRead = true;
         }
-        return json.array.any!(v => v["name"].str == name);
+        return packages.any!(v => v.name == name);
     }
 
-    private auto getData()
+
+    private auto getPackages()
     {
         const path = "%s/.ponies".format(environment.get("HOME"));
         const cachePath = "%s/dub-registry.cache".format(path);
         if (!cachePath.exists)
         {
+            "Populating cache %s".format(cachePath).info;
             const url = "https://code.dlang.org/api/packages/dump";
-            "Downloading %s to %s".format(url, cachePath).info;
+            auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
+            auto content = url.getContent;
+            "Downloading took %s".format(sw.peek).info;
+            sw.reset;
+            auto packages = content.to!string.deserialize!(Package[]);
+            "Parsing took %s".format(sw.peek).info;
             if (!path.exists)
             {
                 path.mkdir;
             }
-            "Parsing %s".format(cachePath).info;
-            std.file.write(cachePath, url.getContent.data);
-            "Parsing %s done".format(cachePath).info;
+            std.file.write(cachePath, packages.map!(v => v.name).join("\n"));
+            return packages;
         }
-
-        return cachePath.readText.parseJSON;
+        auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
+        auto result = cachePath.readText.splitter("\n").map!(v => Package(v)).array;
+        "Loading cache took %s".format(sw.peek).info;
+        return result;
     }
 }
 
