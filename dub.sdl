@@ -46,3 +46,4 @@ configuration "unittest" {
   mainSourceFile "out/generated/unit-threaded/testsuite.d"
   excludedSourceFiles "source/app.d"
 }
+preGenerateCommands "packageversion || dub run --yes packageversion"
