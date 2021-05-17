@@ -109,6 +109,7 @@ class DubRegistryShieldPony : ShieldPony
 
     override bool applicable()
     {
+        writeln("dubPackageName: ", dubPackageName);
         if (dubPackageName == null)
         {
             return false;
