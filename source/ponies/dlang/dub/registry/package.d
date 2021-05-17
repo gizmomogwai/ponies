@@ -7,16 +7,18 @@
 module ponies.dlang.dub.registry;
 
 import asdf;
+import optional;
 import ponies.dlang.dub;
 import ponies.shields;
 import requests;
+import std.datetime.stopwatch;
 import std.experimental.logger;
 import std;
-import std.datetime.stopwatch;
-import optional;
 
-Optional!Result timed(Argument, Result)(Optional!Argument argument,
-        string message, Result delegate(Argument) operation)
+Optional!Result timed(Argument, Result)
+    (Optional!Argument argument,
+     string message,
+     Result delegate(Argument) operation)
 {
     message.info;
     auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
