@@ -15,10 +15,8 @@ import std.datetime.stopwatch;
 import std.experimental.logger;
 import std;
 
-Optional!Result timed(Argument, Result)
-    (Optional!Argument argument,
-     string message,
-     Result delegate(Argument) operation)
+Optional!Result timed(Argument, Result)(Optional!Argument argument,
+        string message, Result delegate(Argument) operation)
 {
     message.info;
     auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
