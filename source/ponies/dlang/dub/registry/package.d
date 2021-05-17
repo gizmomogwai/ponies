@@ -15,8 +15,10 @@ import std;
 import std.datetime.stopwatch;
 import optional;
 
-Optional!Result timed(Argument, Result)(Optional!Argument argument,
-        string message, Result delegate(Argument) operation)
+Optional!Result timed(Argument, Result)
+    (Optional!Argument argument,
+     string message,
+     Result delegate(Argument) operation)
 {
     message.info;
     auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
@@ -62,7 +64,8 @@ class DubRegistryCache
         return cachePath
             .some
             .timed("Loading cache",
-                   (string path) => path.readText.splitter("\n").map!(v => Package(v)).array);
+                   (string path) => path.readText.splitter("\n").map!(v => Package(v)).array)
+            ;
         // dfmt on
     }
 
