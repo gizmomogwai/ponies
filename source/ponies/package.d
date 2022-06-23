@@ -8,8 +8,6 @@
  +/
 module ponies;
 
-public import ponies.packageversion;
-
 import std.algorithm;
 import std.conv;
 import std.experimental.logger;

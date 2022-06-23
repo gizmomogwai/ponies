@@ -131,10 +131,10 @@ auto setupCommandline(P)(P ponies)
             return false;
         }
 
-        import packageversion;
+        import packageinfo;
 
         // dfmt off
-        auto table = packageversion
+        auto table = packageinfo
             .getPackages
             .sort!("a.name < b.name")
             .fold!((table, p) => table.row.add(p.name.white).add(p.semVer.lightGray).add(p.license.lightGray).table)

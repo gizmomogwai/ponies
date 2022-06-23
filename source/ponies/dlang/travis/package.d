@@ -15,6 +15,9 @@ import std.experimental.logger;
 import std.stdio;
 import std.string;
 
+auto isScalar(T)(T node) {
+    return node.nodeID == NodeID.scalar;
+}
 abstract class TravisDlangPony : DlangPony
 {
     private Node root;
@@ -38,7 +41,7 @@ abstract class TravisDlangPony : DlangPony
         if (!upToDate)
         {
             "Writing new %s".format(travisYaml).warning;
-            dumper(File(travisYaml, "w").lockingTextWriter).dump(root);
+            dumper.dump(File(travisYaml, "w").lockingTextWriter, root);
         }
     }
 
