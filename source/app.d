@@ -4,9 +4,9 @@
  + Authors: Christian Koestlin, Christian Köstlin
  +/
 
-import androidlogger;
-import asciitable;
-import colored;
+import androidlogger : AndroidLogger;
+import asciitable : AsciiTable, UnicodeParts;
+import colored : bold, white, lightGray;
 import commandline;
 import ponies.dlang.dub.registry;
 import ponies.dlang.travis;
@@ -14,12 +14,12 @@ import ponies.dlang;
 import ponies.shields;
 import ponies.utils;
 import ponies;
-import std.algorithm;
-import std.array;
-import std.conv;
-import std.experimental.logger;
-import std.stdio;
-import std.string;
+import std.algorithm : fold, sort;
+import std.array : array;
+import std.conv : to;
+import std.experimental.logger : sharedLog, info, LogLevel;
+import std.stdio : stderr, writeln;
+import std.string : join, format;
 
 void commit(string message)
 {
