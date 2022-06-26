@@ -15,6 +15,8 @@ import std.datetime.stopwatch;
 import std.experimental.logger;
 import std;
 
+version (unittest) { // FIXME workaround for strange linker error when doing dub test!
+} else {
 Optional!Result timed(Argument, Result)(Optional!Argument argument,
         string message, Result delegate(Argument) operation)
 {
@@ -130,7 +132,7 @@ class DubRegistryShieldPony : ShieldPony
         }
         if (!cache.includes(dubPackageName))
         {
-            hints ~= "Please upload you package to the https://code.dlang.org";
+            hints ~= "Please upload your package to the https://code.dlang.org";
         }
         return hints;
     }
@@ -180,4 +182,5 @@ class DubWeeklyDownloadsShieldPony : DubRegistryShieldPony
     {
         return "Setup dub registry weekly downloads shield in readme.org";
     }
+}
 }
