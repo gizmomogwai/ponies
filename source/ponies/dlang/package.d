@@ -404,3 +404,50 @@ class GeneratePackageDependenciesPony : DlangPony
     }
 
 }
+
+class PackageInfoPony : DlangPony
+{
+    string preGenerateCommands = "preGenerateCommands \"$DUB run packageinfo\"\n";
+    string sourcePaths = "sourcePaths \"source\" \"out/generated/packageinfo\"\n";
+    string importPaths = "importPaths \"source\" \"out/generated/packageinfo\"\n";
+    override string name()
+    {
+        return "Add generation of packageinforation to %s".format(dubSdl);
+    }
+    override CheckStatus check()
+    {
+        auto dubSdlContent = dubSdl.readText;
+        // dfmt off
+        return (dubSdlContent.canFind(preGenerateCommands)
+            && dubSdlContent.canFind(sourcePaths)
+            && dubSdlContent.canFind(importPaths)).to!CheckStatus;
+        // dftm on
+    }
+    override void run()
+    {
+        auto oldContent = dubSdl.readText;
+        auto content = oldContent;
+        if (!content.canFind(preGenerateCommands))
+        {
+            "Adding preGenerateCommands to %s".format(dubSdl).info;
+            content ~= preGenerateCommands;
+        }
+
+        if (!content.canFind(sourcePaths))
+        {
+            "Adding sourcePaths to %s".format(dubSdl).info;
+            content ~= sourcePaths;
+        }
+        if (!content.canFind(importPaths))
+        {
+            "Adding importPaths to %s".format(dubSdl).info;
+            content ~= importPaths;
+        }
+
+        if (content != oldContent)
+        {
+            "Writing new %s".format(dubSdl).info;
+            std.file.write(dubSdl, content);
+        }
+    }
+}

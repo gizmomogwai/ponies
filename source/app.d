@@ -200,6 +200,7 @@ int main(string[] args)
     // new TravisPony,
     // dfmt off
     auto ponies = [
+        new ponies.dlang.PackageInfoPony,
         new ponies.dlang.AuthorsPony,
         new ponies.dlang.CopyrightCommentPony,
         new ponies.dlang.DDoxPony,
