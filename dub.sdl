@@ -6,9 +6,9 @@ license "MIT"
 
 x:ddoxFilterArgs "--min-protection=Private"
 
-dependency "androidlogger" version="~>0.0.15"
-dependency "asciitable" version="~>0.0.13"
-dependency "colored" version="~>0.0.26"
+dependency "androidlogger" version="~>0.0.16"
+dependency "asciitable" version="~>0.0.14"
+dependency "colored" version="~>0.0.27"
 dependency "dyaml" version="~>0.8.6"
 dependency "asdf" version="~>0.7.15"
 dependency "requests" version="~>2.0.8"
