@@ -135,7 +135,7 @@ auto setupCommandline(P)(P ponies)
 
         // dfmt off
         auto table = packageinfo
-            .getPackages
+            .packages
             .sort!("a.name < b.name")
             .fold!((table, p) => table.row.add(p.name.white).add(p.semVer.lightGray).add(p.license.lightGray).table)
             (new AsciiTable(3).header.add("Package".bold).add("Version".bold).add("License".bold).table);
