@@ -1,7 +1,7 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"androidlogger": "0.0.16",
+		"androidlogger": "0.0.17",
 		"asciitable": "0.0.14",
 		"asdf": "0.7.15",
 		"bolts": "1.3.1",
@@ -11,15 +11,11 @@
 		"dyaml": "0.8.6",
 		"mir-algorithm": "3.14.1",
 		"mir-core": "1.1.109",
-		"mir-cpuid": "1.2.7",
-		"mir-ion": "0.1.19",
 		"optional": "1.3.0",
-		"packageversion": "0.0.19",
 		"requests": "2.0.8",
+		"semver": "0.3.4",
 		"silly": "1.1.1",
-		"stdx-allocator": "2.77.5",
 		"tinyendian": "0.2.0",
-		"unit-threaded": "2.0.4",
-		"vibe-d": "0.9.4"
+		"unit-threaded": "2.0.5"
 	}
 }

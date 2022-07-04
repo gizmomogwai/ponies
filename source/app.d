@@ -6,7 +6,7 @@
 
 import androidlogger : AndroidLogger;
 import asciitable : AsciiTable, UnicodeParts;
-import colored : bold, white, lightGray;
+import colored : bold, underlined, white, lightGray, green, red;
 import commandline;
 import ponies.dlang.dub.registry;
 import ponies.dlang.travis;
@@ -19,7 +19,7 @@ import std.array : array;
 import std.conv : to;
 import std.experimental.logger : sharedLog, info, LogLevel;
 import std.stdio : stderr, writeln;
-import std.string : join, format;
+import std.string : join, format, strip;
 
 void commit(string message)
 {
@@ -52,6 +52,19 @@ void run(P)(P ponies, string what)
     }
 }
 
+string colorize(string checkString)
+{
+    if (checkString == "done")
+    {
+        return checkString.green.to!string;
+    }
+    if (checkString == "todo")
+    {
+        return checkString.red.to!string;
+    }
+    return checkString;
+}
+
 void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
@@ -61,8 +74,12 @@ void list(T)(T ponies, What what)
     // dfmt off
     ponies
         .select(what)
-        .fold!((table, pony) => table.row.add(pony.to!string).add(pony.name).add(pony.applicable.to!string).add(pony.applicable ? pony.check.to!string : "----"))(table)
-        .table.format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string
+        .fold!((table, pony) => table.row
+               .add(pony.to!string)
+               .add(pony.name)
+               .add(pony.applicable.to!string)
+               .add((pony.applicable ? pony.check.to!string : "----").colorize))(table)
+        .format.parts(new UnicodeParts).headerSeparator(true).columnSeparator(true).to!string
         .writeln;
     // dfmt on
 }
@@ -93,10 +110,16 @@ void doctor(T)(T ponies)
         hints["Please install git"] = ["general"];
     }
 
-    foreach (k, v; hints)
+    auto table = new AsciiTable(2).header.add("by".underlined).add("what".underlined);
+    foreach (hint, categories; hints)
     {
-        "%s:\n    %s".format(k, v.join("\n    ")).writeln;
+        table.row
+            .add(categories.join("\n"))
+            .add(hint);
     }
+    writeln(table.format
+        .columnSeparator(true)
+        .headerSeparator(true));
 }
 
 auto setupCommandline(P)(P ponies)
@@ -137,8 +160,17 @@ auto setupCommandline(P)(P ponies)
         auto table = packageinfo
             .packages
             .sort!("a.name < b.name")
-            .fold!((table, p) => table.row.add(p.name.white).add(p.semVer.lightGray).add(p.license.lightGray).table)
-            (new AsciiTable(3).header.add("Package".bold).add("Version".bold).add("License".bold).table);
+            .fold!((table, p) => table
+                .row
+                    .add(p.name.white)
+                    .add(p.semVer.lightGray)
+                    .add(p.license.lightGray)
+                .table)
+            (new AsciiTable(3)
+                 .header
+                     .add("Package".bold)
+                     .add("Version".bold)
+                     .add("License".bold).table);
         // dfmt on
         writeln("Packages:\n", table.format.parts(new UnicodeParts)
                 .headerSeparator(true).columnSeparator(true).to!string);
@@ -209,6 +241,7 @@ int main(string[] args)
         new ponies.dlang.dub.registry.DubLicenseShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.DubVersionShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony(dubRegistry),
+        new ponies.dlang.dub.registry.CheckVersionsPony(dubRegistry),
         new ponies.dlang.travis.CompilerTravisDlangPony,
         new ponies.dlang.travis.GhPagesTravisDlangPony,
         new ponies.dlang.travis.LanguageTravisDlangPony,

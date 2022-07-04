@@ -3,42 +3,35 @@ description "Helps you to setup nice projects."
 authors "Christian Koestlin"
 copyright "Copyright (c) 2018, Christian Koestlin"
 license "MIT"
-
 x:ddoxFilterArgs "--min-protection=Private"
-
-dependency "androidlogger" version="~>0.0.16"
-dependency "asciitable" version="~>0.0.14"
-dependency "colored" version="~>0.0.27"
-dependency "dyaml" version="~>0.8.6"
-dependency "asdf" version="~>0.7.15"
 dependency "requests" version="~>2.0.8"
+dependency "colored" version="~>0.0.27"
+dependency "asciitable" version="~>0.0.14"
+dependency "androidlogger" version="~>0.0.16"
+dependency "asdf" version="~>0.7.15"
+dependency "semver" version="~>0.3.4"
+dependency "dyaml" version="~>0.8.6"
 dependency "optional" version="~>1.3.0"
-
 configuration "application" {
-  targetType "executable"
-  targetPath "out/main"
-
-  preGenerateCommands "dub run packageinfo"
-  sourcePaths "source" "out/generated/packageinfo"
-  importPaths "source" "out/generated/packageinfo"
+	targetType "executable"
+	targetPath "out/main"
+	sourcePaths "source" "out/generated/packageinfo"
+	importPaths "source" "out/generated/packageinfo"
+	preGenerateCommands "dub run packageinfo"
 }
-
 configuration "ut" {
-  targetType "executable"
-  targetName "ut"
-  targetPath "out/test"
-
-  versions "unitThreadedLight"
-  dependency "unit-threaded" version="~>2.0.4"
-  excludedSourceFiles "source/app.d"
+	dependency "unit-threaded" version="~>2.0.4"
+	targetType "executable"
+	targetPath "out/test"
+	targetName "ut"
+	excludedSourceFiles "source/app.d"
+	versions "unitThreadedLight"
 }
-
 configuration "unittest" {
-  targetType "executable"
-  targetName "unittest"
-  targetPath "out/test"
-
-  dependency "unit-threaded" version="~>2.0.4"
-  mainSourceFile "source/testsuite.d"
-  excludedSourceFiles "source/app.d"
+	dependency "unit-threaded" version="~>2.0.4"
+	targetType "executable"
+	targetPath "out/test"
+	targetName "unittest"
+	mainSourceFile "source/testsuite.d"
+	excludedSourceFiles "source/app.d"
 }

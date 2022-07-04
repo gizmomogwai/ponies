@@ -116,7 +116,7 @@ class FormatSourcesPony : DlangPony
     {
         if (!dfmtAvailable)
         {
-            return ["Please install dfmt"];
+            return ["Please install dfmt by running `dub fetch dfmt`"];
         }
         return [];
     }

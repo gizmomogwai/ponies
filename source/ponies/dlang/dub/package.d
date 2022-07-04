@@ -7,11 +7,13 @@
 module ponies.dlang.dub;
 
 import std;
+import ponies : Pony, CheckStatus;
+import asdf : deserialize;
 
 const dubSdl = "dub.sdl";
 auto dubSdlAvailable()
 {
-    return exists(dubSdl);
+    return dubSdl.exists;
 }
 
 auto getFromDubSdl(string what)
