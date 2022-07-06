@@ -20,6 +20,7 @@ import std.conv : to;
 import std.experimental.logger : sharedLog, info, LogLevel;
 import std.stdio : stderr, writeln;
 import std.string : join, format, strip;
+import std.file : exists;
 
 void commit(string message)
 {
@@ -99,9 +100,7 @@ void doctor(T)(T ponies)
             hints[hint] ~= h;
         }
     }
-    import std.file;
-
-    if (!exists(".git"))
+    if (!".git".exists)
     {
         hints["Please create a git repository"] = ["general"];
     }
