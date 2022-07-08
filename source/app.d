@@ -70,9 +70,13 @@ void list(T)(T ponies, What what)
 {
     "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
-    auto table = new AsciiTable(4).header.add("class".bold)
-        .add("description".bold).add("applicable".bold).add("status".bold);
     // dfmt off
+    auto table = new AsciiTable(4)
+        .header
+            .add("class".bold)
+            .add("description".bold)
+            .add("applicable".bold)
+            .add("status".bold);
     ponies
         .select(what)
         .fold!((table, pony) => table.row
@@ -85,8 +89,7 @@ void list(T)(T ponies, What what)
     // dfmt on
 }
 
-void doctor(T)(T ponies)
-{
+void doctorWithoutExceptionHandling(T)(T ponies) {
     string[][string] hints;
     foreach (pony; ponies)
     {
@@ -118,7 +121,16 @@ void doctor(T)(T ponies)
     }
     writeln(table.format
         .columnSeparator(true)
+        .rowSeparator(true)
         .headerSeparator(true));
+}
+void doctor(T)(T ponies)
+{
+    try {
+        doctorWithoutExceptionHandling(ponies);
+    } catch (Exception e) {
+        writeln("Fatal exception: ", e);
+    }
 }
 
 auto setupCommandline(P)(P ponies)
