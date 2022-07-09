@@ -428,7 +428,7 @@ class PackageInfoPony : DlangPony
         return (dubSdlContent.canFind(preGenerateCommands)
             && dubSdlContent.canFind(sourcePaths)
             && dubSdlContent.canFind(importPaths)).to!CheckStatus;
-        // dftm on
+        // dfmt on
     }
     override void run()
     {
