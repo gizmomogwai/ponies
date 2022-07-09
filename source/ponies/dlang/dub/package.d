@@ -6,9 +6,10 @@
 
 module ponies.dlang.dub;
 
-import std;
-import ponies : Pony, CheckStatus;
 import asdf : deserialize;
+import std.file : readText, exists;
+import std.format : format;
+import std.regex : matchFirst, regex;
 
 const dubSdl = "dub.sdl";
 auto dubSdlAvailable()
@@ -19,8 +20,8 @@ auto dubSdlAvailable()
 auto getFromDubSdl(string what)
 {
     auto pattern = "^%1$s \"(?P<%1$s>.*)\"$".format(what);
-    auto text = readText(dubSdl);
-    auto match = matchFirst(text, regex(pattern, "m"));
+    auto text = dubSdl.readText;
+    auto match = text.matchFirst(regex(pattern, "m"));
     if (match)
     {
         return match[what];

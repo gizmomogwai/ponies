@@ -6,14 +6,21 @@
 
 module ponies.dlang;
 
-import dyaml;
-import ponies.dlang.dub;
-import ponies.shields;
-import ponies.utils;
-import ponies;
-import std.experimental.logger;
-import std;
-
+import ponies.dlang.dub : dubSdl, dubSdlAvailable, getFromDubSdl;
+import ponies.utils : works;
+import ponies : Pony, CheckStatus, askFor;
+import std.experimental.logger : info, warning;
+import std.file : write, exists, readText, FileException, dirEntries, SpanMode, append;
+import std.process : executeShell, execute;
+import std.exception : enforce;
+import std.format : format;
+import std.string : strip;
+import std.array : appender, split;
+import std.algorithm : canFind;
+import std.conv : to;
+import std.regex : matchFirst, escaper, regex, replaceFirst;
+import std.algorithm : sort, uniq;
+import std.range : join;
 bool dfmtAvailable()
 {
     return works(["dub", "run", "dfmt", "--", "--version"]);
@@ -159,8 +166,8 @@ class CopyrightCommentPony : DlangPony
 
         foreach (file; noCopyrightFiles)
         {
-            auto content = readText(file);
-            auto newContent = replaceFirst(content, regex("^ \\+ Copyright: .*?$",
+            auto content = file.readText;
+            auto newContent = content.replaceFirst(regex("^ \\+ Copyright: .*?$",
                     "m"), " + Copyright: %s".format(copyright));
             if (content == newContent)
             {
@@ -171,7 +178,7 @@ class CopyrightCommentPony : DlangPony
             {
                 "Change copyright to %s in file %s".format(copyright, file).info;
             }
-            std.file.write(file, newContent);
+            file.write(newContent);
         }
     }
 }
@@ -210,14 +217,14 @@ class AuthorsPony : DlangPony
                 else
                 {
                     "Change authors to %s in file %s".format(authors, file).info;
-                    std.file.write(file, newContent);
+                    file.write(newContent);
                 }
             }
             else
             {
                 "Adding authors line %s to file %s".format(authors, file).warning;
                 newContent = "/++\n + Authors: %s\n +/\n\n".format(authors) ~ content;
-                std.file.write(file, newContent);
+                file.write(newContent);
             }
         }
 
@@ -274,7 +281,7 @@ class LicenseCommentPony : DlangPony
             {
                 "Change license to %s in file %s".format(license, file).info;
             }
-            std.file.write(file, newContent);
+            file.write(newContent);
         }
 
     }
@@ -412,7 +419,7 @@ class PackageInfoPony : DlangPony
     string importPaths = "importPaths \"source\" \"out/generated/packageinfo\"\n";
     override string name()
     {
-        return "Add generation of packageinforation to %s".format(dubSdl);
+        return "Add generation of packageinformation to %s".format(dubSdl);
     }
     override CheckStatus check()
     {
@@ -447,7 +454,7 @@ class PackageInfoPony : DlangPony
         if (content != oldContent)
         {
             "Writing new %s".format(dubSdl).info;
-            std.file.write(dubSdl, content);
+            dubSdl.write(content);
         }
     }
 }
