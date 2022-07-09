@@ -107,11 +107,9 @@ class FormatSourcesPony : DlangPony
     {
         foreach (string file; sources)
         {
-            import std.process;
-
-            auto oldContent = readText(file);
-            sh(["dub", "run", "dfmt", "--", "-i", file]);
-            auto newContent = readText(file);
+            auto oldContent = file.readText;
+            ["dub", "run", "dfmt", "--", "-i", file].sh;
+            auto newContent = file.readText;
             if (oldContent != newContent)
             {
                 "FormatSources:%s changed by dfmt -i".format(file).warning;
@@ -148,9 +146,9 @@ class CopyrightCommentPony : DlangPony
         auto res = appender!(string[]);
         foreach (string file; sources)
         {
-            auto content = readText(file);
+            auto content = file.readText;
             auto pattern = "^ \\+ Copyright: %s$".format(copyright.escaper);
-            auto found = matchFirst(content, regex(pattern, "gm"));
+            auto found = content.matchFirst(regex(pattern, "gm"));
             if (!found)
             {
                 res.put(file);
@@ -381,10 +379,10 @@ class GeneratePackageDependenciesPony : DlangPony
 
         import std.process;
 
-        sh("mkdir -p out");
-        sh("dub describe > out/dependencies.json");
+        "mkdir -p out".sh;
+        "dub describe > out/dependencies.json".sh;
 
-        auto json = parseJSON(readText("out/dependencies.json"));
+        auto json = "out/dependencies.json".readText.parseJSON;
         auto packages = Packages();
         auto rootPackage = json["rootPackage"].str;
 
@@ -402,12 +400,10 @@ class GeneratePackageDependenciesPony : DlangPony
         stderr.writeln(packages.addOrGet(rootPackage).to!string);
         auto dot = "digraph G {%s\n}\n".format(packages.addOrGet(rootPackage)
                 .setVisited(false).toDot);
-        std.file.write("out/dependencies.dot", dot);
-        import std.process;
-
-        sh("mkdir -p docs/images");
-        sh("dot out/dependencies.dot -Tpng -o docs/images/dependencies.png");
-        sh("dot out/dependencies.dot -Tsvg -o docs/images/dependencies.svg");
+        "out/dependencies.dot".write(dot);
+        "mkdir -p docs/images".sh;
+        "dot out/dependencies.dot -Tpng -o docs/images/dependencies.png".sh;
+        "dot out/dependencies.dot -Tsvg -o docs/images/dependencies.svg".sh;
     }
 
 }
