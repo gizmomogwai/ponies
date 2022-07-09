@@ -15,9 +15,9 @@ dependency "dyaml" version="~>0.8.6"
 configuration "application" {
 	targetType "executable"
 	targetPath "out/main"
+	preGenerateCommands "$DUB run packageinfo"
 	sourcePaths "source" "out/generated/packageinfo"
-	importPaths "source" "out/generated/packageinfo"
-	preGenerateCommands "dub run packageinfo"
+	importPathsbb "source" "out/generated/packageinfo"
 }
 configuration "ut" {
 	dependency "unit-threaded" version="~>2.0.4"
