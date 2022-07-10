@@ -3,13 +3,12 @@
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + License: MIT
  +/
-
 module ponies.utils;
+
+import std.process : execute;
 
 bool works(string[] cmd)
 {
-    import std.process;
-
     try
     {
         auto res = cmd.execute;
@@ -23,5 +22,5 @@ bool works(string[] cmd)
 
 bool gitAvailable()
 {
-    return works(["git", "--version"]);
+    return ["git", "--version"].works;
 }

@@ -195,7 +195,6 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
         if (script.isScalar)
         {
-            "Changing script node".warning;
             if (script.as!string != buildDdox)
             {
                 root["script"] = Node(script.as!string ~ " && " ~ buildDdox);

@@ -8,17 +8,49 @@
  +/
 module ponies;
 
-import std.algorithm;
-import std.conv;
-import std.experimental.logger;
-import std.file;
-import std.functional;
-import std.range;
-import std.regex;
-import std.stdio;
-import std.string;
-import std.traits;
-import std.typecons;
+import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default, Parse, Action, PreValidation, Validation;
+import std.algorithm : filter, map, fold;
+import std.conv : to;
+import std.experimental.logger : info, warning;
+import std.process : execute;
+import std.range : array;
+import std.regex : Regex, regex, match, matchFirst;
+import std.stdio : writeln, readln;
+import std.string : split, format, strip, join, replace;
+import std.sumtype : SumType;
+import std.traits : EnumMembers;
+import std.typecons : tuple, Tuple;
+
+// Commandline parsing
+@(Command("version").Description("Show version."))
+struct Version {
+}
+
+@(Command("doctor").Description("Check if ponies are happy."))
+struct Doctor {
+}
+
+@(Command("list").Description("List all ponies and their current state."))
+struct List {
+    What what = What.all;
+}
+
+@(Command("run").Description("Run ponies."))
+struct Run {
+}
+
+struct Arguments {
+    @ArgumentGroup("Common arguments")
+    {
+        @(NamedArgument.Description("Verbose output."))
+        bool verbose;
+
+        @(NamedArgument.Description("Comma separated list of +- regexes."))
+        string set = "+.*";
+    }
+    @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
+}
+
 
 enum Vote
 {
@@ -58,9 +90,9 @@ auto voteByPlusMinusRegex(string pony, string plusMinusRegex)
         return Vote.dontCare;
     }
 
-    auto pm = removePlusMinusPrefix(plusMinusRegex);
+    auto pm = plusMinusRegex.removePlusMinusPrefix();
 
-    auto r = regex(pm.text);
+    auto r = pm.text.regex;
     if (pony.match(r))
     {
         if (pm.negative)
@@ -123,7 +155,7 @@ auto readyToRun(P)(P ponies)
 
 auto poniesToRun(P)(P ponies, string what)
 {
-    return ponies.readyToRun.filter!(a => a.selected(what));
+    return ponies.readyToRun.filter!(a => a.selected(what)).array;
 }
 
 enum What
@@ -189,12 +221,9 @@ alias UserAndProject = Tuple!(string, "user", string, "project");
 UserAndProject userAndProject;
 auto getUserAndProject()
 {
-    import std.process;
-    import std.string : replace;
-
     auto res = ["git", "remote", "get-url", "origin"].execute;
     auto pattern = "github.com:(?P<user>.*)/(?P<project>.*)";
-    auto match = matchFirst(res.output, regex(pattern, "m"));
+    auto match = res.output.matchFirst(regex(pattern, "m"));
     if (match)
     {
         return UserAndProject(match["user"], match["project"].replace(".git", ""));

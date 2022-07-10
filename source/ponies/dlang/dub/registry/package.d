@@ -66,13 +66,13 @@ else
         return operation(argument);
     }
 
-    struct Version
+    private struct Version
     {
         @serdeKeys("version")
         string semVer;
     }
 
-    struct Package
+    private struct Package
     {
         string name;
         Version[] versions;
@@ -372,6 +372,7 @@ else
             if (!selected.isValid)
             {
                 result ~= "Use valid version";
+                return result;
             }
             if (!selected.isStable)
             {
@@ -386,6 +387,7 @@ else
 
             Package p = dubPackage.front;
             auto newestStable = p.newestStable;
+
             if (newestStable.empty)
             {
                 result ~= "No stable version in DUB registry";
@@ -399,14 +401,15 @@ else
                 else if (v < selected)
                 {
                     result ~= "Update DUB registry or ponies cache";
-                }
-                else if (selected < v)
+                } else if (selected < v)
                 {
                     result ~= "Upgrade".yellow.to!string;
                 }
             }
             if (result.empty)
+            {
                 return "ok".green.to!string;
+            }
             return result;
         }
 
@@ -420,6 +423,7 @@ else
                 .versions
                 .byKeyValue
                 .fold!((table, nameAndVersion) {
+                        import std.stdio;
                         auto packageName = nameAndVersion.key;
                         auto semVerString = nameAndVersion.value;
                         auto dubRegistryPackage = allDubPackages.find!(p => p.name == packageName);

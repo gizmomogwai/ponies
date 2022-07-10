@@ -1,20 +1,17 @@
 /++
  + License: MIT
- +/
-
-/++
  + Copyright: Copyright (c) 2018, Christian Koestlin
- +/
-
-/++
  + Authors: Christian Koestlin
  +/
-
 module ponies.shields;
 
-import ponies;
-import std;
-import std.experimental.logger;
+import ponies : Pony, UserAndProject, CheckStatus, getUserAndProject;
+import std.algorithm : canFind;
+import std.experimental.logger : info, warning;
+import std.file : exists, readText, append;
+import std.format : format;
+import std.string : strip;
+import std.conv : to;
 
 class ShieldPony : Pony
 {

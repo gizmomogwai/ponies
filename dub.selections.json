@@ -2,6 +2,7 @@
 	"fileVersion": 1,
 	"versions": {
 		"androidlogger": "0.0.17",
+		"argparse": "~master",
 		"asciitable": "0.0.14",
 		"asdf": "0.7.15",
 		"cachetools": "0.3.1",

@@ -3,11 +3,10 @@
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + Authors: Christian Koestlin, Christian Köstlin
  +/
-
+import argparse : CLI;
 import androidlogger : AndroidLogger;
 import asciitable : AsciiTable, UnicodeParts;
 import colored : bold, underlined, white, lightGray, green, red;
-import commandline;
 import ponies.dlang.dub.registry;
 import ponies.dlang.travis;
 import ponies.dlang;
@@ -18,9 +17,10 @@ import std.algorithm : fold, sort;
 import std.array : array;
 import std.conv : to;
 import std.experimental.logger : sharedLog, info, LogLevel;
-import std.stdio : stderr, writeln;
+import std.stdio : stderr, writeln, writefln;
 import std.string : join, format, strip;
 import std.file : exists;
+import std.sumtype : SumType, match;
 
 void commit(string message)
 {
@@ -36,11 +36,11 @@ void commit(string message)
     "result of %s: %s".format(commitCommand, res).info;
 }
 
-void run(P)(P ponies, string what)
+void run(P)(P ponies)
 {
     "run".info;
     "Before running ponies".commit;
-    foreach (pony; ponies.poniesToRun(what))
+    foreach (pony; ponies)
     {
         auto check = pony.check;
         "main:Checking %s -> %s".format(pony.name, check).info;
@@ -112,6 +112,12 @@ void doctorWithoutExceptionHandling(T)(T ponies) {
         hints["Please install git"] = ["general"];
     }
 
+    if (hints.length == 0)
+    {
+        writeln("All good");
+        return;
+    }
+
     auto table = new AsciiTable(2).header.add("by".underlined).add("what".underlined);
     foreach (hint, categories; hints)
     {
@@ -124,6 +130,7 @@ void doctorWithoutExceptionHandling(T)(T ponies) {
         .rowSeparator(true)
         .headerSeparator(true));
 }
+
 void doctor(T)(T ponies)
 {
     try {
@@ -133,114 +140,40 @@ void doctor(T)(T ponies)
     }
 }
 
-auto setupCommandline(P)(P ponies)
+void printVersion()
 {
-    bool delegate(Command) rootDelegate = (Command command) {
-        if (command.helpNeeded)
-        {
-            writeln(command.help);
-            return false;
-        }
-        if (auto verbose = "verbose" in command.parsed)
-        {
-            auto androidLog = new AndroidLogger(stderr, true,
-                    (*verbose == "true") ? LogLevel.all : LogLevel.warning);
-            sharedLog = androidLog;
-        }
-        return true;
-    };
-    auto runDelegate = (Command command) {
-        if (command.helpNeeded)
-        {
-            writeln(command.help);
-            return false;
-        }
-        run(ponies, command.parsed["set"]);
-        return true;
-    };
-    bool delegate(Command) versionDelegate = (Command command) {
-        if (command.helpNeeded)
-        {
-            writeln(command.help);
-            return false;
-        }
+    import packageinfo;
 
-        import packageinfo;
-
-        // dfmt off
-        auto table = packageinfo
-            .packages
-            .sort!("a.name < b.name")
-            .fold!((table, p) => table
-                .row
-                    .add(p.name.white)
-                    .add(p.semVer.lightGray)
-                    .add(p.license.lightGray)
-                .table)
-            (new AsciiTable(3)
-                 .header
-                     .add("Package".bold)
-                     .add("Version".bold)
-                     .add("License".bold).table);
-        // dfmt on
-        writeln("Packages:\n", table.format.parts(new UnicodeParts)
-                .headerSeparator(true).columnSeparator(true).to!string);
-        return true;
-    };
-    auto listDelegate = (Command command) {
-        if (command.helpNeeded)
-        {
-            writeln(command.help);
-            return false;
-        }
-        list(ponies, command.parsed["set"].to!What);
-        return true;
-    };
-    auto doctorDelegate = (Command command) {
-        if (command.helpNeeded)
-        {
-            writeln(command.help);
-            return false;
-        }
-        doctor(ponies);
-        return true;
-    };
     // dfmt off
-    Command rootCommand =
-        Command("root", rootDelegate,
-        [
-            Option.boolWithName("help").withDescription("show general help"),
-            Option.boolWithName("verbose").withDescription("enable verbose logging")],
-            [
-                Command("doctor", doctorDelegate,
-                [
-                    Option.boolWithName("help").withDescription("show doctor help"),
-                ]),
-                Command("list", listDelegate,
-                [
-                    Option.boolWithName("help").withDescription("show list help"),
-                    Option.withName("set").withDescription("which ponies to list").withDefault("readyToRun").allow(One!string.fromEnum!What)], []),
-                Command("run", runDelegate,
-                [
-                    Option.boolWithName("help").withDescription("show run help"),
-                    Option.withName("set").withDescription("set of ponies to run (+-set of regex on pony classes)").withDefault(".*")], []),
-                Command("version", versionDelegate,
-                [
-                    Option.boolWithName("help").withDescription("show version help")], []),
-             ]);
+    auto table = packageinfo
+        .packages
+        .sort!("a.name < b.name")
+        .fold!((table, p) => table
+               .row
+                   .add(p.name.white)
+                   .add(p.semVer.lightGray)
+                   .add(p.license.lightGray)
+               .table
+        )
+        (new AsciiTable(3)
+             .header
+                 .add("Package".bold)
+                 .add("Version".bold)
+                 .add("License".bold).table);
     // dfmt on
-
-    return rootCommand;
+    writefln("Packages:\n%s",
+            table
+                .format
+                .parts(new UnicodeParts)
+                .headerSeparator(true)
+                .columnSeparator(true));
 }
 
-int main(string[] args)
-{
-    auto androidLog = new AndroidLogger(stderr, true, LogLevel.all);
-    sharedLog = androidLog;
-
+int main_(Arguments arguments) {
+    sharedLog = new AndroidLogger(stderr,
+                                  true,
+                                  arguments.verbose ? LogLevel.all : LogLevel.warning);
     auto dubRegistry = new DubRegistryCache;
-
-    // new TravisPony,
     // dfmt off
     auto ponies = [
         new ponies.dlang.PackageInfoPony,
@@ -266,15 +199,28 @@ int main(string[] args)
     ].sort!((v1, v2) => v1.to!string < v2.to!string).array;
     // dfmt on
 
-    try
-    {
-        setupCommandline(ponies).parse(args[1 .. $]).run;
-        return 0;
-    }
-    catch (Exception e)
-    {
-        e.message.writeln;
-        e.to!string.writeln;
-        return 1;
-    }
+    arguments.subcommand.match!
+    (
+      (Version v)
+      {
+           printVersion;
+      },
+      (Doctor d)
+      {
+          ponies.poniesToRun(arguments.set).doctor();
+      },
+      (List l)
+      {
+          ponies.poniesToRun(arguments.set).list(l.what);
+      },
+      (Run r)
+      {
+          ponies.poniesToRun(arguments.set).run();
+      },
+    );
+    return 0;
 }
+
+mixin CLI!(Arguments).main!((arguments) {
+    return main_(arguments);
+});
