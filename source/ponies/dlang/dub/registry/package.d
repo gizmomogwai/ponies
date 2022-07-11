@@ -27,6 +27,11 @@ import std.range : empty, front, tee;
 import std.string : strip;
 import std.typecons : tuple;
 
+version (unittest)
+{
+    import unit_threaded;
+}
+
 auto ifOk(T)(Optional!T argument, void delegate(T) okHandler)
 {
     if (argument == none)
@@ -39,8 +44,6 @@ version (unittest)
 { // FIXME workaround for strange linker error when doing dub test!
     @("isstable") unittest
     {
-        import unit_threaded;
-
         " ~master".to!SemVer.isValid.should == false;
         " ~master".to!SemVer.isStable.should == true;
         "0.0.2".to!SemVer.isStable.should == true;
@@ -318,8 +321,6 @@ struct DubSelections
 
 @("Parse dub selections") unittest
 {
-    import unit_threaded;
-
     string testData = `{
     	"fileVersion": 1,
     	"versions": {
@@ -335,9 +336,6 @@ struct DubSelections
         }
     }`;
     auto result = testData.deserialize!DubSelections;
-    import std.stdio : writeln;
-
-    writeln(result);
 }
 
 const dubSelectionsJson = "dub.selections.json";

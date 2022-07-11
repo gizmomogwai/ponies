@@ -22,6 +22,10 @@ import std.sumtype : SumType;
 import std.traits : EnumMembers;
 import std.typecons : tuple, Tuple;
 
+version (unittest)
+{
+    import unit_threaded;
+}
 // Commandline parsing
 @(Command("version").Description("Show version."))
 struct Version
@@ -81,8 +85,6 @@ auto removePlusMinusPrefix(string s)
 
 @("check remove plusminusprefix") unittest
 {
-    import unit_threaded;
-
     "-test".removePlusMinusPrefix.shouldEqual(tuple(true, "test"));
     "test".removePlusMinusPrefix.shouldEqual(tuple(false, "test"));
     "+test".removePlusMinusPrefix.shouldEqual(tuple(false, "test"));
@@ -141,8 +143,6 @@ bool selected(P)(P pony, string what)
 
 @("select a pony") unittest
 {
-    import unit_threaded;
-
     "test".selected(".*").shouldBeTrue;
     "test".selected("-.*").shouldBeFalse;
     "test".selected("test1,+test").shouldBeTrue;
@@ -203,8 +203,6 @@ enum CheckStatus
 
 @("bool to checkstatus") unittest
 {
-    import unit_threaded;
-
     true.to!CheckStatus.shouldEqual(CheckStatus.done);
     false.to!CheckStatus.shouldEqual(CheckStatus.todo);
 }
