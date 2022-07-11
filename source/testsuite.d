@@ -1,5 +1,3 @@
 import unit_threaded;
-mixin runTestsMain!(
-    "ponies",
-    "ponies.dlang.dub.registry",
-);
+
+mixin runTestsMain!("ponies", "ponies.dlang.dub.registry",);

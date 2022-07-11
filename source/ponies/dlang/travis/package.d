@@ -14,7 +14,8 @@ import std.experimental.logger : info, warning;
 import std.stdio : File;
 import std.format : format;
 
-auto isScalar(T)(T node) {
+auto isScalar(T)(T node)
+{
     return node.nodeID == NodeID.scalar;
 }
 
@@ -216,8 +217,8 @@ class GhPagesTravisDlangPony : TravisDlangPony
         {
             "Adding addons node".warning;
             root["addons"] = Node([
-                    "apt": Node(["packages": Node(["libevent-dev"])])
-                    ]);
+                "apt": Node(["packages": Node(["libevent-dev"])])
+            ]);
             return true;
         }
 
@@ -225,8 +226,8 @@ class GhPagesTravisDlangPony : TravisDlangPony
         {
             "Changing addons node".warning;
             root["addons"] = Node([
-                    "apt": Node(["packages": Node(["libevent-dev"])])
-                    ]);
+                "apt": Node(["packages": Node(["libevent-dev"])])
+            ]);
             return true;
         }
 

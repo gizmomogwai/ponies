@@ -416,6 +416,7 @@ class PackageInfoPony : DlangPony
     {
         return "Add generation of packageinformation to %s".format(dubSdl);
     }
+
     override CheckStatus check()
     {
         auto dubSdlContent = dubSdl.readText;
@@ -425,6 +426,7 @@ class PackageInfoPony : DlangPony
             && dubSdlContent.canFind(importPaths)).to!CheckStatus;
         // dfmt on
     }
+
     override void run()
     {
         auto oldContent = dubSdl.readText;

@@ -51,7 +51,7 @@ version (unittest)
 else
 {
     Result timed(Argument, Result)(Argument argument, string message,
-                                   Result delegate(Argument) operation, bool error=false)
+            Result delegate(Argument) operation, bool error = false)
     {
         auto sw = StopWatch(AutoStart.yes);
         scope (success)
@@ -60,7 +60,8 @@ else
         }
         scope (failure)
         {
-            (error ? LogLevel.error : LogLevel.warning).log("%s failed after %s".format(message, sw.peek));
+            (error ? LogLevel.error : LogLevel.warning).log("%s failed after %s".format(message,
+                    sw.peek));
         }
         message.info;
         return operation(argument);
@@ -113,8 +114,7 @@ else
 
         bool includes(string name)
         {
-            return (memoize!(() => getPackages()))
-                .any!(v => v.name == name);
+            return (memoize!(() => getPackages())).any!(v => v.name == name);
         }
 
         private Package[] getPackages()
@@ -218,110 +218,110 @@ else
                                 .join("\n")
                         );
                         // dfmt on
-                    }
-                    return packages.array;
-                });
-            // dfmt on
         }
+        return packages.array;
+    });
+    // dfmt on
+}
+}
+
+class DubRegistryShieldPony : ShieldPony
+{
+    DubRegistryCache cache;
+    string dubPackageName;
+    string what;
+
+    this(DubRegistryCache cache, string what)
+    {
+        this.cache = cache;
+        this.dubPackageName = getFromDubSdl("name");
+        this.what = what;
     }
 
-    class DubRegistryShieldPony : ShieldPony
+    override bool applicable()
     {
-        DubRegistryCache cache;
-        string dubPackageName;
-        string what;
-
-        this(DubRegistryCache cache, string what)
+        if (dubPackageName == null)
         {
-            this.cache = cache;
-            this.dubPackageName = getFromDubSdl("name");
-            this.what = what;
+            return false;
         }
-
-        override bool applicable()
-        {
-            if (dubPackageName == null)
-            {
-                return false;
-            }
-            return dubSdlAvailable && cache.includes(dubPackageName) && super.applicable;
-        }
-
-        override string[] doctor()
-        {
-            string[] hints;
-            if (!exists("readme.org"))
-            {
-                hints ~= "Please add readme.org";
-            }
-            if (!dubSdlAvailable)
-            {
-                hints ~= "Please add dub.sdl";
-            }
-            if (!cache.includes(dubPackageName))
-            {
-                hints ~= "Please upload your package to https://code.dlang.org";
-            }
-            return hints;
-        }
-
-        override string shield()
-        {
-            return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg?style=flat-square]]"
-                .format(dubPackageName, what);
-        }
-
+        return dubSdlAvailable && cache.includes(dubPackageName) && super.applicable;
     }
 
-    class DubLicenseShieldPony : DubRegistryShieldPony
+    override string[] doctor()
     {
-        this(DubRegistryCache cache)
+        string[] hints;
+        if (!exists("readme.org"))
         {
-            super(cache, "l");
+            hints ~= "Please add readme.org";
         }
-
-        override string name()
+        if (!dubSdlAvailable)
         {
-            return "Setup dub registry license shield in readme.org";
+            hints ~= "Please add dub.sdl";
         }
+        if (!cache.includes(dubPackageName))
+        {
+            hints ~= "Please upload your package to https://code.dlang.org";
+        }
+        return hints;
     }
 
-    class DubVersionShieldPony : DubRegistryShieldPony
+    override string shield()
     {
-        this(DubRegistryCache cache)
-        {
-            super(cache, "v");
-        }
-
-        override string name()
-        {
-            return "Setup dub registry version shield in readme.org";
-        }
+        return "[[http://code.dlang.org/packages/%1$s][https://img.shields.io/dub/%2$s/%1$s.svg?style=flat-square]]"
+            .format(dubPackageName, what);
     }
 
-    class DubWeeklyDownloadsShieldPony : DubRegistryShieldPony
-    {
-        this(DubRegistryCache cache)
-        {
-            super(cache, "dw");
-        }
+}
 
-        override string name()
-        {
-            return "Setup dub registry weekly downloads shield in readme.org";
-        }
+class DubLicenseShieldPony : DubRegistryShieldPony
+{
+    this(DubRegistryCache cache)
+    {
+        super(cache, "l");
     }
 
-    struct DubSelections
+    override string name()
     {
-        string[string] versions;
+        return "Setup dub registry license shield in readme.org";
+    }
+}
+
+class DubVersionShieldPony : DubRegistryShieldPony
+{
+    this(DubRegistryCache cache)
+    {
+        super(cache, "v");
     }
 
-    @("Parse dub selections") unittest
+    override string name()
     {
-        import unit_threaded;
+        return "Setup dub registry version shield in readme.org";
+    }
+}
 
-        string testData = `{
+class DubWeeklyDownloadsShieldPony : DubRegistryShieldPony
+{
+    this(DubRegistryCache cache)
+    {
+        super(cache, "dw");
+    }
+
+    override string name()
+    {
+        return "Setup dub registry weekly downloads shield in readme.org";
+    }
+}
+
+struct DubSelections
+{
+    string[string] versions;
+}
+
+@("Parse dub selections") unittest
+{
+    import unit_threaded;
+
+    string testData = `{
     	"fileVersion": 1,
     	"versions": {
     		"androidlogger": "0.0.16",
@@ -335,117 +335,116 @@ else
     		"mir-algorithm": "3.14.1"
         }
     }`;
-        auto result = testData.deserialize!DubSelections;
-        import std.stdio : writeln;
+    auto result = testData.deserialize!DubSelections;
+    import std.stdio : writeln;
 
-        writeln(result);
+    writeln(result);
+}
+
+const dubSelectionsJson = "dub.selections.json";
+auto dubSelectionsJsonAvailable()
+{
+    return dubSelectionsJson.exists;
+}
+
+class CheckVersionsPony : Pony
+{
+    DubRegistryCache dubRegistryCache;
+    this(DubRegistryCache dubRegistryCache)
+    {
+        this.dubRegistryCache = dubRegistryCache;
     }
 
-    const dubSelectionsJson = "dub.selections.json";
-    auto dubSelectionsJsonAvailable()
+    public override string name()
     {
-        return dubSelectionsJson.exists;
+        return "Check versions in dub.selections.json against the DUB registry";
     }
 
-    class CheckVersionsPony : Pony
+    public override bool applicable()
     {
-        DubRegistryCache dubRegistryCache;
-        this(DubRegistryCache dubRegistryCache)
+        return dubSdlAvailable() && dubSelectionsJsonAvailable();
+    }
+
+    public override CheckStatus check()
+    {
+        return CheckStatus.dont_know;
+    }
+
+    private string calcStatus(R)(SemVer selected, R dubPackage)
+    {
+        string result;
+        if (!selected.isValid)
         {
-            this.dubRegistryCache = dubRegistryCache;
+            result ~= "Use valid version";
+            return result;
+        }
+        if (!selected.isStable)
+        {
+            result ~= "Use stable version";
         }
 
-        public override string name()
+        if (dubPackage.empty)
         {
-            return "Check versions in dub.selections.json against the DUB registry";
-        }
-
-        public override bool applicable()
-        {
-            return dubSdlAvailable() && dubSelectionsJsonAvailable();
-        }
-
-        public override CheckStatus check()
-        {
-            return CheckStatus.dont_know;
-        }
-
-        private string calcStatus(R)(SemVer selected, R dubPackage)
-        {
-            string result;
-            if (!selected.isValid)
-            {
-                result ~= "Use valid version";
-                return result;
-            }
-            if (!selected.isStable)
-            {
-                result ~= "Use stable version";
-            }
-
-            if (dubPackage.empty)
-            {
-                result ~= "Not in registry";
-                return result;
-            }
-
-            Package p = dubPackage.front;
-            auto newestStable = p.newestStable;
-
-            if (newestStable.empty)
-            {
-                result ~= "No stable version in DUB registry";
-            }
-            else
-            {
-                auto v = newestStable.front;
-                if (v == selected)
-                {
-                }
-                else if (v < selected)
-                {
-                    result ~= "Update DUB registry or ponies cache";
-                } else if (selected < v)
-                {
-                    result ~= "Upgrade".yellow.to!string;
-                }
-            }
-            if (result.empty)
-            {
-                return "ok".green.to!string;
-            }
+            result ~= "Not in registry";
             return result;
         }
 
-        public override string[] doctor()
-        {
-            auto allDubPackages = dubRegistryCache.getPackages;
-            return [dubSelectionsJson
-                .readText
-                .deserialize!DubSelections
-                .versions
-                .byKeyValue
-                .fold!((table, nameAndVersion) {
-                        import std.stdio;
-                        auto packageName = nameAndVersion.key;
-                        auto semVerString = nameAndVersion.value;
-                        auto dubRegistryPackage = allDubPackages.find!(p => p.name == packageName);
-                        return table.row
-                            .add(packageName)
-                            .add(semVerString)
-                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newestStable.front.to!string)
-                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newest.front.to!string)
-                            .add(calcStatus(semVerString.to!SemVer, dubRegistryPackage));
-                    })(new AsciiTable(5).header
-                        .add("Package".bold)
-                        .add("Used version".bold)
-                        .add("Newest stable".bold)
-                        .add("Newest".bold)
-                        .add("Status".bold)).format.headerSeparator(true).columnSeparator(true).to!string];
-        }
+        Package p = dubPackage.front;
+        auto newestStable = p.newestStable;
 
-        public override void run()
+        if (newestStable.empty)
         {
+            result ~= "No stable version in DUB registry";
         }
+        else
+        {
+            auto v = newestStable.front;
+            if (v == selected)
+            {
+            }
+            else if (v < selected)
+            {
+                result ~= "Update DUB registry or ponies cache";
+            }
+            else if (selected < v)
+            {
+                result ~= "Upgrade".yellow.to!string;
+            }
+        }
+        if (result.empty)
+        {
+            return "ok".green.to!string;
+        }
+        return result;
     }
+
+    public override string[] doctor()
+    {
+        auto allDubPackages = dubRegistryCache.getPackages;
+        return [
+            dubSelectionsJson.readText
+            .deserialize!DubSelections
+            .versions
+            .byKeyValue
+            .fold!((table, nameAndVersion) {
+                import std.stdio;
+
+                auto packageName = nameAndVersion.key;
+                auto semVerString = nameAndVersion.value;
+                auto dubRegistryPackage = allDubPackages.find!(p => p.name == packageName);
+                return table.row.add(packageName).add(semVerString).add(dubRegistryPackage.empty
+                    ? "---" : dubRegistryPackage.front.newestStable.front.to!string).add(dubRegistryPackage.empty
+                    ? "---" : dubRegistryPackage.front.newest.front.to!string)
+                    .add(calcStatus(semVerString.to!SemVer, dubRegistryPackage));
+            })(new AsciiTable(5).header.add("Package".bold)
+                    .add("Used version".bold).add("Newest stable".bold)
+                    .add("Newest".bold).add("Status".bold)).format.headerSeparator(true)
+            .columnSeparator(true).to!string
+        ];
+    }
+
+    public override void run()
+    {
+    }
+}
 }

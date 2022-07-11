@@ -89,7 +89,8 @@ void list(T)(T ponies, What what)
     // dfmt on
 }
 
-void doctorWithoutExceptionHandling(T)(T ponies) {
+void doctorWithoutExceptionHandling(T)(T ponies)
+{
     string[][string] hints;
     foreach (pony; ponies)
     {
@@ -121,21 +122,19 @@ void doctorWithoutExceptionHandling(T)(T ponies) {
     auto table = new AsciiTable(2).header.add("by".underlined).add("what".underlined);
     foreach (hint, categories; hints)
     {
-        table.row
-            .add(categories.join("\n"))
-            .add(hint);
+        table.row.add(categories.join("\n")).add(hint);
     }
-    writeln(table.format
-        .columnSeparator(true)
-        .rowSeparator(true)
-        .headerSeparator(true));
+    writeln(table.format.columnSeparator(true).rowSeparator(true).headerSeparator(true));
 }
 
 void doctor(T)(T ponies)
 {
-    try {
+    try
+    {
         doctorWithoutExceptionHandling(ponies);
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
         writeln("Fatal exception: ", e);
     }
 }
@@ -158,18 +157,13 @@ void printVersion()
                  .add("Version".bold)
                  .add("License".bold).table);
     // dfmt on
-    writefln("Packages:\n%s",
-            table
-                .format
-                .parts(new UnicodeParts)
-                .headerSeparator(true)
-                .columnSeparator(true));
+    writefln("Packages:\n%s", table.format.parts(new UnicodeParts)
+            .headerSeparator(true).columnSeparator(true));
 }
 
-int main_(Arguments arguments) {
-    sharedLog = new AndroidLogger(stderr,
-                                  true,
-                                  arguments.verbose ? LogLevel.all : LogLevel.warning);
+int main_(Arguments arguments)
+{
+    sharedLog = new AndroidLogger(stderr, true, arguments.verbose ? LogLevel.all : LogLevel.warning);
     auto dubRegistry = new DubRegistryCache;
     // dfmt off
     auto ponies = [
@@ -196,28 +190,12 @@ int main_(Arguments arguments) {
     ].sort!((v1, v2) => v1.to!string < v2.to!string).array;
     // dfmt on
 
-    arguments.subcommand.match!
-    (
-      (Version v)
-      {
-           printVersion;
-      },
-      (Doctor d)
-      {
-          ponies.poniesToRun(arguments.set).doctor();
-      },
-      (List l)
-      {
-          ponies.poniesToRun(arguments.set).list(l.what);
-      },
-      (Run r)
-      {
-          ponies.poniesToRun(arguments.set).run();
-      },
-    );
+    arguments.subcommand.match!((Version v) { printVersion; }, (Doctor d) {
+        ponies.poniesToRun(arguments.set).doctor();
+    }, (List l) { ponies.poniesToRun(arguments.set).list(l.what); }, (Run r) {
+        ponies.poniesToRun(arguments.set).run();
+    },);
     return 0;
 }
 
-mixin CLI!(Arguments).main!((arguments) {
-    return main_(arguments);
-});
+mixin CLI!(Arguments).main!((arguments) { return main_(arguments); });

@@ -8,7 +8,8 @@
  +/
 module ponies;
 
-import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default, Parse, Action, PreValidation, Validation;
+import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default,
+    Parse, Action, PreValidation, Validation;
 import std.algorithm : filter, map, fold;
 import std.conv : to;
 import std.experimental.logger : info, warning;
@@ -23,23 +24,28 @@ import std.typecons : tuple, Tuple;
 
 // Commandline parsing
 @(Command("version").Description("Show version."))
-struct Version {
+struct Version
+{
 }
 
 @(Command("doctor").Description("Check if ponies are happy."))
-struct Doctor {
+struct Doctor
+{
 }
 
 @(Command("list").Description("List all ponies and their current state."))
-struct List {
+struct List
+{
     What what = What.all;
 }
 
 @(Command("run").Description("Run ponies."))
-struct Run {
+struct Run
+{
 }
 
-struct Arguments {
+struct Arguments
+{
     @ArgumentGroup("Common arguments")
     {
         @(NamedArgument.Description("Verbose output."))
@@ -50,7 +56,6 @@ struct Arguments {
     }
     @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
 }
-
 
 enum Vote
 {
