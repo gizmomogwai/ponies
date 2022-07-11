@@ -3,7 +3,6 @@
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + Authors: Christian Koestlin
  +/
-
 module ponies.dlang.dub.registry;
 
 import asciitable : AsciiTable;
