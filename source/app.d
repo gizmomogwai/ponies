@@ -7,6 +7,7 @@ import argparse : CLI;
 import androidlogger : AndroidLogger;
 import asciitable : AsciiTable, UnicodeParts;
 import colored : bold, underlined, white, lightGray, green, red;
+import packageinfo : packages;
 import ponies.dlang.dub.registry;
 import ponies.dlang.travis;
 import ponies.dlang;
@@ -21,11 +22,10 @@ import std.stdio : stderr, writeln, writefln;
 import std.string : join, format, strip;
 import std.file : exists;
 import std.sumtype : SumType, match;
+import std.process : execute;
 
 void commit(string message)
 {
-    import std.process;
-
     "main:%s".format(message).info;
 
     auto addCommand = ["git", "add", "-u"];
@@ -142,11 +142,8 @@ void doctor(T)(T ponies)
 
 void printVersion()
 {
-    import packageinfo;
-
     // dfmt off
-    auto table = packageinfo
-        .packages
+    auto table = packages
         .sort!("a.name < b.name")
         .fold!((table, p) => table
                .row

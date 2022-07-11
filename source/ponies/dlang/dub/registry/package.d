@@ -6,27 +6,27 @@
 
 module ponies.dlang.dub.registry;
 
+import asciitable : AsciiTable;
+import asdf : deserialize, serdeKeys;
 import colored : bold, green, yellow;
 import ponies : Pony, CheckStatus;
-import asdf;
 import ponies.dlang.dub;
 import ponies.shields;
-import requests;
-import std.datetime.stopwatch;
-import std.experimental.logger : error, warning, info, LogLevel, log;
-import std.exception : ifThrown;
-import std.format : format;
-import std.file : readText;
-import std.process : environment;
+import requests : getContent;
+import semver : SemVer;
 import std.algorithm : map, any, filter, find, reverse, fold;
-import std.functional : memoize, pipe;
 import std.array : array, join, split;
-import std.file;
 import std.conv : to;
+import std.datetime.stopwatch : AutoStart, StopWatch;
+import std.exception : ifThrown;
+import std.experimental.logger : error, warning, info, LogLevel, log;
+import std.file : readText, exists, mkdir, write;
+import std.format : format;
+import std.functional : memoize, pipe;
+import std.process : environment;
 import std.range : empty, front, tee;
-import semver;
-import std.typecons : tuple;
 import std.string : strip;
+import std.typecons : tuple;
 
 auto ifOk(T)(Optional!T argument, void delegate(T) okHandler)
 {
@@ -53,7 +53,7 @@ else
     Result timed(Argument, Result)(Argument argument, string message,
                                    Result delegate(Argument) operation, bool error=false)
     {
-        auto sw = std.datetime.stopwatch.StopWatch(AutoStart.yes);
+        auto sw = StopWatch(AutoStart.yes);
         scope (success)
         {
             "%s took %s".format(message, sw.peek).info;
@@ -209,9 +209,15 @@ else
 
                     if (!packages.empty)
                     {
-                        std.file.write(packageNameCachePath,
-                            packages.map!(v => "%s: %s".format(v.name,
-                            v.versions.map!("a.semVer").join(","))).join("\n"));
+                        // dfmt off
+                        packageNameCachePath.write(
+                            packages
+                                .map!(v => "%s: %s".format(
+                                    v.name,
+                                    v.versions.map!("a.semVer").join(",")))
+                                .join("\n")
+                        );
+                        // dfmt on
                     }
                     return packages.array;
                 });
@@ -341,8 +347,6 @@ else
         return dubSelectionsJson.exists;
     }
 
-    import semver : SemVer;
-
     class CheckVersionsPony : Pony
     {
         DubRegistryCache dubRegistryCache;
@@ -415,7 +419,6 @@ else
 
         public override string[] doctor()
         {
-            import asciitable;
             auto allDubPackages = dubRegistryCache.getPackages;
             return [dubSelectionsJson
                 .readText

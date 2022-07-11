@@ -5,20 +5,22 @@
  +/
 module ponies.dlang;
 
+import ponies : Pony, CheckStatus, askFor;
 import ponies.dlang.dub : dubSdl, dubSdlAvailable, getFromDubSdl;
 import ponies.utils : works;
-import ponies : Pony, CheckStatus, askFor;
+import std.algorithm : canFind;
+import std.algorithm : sort, uniq;
+import std.array : appender, split;
+import std.conv : to;
+import std.exception : enforce;
 import std.experimental.logger : info, warning;
 import std.file : write, exists, readText, FileException, dirEntries, SpanMode, append;
-import std.process : executeShell, execute;
-import std.exception : enforce;
 import std.format : format;
-import std.string : strip;
-import std.array : appender, split;
-import std.algorithm : canFind;
-import std.conv : to;
+import std.json : parseJSON;
+import std.process : executeShell, execute;
 import std.regex : matchFirst, escaper, regex, replaceFirst;
-import std.algorithm : sort, uniq;
+import std.stdio : stderr;
+import std.string : strip;
 import std.range : join;
 
 bool dfmtAvailable()
@@ -197,11 +199,16 @@ class AuthorsPony : DlangPony
     {
         foreach (file; sources)
         {
-            import std.process;
-
-            auto content = readText(file);
-            auto authors = ["git", "log", "--pretty=format:%an", file].execute.output.split("\n")
-                .sort.uniq.join(", ");
+            auto content = file.readText;
+            // dfmt off
+            auto authors = ["git", "log", "--pretty=format:%an", file]
+                .execute
+                .output
+                .split("\n")
+                .sort
+                .uniq
+                .join(", ");
+            // dfmt on
             auto authorsRegex = regex("^ \\+ Authors: (.*)$", "m");
             auto hasAuthorsLine = !content.matchFirst(authorsRegex).empty;
             auto newContent = replaceFirst(content, authorsRegex,
@@ -299,12 +306,6 @@ class GeneratePackageDependenciesPony : DlangPony
 
     override void run()
     {
-        import std.conv;
-        import std.file;
-        import std.json;
-        import std.stdio;
-        import std.string;
-
         class Package
         {
             string name;
@@ -376,8 +377,6 @@ class GeneratePackageDependenciesPony : DlangPony
                 return packages[name];
             }
         }
-
-        import std.process;
 
         "mkdir -p out".sh;
         "dub describe > out/dependencies.json".sh;
