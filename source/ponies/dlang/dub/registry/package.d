@@ -421,26 +421,37 @@ class CheckVersionsPony : Pony
     public override string[] doctor()
     {
         auto allDubPackages = dubRegistryCache.getPackages;
+        // dfmt off
         return [
-            dubSelectionsJson.readText
-            .deserialize!DubSelections
-            .versions
-            .byKeyValue
-            .fold!((table, nameAndVersion) {
-                import std.stdio;
-
-                auto packageName = nameAndVersion.key;
-                auto semVerString = nameAndVersion.value;
-                auto dubRegistryPackage = allDubPackages.find!(p => p.name == packageName);
-                return table.row.add(packageName).add(semVerString).add(dubRegistryPackage.empty
-                    ? "---" : dubRegistryPackage.front.newestStable.front.to!string).add(dubRegistryPackage.empty
-                    ? "---" : dubRegistryPackage.front.newest.front.to!string)
-                    .add(calcStatus(semVerString.to!SemVer, dubRegistryPackage));
-            })(new AsciiTable(5).header.add("Package".bold)
-                    .add("Used version".bold).add("Newest stable".bold)
-                    .add("Newest".bold).add("Status".bold)).format.headerSeparator(true)
-            .columnSeparator(true).to!string
+            dubSelectionsJson
+                .readText
+                .deserialize!DubSelections
+                .versions
+                .byKeyValue
+                .fold!((table, nameAndVersion) {
+                    auto packageName = nameAndVersion.key;
+                    auto semVerString = nameAndVersion.value;
+                    auto dubRegistryPackage = allDubPackages.find!(p => p.name == packageName);
+                    return table
+                        .row
+                            .add(packageName)
+                            .add(semVerString)
+                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newestStable.front.to!string)
+                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newest.front.to!string)
+                            .add(calcStatus(semVerString.to!SemVer, dubRegistryPackage));
+                })(new AsciiTable(5)
+                    .header
+                        .add("Package".bold)
+                        .add("Used version".bold)
+                        .add("Newest stable".bold)
+                        .add("Newest".bold)
+                        .add("Status".bold))
+            .format
+            .headerSeparator(true)
+            .columnSeparator(true)
+            .to!string
         ];
+        // dfmt on
     }
 
     public override void run()
