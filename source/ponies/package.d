@@ -97,7 +97,7 @@ auto voteByPlusMinusRegex(string pony, string plusMinusRegex)
         return Vote.dontCare;
     }
 
-    auto pm = plusMinusRegex.removePlusMinusPrefix();
+    const pm = plusMinusRegex.removePlusMinusPrefix();
 
     auto r = pm.text.regex;
     if (pony.match(r))
@@ -119,7 +119,7 @@ auto voteByPlusMinusRegex(string pony, string plusMinusRegex)
 
 bool vote(P)(P pony, bool old, string pattern)
 {
-    auto h = voteByPlusMinusRegex(pony.to!string, pattern);
+    const h = voteByPlusMinusRegex(pony.to!string, pattern);
     switch (h)
     {
     case Vote.up:

@@ -109,9 +109,9 @@ class FormatSourcesPony : DlangPony
     {
         foreach (string file; sources)
         {
-            auto oldContent = file.readText;
+            const oldContent = file.readText;
             [environment["DUB"].ifThrown("dub"), "run", "dfmt", "--", "-i", file].sh;
-            auto newContent = file.readText;
+            const newContent = file.readText;
             if (oldContent != newContent)
             {
                 "FormatSources:%s changed by dfmt -i".format(file).warning;
@@ -150,7 +150,7 @@ class CopyrightCommentPony : DlangPony
         {
             auto content = file.readText;
             auto pattern = "^ \\+ Copyright: %s$".format(copyright.escaper);
-            auto found = content.matchFirst(regex(pattern, "gm"));
+            const found = content.matchFirst(regex(pattern, "gm"));
             if (!found)
             {
                 res.put(file);
@@ -209,8 +209,8 @@ class AuthorsPony : DlangPony
                 .uniq
                 .join(", ");
             // dfmt on
-            auto authorsRegex = regex("^ \\+ Authors: (.*)$", "m");
-            auto hasAuthorsLine = !content.matchFirst(authorsRegex).empty;
+            const authorsRegex = regex("^ \\+ Authors: (.*)$", "m");
+            const hasAuthorsLine = !content.matchFirst(authorsRegex).empty;
             auto newContent = replaceFirst(content, authorsRegex,
                     " + Authors: %s".format(authors));
             if (hasAuthorsLine)
@@ -256,9 +256,9 @@ class LicenseCommentPony : DlangPony
         auto res = appender!(string[]);
         foreach (string file; sources)
         {
-            auto content = readText(file);
-            auto pattern = "^ \\+ License: %s$".format(license);
-            auto found = matchFirst(content, regex(pattern, "m"));
+            const content = file.readText;
+            const pattern = "^ \\+ License: %s$".format(license);
+            const found = matchFirst(content, regex(pattern, "m"));
             if (!found)
             {
                 res.put(file);
@@ -316,17 +316,17 @@ class GeneratePackageDependenciesPony : DlangPony
                 this.name = name;
             }
 
-            auto addDependency(Package p)
+            void addDependency(Package p)
             {
                 dependencies ~= p;
             }
 
-            override string toString()
+            override string toString() const
             {
                 return toString("");
             }
 
-            string toString(string indent)
+            string toString(string indent) const
             {
                 string res = indent;
                 res ~= name ~ "\n";
@@ -429,8 +429,8 @@ class PackageInfoPony : DlangPony
 
     override void run()
     {
-        auto oldContent = dubSdl.readText;
-        auto content = oldContent;
+        const oldContent = dubSdl.readText;
+        auto content = oldContent.dup;
         if (!content.canFind(preGenerateCommands))
         {
             "Adding preGenerateCommands to %s".format(dubSdl).info;

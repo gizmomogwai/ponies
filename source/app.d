@@ -188,13 +188,15 @@ int main_(Arguments arguments)
         new ponies.shields.TravisCiShieldPony,
         new ponies.dlang.FormatSourcesPony,
     ].sort!((v1, v2) => v1.to!string < v2.to!string).array;
+
+    arguments.subcommand.match!(
+      (Version _) { printVersion; },
+      (Doctor _) { ponies.poniesToRun(arguments.set).doctor(); },
+      (List l) { ponies.poniesToRun(arguments.set).list(l.what); },
+      (Run _) { ponies.poniesToRun(arguments.set).run(); },
+    );
     // dfmt on
 
-    arguments.subcommand.match!((Version v) { printVersion; }, (Doctor d) {
-        ponies.poniesToRun(arguments.set).doctor();
-    }, (List l) { ponies.poniesToRun(arguments.set).list(l.what); }, (Run r) {
-        ponies.poniesToRun(arguments.set).run();
-    },);
     return 0;
 }
 

@@ -61,7 +61,7 @@ class LanguageTravisDlangPony : TravisDlangPony
 
     override bool change(ref Node root)
     {
-        auto language = "language" in root;
+        const language = "language" in root;
         if (language)
         {
             if (language.isScalar)
@@ -132,7 +132,7 @@ class NoSudoTravisDlangPony : TravisDlangPony
 
     override bool change(ref Node root)
     {
-        auto sudo = "sudo" in root;
+        const sudo = "sudo" in root;
         if (sudo)
         {
             if (sudo.as!string != "false")
@@ -164,7 +164,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
     private bool addDeployNode(ref Node root)
     {
-        auto deploy = "deploy" in root;
+        const deploy = "deploy" in root;
         if (!deploy)
         {
             "Adding deploy node".warning;
@@ -186,7 +186,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
     private bool addDdoxBuildScript(ref Node root)
     {
         const buildDdox = "dub build --compiler=${DC} --build=ddox";
-        auto script = "script" in root;
+        const script = "script" in root;
         if (!script)
         {
             "Adding ddox build script".warning;
@@ -212,7 +212,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
     private bool addNeededPackages(ref Node root)
     {
-        auto addons = "addons" in root;
+        const addons = "addons" in root;
         if (!addons)
         {
             "Adding addons node".warning;
@@ -231,7 +231,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
             return true;
         }
 
-        auto apt = "apt" in root["addons"];
+        const apt = "apt" in root["addons"];
         if (!apt)
         {
             root["addons"]["apt"] = Node(["packages": Node(["libevent-dev"])]);

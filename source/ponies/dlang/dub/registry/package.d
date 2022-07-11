@@ -79,20 +79,22 @@ else
     {
         string name;
         Version[] versions;
-        auto newestStable()
+        auto newestStable() const
         {
             return versions.dup
                 .reverse
                 .map!(v => v.pipe!("a.semVer", to!SemVer))
-                .filter!("a.isValid && a.isStable");
+                .filter!("a.isValid && a.isStable")
+                .array;
         }
 
-        auto newest()
+        auto newest() const
         {
             return versions.dup
                 .reverse
                 .map!(v => v.pipe!("a.semVer", to!SemVer))
-                .filter!("a.isValid");
+                .filter!("a.isValid")
+                .array;
         }
     }
 
@@ -321,7 +323,7 @@ struct DubSelections
 
 @("Parse dub selections") unittest
 {
-    string testData = `{
+    const testData = `{
     	"fileVersion": 1,
     	"versions": {
     		"androidlogger": "0.0.16",
@@ -335,7 +337,7 @@ struct DubSelections
     		"mir-algorithm": "3.14.1"
         }
     }`;
-    auto result = testData.deserialize!DubSelections;
+    testData.deserialize!DubSelections;
 }
 
 const dubSelectionsJson = "dub.selections.json";
@@ -386,8 +388,8 @@ class CheckVersionsPony : Pony
             return result;
         }
 
-        Package p = dubPackage.front;
-        auto newestStable = p.newestStable;
+        const p = dubPackage.front;
+        const newestStable = p.newestStable;
 
         if (newestStable.empty)
         {
@@ -395,7 +397,7 @@ class CheckVersionsPony : Pony
         }
         else
         {
-            auto v = newestStable.front;
+            const v = newestStable.front;
             if (v == selected)
             {
             }
@@ -433,8 +435,12 @@ class CheckVersionsPony : Pony
                         .row
                             .add(packageName)
                             .add(semVerString)
-                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newestStable.front.to!string)
-                            .add(dubRegistryPackage.empty ? "---" : dubRegistryPackage.front.newest.front.to!string)
+                            .add(dubRegistryPackage.empty ?
+                                 "---" :
+                                 dubRegistryPackage.front.newestStable.front.to!string)
+                            .add(dubRegistryPackage.empty ?
+                                 "---" :
+                                 dubRegistryPackage.front.newest.front.to!string)
                             .add(calcStatus(semVerString.to!SemVer, dubRegistryPackage));
                 })(new AsciiTable(5)
                     .header
