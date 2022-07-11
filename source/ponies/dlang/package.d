@@ -12,12 +12,12 @@ import std.algorithm : canFind;
 import std.algorithm : sort, uniq;
 import std.array : appender, split;
 import std.conv : to;
-import std.exception : enforce;
+import std.exception : enforce, ifThrown;
 import std.experimental.logger : info, warning;
 import std.file : write, exists, readText, FileException, dirEntries, SpanMode, append;
 import std.format : format;
 import std.json : parseJSON;
-import std.process : executeShell, execute;
+import std.process : executeShell, execute, environment;
 import std.regex : matchFirst, escaper, regex, replaceFirst;
 import std.stdio : stderr;
 import std.string : strip;
@@ -97,7 +97,7 @@ class FormatSourcesPony : DlangPony
 {
     override string name()
     {
-        return "Format sources with dfmt";
+        return "style: Format sources with dfmt";
     }
 
     override CheckStatus check()
@@ -110,7 +110,7 @@ class FormatSourcesPony : DlangPony
         foreach (string file; sources)
         {
             auto oldContent = file.readText;
-            ["dub", "run", "dfmt", "--", "-i", file].sh;
+            [environment["DUB"].ifThrown("dub"), "run", "dfmt", "--", "-i", file].sh;
             auto newContent = file.readText;
             if (oldContent != newContent)
             {
