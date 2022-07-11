@@ -1,9 +1,8 @@
 /++
- + Authors: Christian Koestlin, Christian Köstlin
+ + Authors: Christian Koestlin, Christian Koestlin
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + License: MIT
  +/
-
 module ponies.dlang;
 
 import ponies.dlang.dub : dubSdl, dubSdlAvailable, getFromDubSdl;
@@ -21,6 +20,7 @@ import std.conv : to;
 import std.regex : matchFirst, escaper, regex, replaceFirst;
 import std.algorithm : sort, uniq;
 import std.range : join;
+
 bool dfmtAvailable()
 {
     return works(["dub", "run", "dfmt", "--", "--version"]);

@@ -3,21 +3,21 @@
  + License: MIT
  + Authors: Christian Koestlin, Christian Köstlin
  +/
-
 module ponies.dlang.travis;
 
-import dyaml;
-import ponies.dlang;
-import ponies;
-import std.algorithm;
-import std.conv;
-import std.experimental.logger;
-import std.stdio;
-import std.string;
+import dyaml : Loader, Node, dumper, NodeID;
+import ponies.dlang : DlangPony, travisYamlAvailable;
+import ponies : CheckStatus;
+import std.algorithm : map, canFind;
+import std.conv : to;
+import std.experimental.logger : info, warning;
+import std.stdio : File;
+import std.format : format;
 
 auto isScalar(T)(T node) {
     return node.nodeID == NodeID.scalar;
 }
+
 abstract class TravisDlangPony : DlangPony
 {
     private Node root;
