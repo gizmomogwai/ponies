@@ -4,6 +4,8 @@ authors "Christian Koestlin"
 copyright "Copyright (c) 2018, Christian Koestlin"
 license "MIT"
 x:ddoxFilterArgs "--min-protection=Private"
+x:ddoxTool "scod"
+
 dependency "requests" version="~>2.0.8"
 dependency "colored" version="~>0.0.27"
 dependency "asciitable" version="~>0.0.14"
