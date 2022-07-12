@@ -38,3 +38,4 @@ configuration "unittest" {
 	mainSourceFile "source/testsuite.d"
 	excludedSourceFiles "source/app.d"
 }
+preGenerateCommands "$DC --version"
