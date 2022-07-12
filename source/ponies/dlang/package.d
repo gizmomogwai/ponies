@@ -110,7 +110,10 @@ class FormatSourcesPony : DlangPony
         foreach (string file; sources)
         {
             const oldContent = file.readText;
-            [environment["DUB"].ifThrown("dub"), "run", "dfmt", "--", "-i", file].sh;
+            [
+                environment["DUB"].ifThrown("dub"), "run", "dfmt", "--", "-i",
+                file
+            ].sh;
             const newContent = file.readText;
             if (oldContent != newContent)
             {

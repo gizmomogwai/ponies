@@ -77,9 +77,9 @@ class CodecovShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[https://codecov.io/gh/%1$s/%2$s]" ~
-            "[https://img.shields.io/codecov/c/github/%1$s/%2$s/master.svg?style=flat-square]]\n"
-            .format(userAndProject.user, userAndProject.project);
+        return "[[https://codecov.io/gh/%1$s/%2$s]"
+            ~ "[https://img.shields.io/codecov/c/github/%1$s/%2$s/master.svg?style=flat-square]]\n".format(
+                    userAndProject.user, userAndProject.project);
     }
 
     override bool applicable()
@@ -97,9 +97,9 @@ class TravisCiShieldPony : ShieldPony
 
     override string shield()
     {
-        return "[[https://travis-ci.org/%1$s/%2$s]" ~
-            "[https://img.shields.io/travis/%1$s/%2$s/master.svg?style=flat-square]]\n"
-            .format(userAndProject.user, userAndProject.project);
+        return "[[https://travis-ci.org/%1$s/%2$s]"
+            ~ "[https://img.shields.io/travis/%1$s/%2$s/master.svg?style=flat-square]]\n".format(
+                    userAndProject.user, userAndProject.project);
     }
 
     override bool applicable()

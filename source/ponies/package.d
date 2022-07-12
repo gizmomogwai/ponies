@@ -29,40 +29,40 @@ version (unittest)
 }
 public
 {
-// Commandline parsing
-@(Command("version").Description("Show version."))
-struct Version
-{
-}
-
-@(Command("doctor").Description("Check if ponies are happy."))
-struct Doctor
-{
-}
-
-@(Command("list").Description("List all ponies and their current state."))
-struct List
-{
-    What what = What.all;
-}
-
-@(Command("run").Description("Run ponies."))
-struct Run
-{
-}
-
-struct Arguments
-{
-    @ArgumentGroup("Common arguments")
+    // Commandline parsing
+    @(Command("version").Description("Show version."))
+    struct Version
     {
-        @(NamedArgument.Description("Verbose output."))
-        bool verbose;
-
-        @(NamedArgument.Description("Comma separated list of +- regexes."))
-        string set = "+.*";
     }
-    @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
-}
+
+    @(Command("doctor").Description("Check if ponies are happy."))
+    struct Doctor
+    {
+    }
+
+    @(Command("list").Description("List all ponies and their current state."))
+    struct List
+    {
+        What what = What.all;
+    }
+
+    @(Command("run").Description("Run ponies."))
+    struct Run
+    {
+    }
+
+    struct Arguments
+    {
+        @ArgumentGroup("Common arguments")
+        {
+            @(NamedArgument.Description("Verbose output."))
+            bool verbose;
+
+            @(NamedArgument.Description("Comma separated list of +- regexes."))
+            string set = "+.*";
+        }
+        @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
+    }
 }
 enum Vote
 {
