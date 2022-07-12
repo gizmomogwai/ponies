@@ -24,6 +24,8 @@ import std.file : exists;
 import std.sumtype : SumType, match;
 import std.process : execute;
 
+private:
+
 void commit(string message)
 {
     "main:%s".format(message).info;

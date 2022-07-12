@@ -22,10 +22,13 @@ import std.sumtype : SumType;
 import std.traits : EnumMembers;
 import std.typecons : tuple, Tuple;
 
+private:
 version (unittest)
 {
     import unit_threaded;
 }
+public
+{
 // Commandline parsing
 @(Command("version").Description("Show version."))
 struct Version
@@ -60,7 +63,7 @@ struct Arguments
     }
     @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
 }
-
+}
 enum Vote
 {
     up,
@@ -158,18 +161,18 @@ auto readyToRun(P)(P ponies)
     return ponies.filter!(a => a.applicable).array;
 }
 
-auto poniesToRun(P)(P ponies, string what)
+public auto poniesToRun(P)(P ponies, string what)
 {
     return ponies.readyToRun.filter!(a => a.selected(what)).array;
 }
 
-enum What
+public enum What
 {
     all,
     readyToRun
 }
 
-auto select(T)(T ponies, What what)
+public auto select(T)(T ponies, What what)
 {
     switch (what)
     {
@@ -187,14 +190,14 @@ auto possibleValues(E)() if (is(E == enum))
     return [EnumMembers!E].map!("a.to!string").join(", ");
 }
 
-T askFor(T)() if (is(T == enum))
+public T askFor(T)() if (is(T == enum))
 {
     writeln("Please enter %s [%s]: ".format(T.stringof, possibleValues!T));
     auto line = readln.strip;
     return line.to!T;
 }
 
-enum CheckStatus
+public enum CheckStatus
 {
     todo,
     done,
@@ -207,7 +210,7 @@ enum CheckStatus
     false.to!CheckStatus.shouldEqual(CheckStatus.todo);
 }
 
-abstract class Pony
+public abstract class Pony
 {
     public abstract string name();
     public abstract bool applicable();
@@ -220,9 +223,9 @@ abstract class Pony
     public abstract void run();
 }
 
-alias UserAndProject = Tuple!(string, "user", string, "project");
-UserAndProject userAndProject;
-auto getUserAndProject()
+public alias UserAndProject = Tuple!(string, "user", string, "project");
+public UserAndProject userAndProject;
+public auto getUserAndProject()
 {
     auto res = ["git", "remote", "get-url", "origin"].execute;
     auto pattern = "github.com:(?P<user>.*)/(?P<project>.*)";
