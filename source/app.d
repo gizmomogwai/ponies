@@ -3,12 +3,13 @@
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + Authors: Christian Koestlin, Christian Köstlin
  +/
-import argparse : CLI;
 import androidlogger : AndroidLogger;
+import argparse : CLI;
 import asciitable : AsciiTable, UnicodeParts;
 import colored : bold, underlined, white, lightGray, green, red;
 import packageinfo : packages;
 import ponies.dlang.dub.registry;
+import ponies.dlang.gitlab;
 import ponies.dlang.travis;
 import ponies.dlang;
 import ponies.shields;
@@ -18,9 +19,9 @@ import std.algorithm : fold, sort;
 import std.array : array;
 import std.conv : to;
 import std.experimental.logger : sharedLog, info, LogLevel;
+import std.file : exists;
 import std.stdio : stderr, writeln, writefln;
 import std.string : join, format, strip;
-import std.file : exists;
 import std.sumtype : SumType, match;
 import std.process : execute;
 
@@ -180,6 +181,7 @@ int main_(Arguments arguments)
         new ponies.dlang.dub.registry.DubVersionShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.CheckVersionsPony(dubRegistry),
+        new ponies.dlang.gitlab.GitlabPony,
         new ponies.dlang.travis.CompilerTravisDlangPony,
         new ponies.dlang.travis.GhPagesTravisDlangPony,
         new ponies.dlang.travis.LanguageTravisDlangPony,
