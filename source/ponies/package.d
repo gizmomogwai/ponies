@@ -221,6 +221,10 @@ public abstract class Pony
     }
 
     public abstract void run();
+    protected string logTag()
+    {
+        return this.classinfo.name;
+    }
 }
 
 public alias UserAndProject = Tuple!(string, "user", string, "project");
