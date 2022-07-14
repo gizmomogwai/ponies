@@ -134,10 +134,10 @@ bool vote(P)(P pony, bool old, string pattern)
     }
 }
 
-bool selected(P)(P pony, string what)
+bool selected(P)(P pony, string set)
 {
     // dfmt off
-    return what
+    return set
         .split(",")
         .fold!((result, pattern) => pony.vote(result, pattern))
         (false);
@@ -156,20 +156,20 @@ bool selected(P)(P pony, string what)
     "a.dlang.pony".selected("-.*dlang.*").shouldBeFalse;
 }
 
-auto readyToRun(P)(P ponies)
+auto applicablePonies(P)(P ponies)
 {
     return ponies.filter!(a => a.applicable).array;
 }
 
-public auto poniesToRun(P)(P ponies, string what)
+public auto selectedPonies(P)(P ponies, string set)
 {
-    return ponies.readyToRun.filter!(a => a.selected(what)).array;
+    return ponies.filter!(a => a.selected(set)).array;
 }
 
 public enum What
 {
     all,
-    readyToRun
+    applicable,
 }
 
 public auto select(T)(T ponies, What what)
@@ -178,8 +178,8 @@ public auto select(T)(T ponies, What what)
     {
     case What.all:
         return ponies;
-    case What.readyToRun:
-        return ponies.readyToRun;
+    case What.applicable:
+        return ponies.applicablePonies;
     default:
         throw new Exception("nyi");
     }

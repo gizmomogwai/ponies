@@ -71,7 +71,6 @@ string colorize(string checkString)
 
 void list(T)(T ponies, What what)
 {
-    "list args: %s".format(what).info;
     writeln("%s ponies:".format(what));
     // dfmt off
     auto table = new AsciiTable(4)
@@ -196,9 +195,9 @@ int main_(Arguments arguments)
 
     arguments.subcommand.match!(
       (Version _) { printVersion; },
-      (Doctor _) { ponies.poniesToRun(arguments.set).doctor(); },
-      (List l) { ponies.poniesToRun(arguments.set).list(l.what); },
-      (Run _) { ponies.poniesToRun(arguments.set).run(); },
+      (Doctor _) { ponies.selectedPonies(arguments.set).doctor(); },
+      (List l) { ponies.selectedPonies(arguments.set).list(l.what); },
+      (Run _) { ponies.selectedPonies(arguments.set).run(); },
     );
     // dfmt on
 
