@@ -6,13 +6,21 @@
 module ponies.dlang.travis;
 
 import dyaml : Loader, Node, dumper, NodeID;
-import ponies.dlang : DlangPony, travisYamlAvailable;
+import ponies.dlang : DlangPony;
 import ponies : CheckStatus;
 import std.algorithm : map, canFind;
 import std.conv : to;
 import std.experimental.logger : info, warning;
 import std.stdio : File;
 import std.format : format;
+import std.file : exists;
+
+const TRAVIS_YAML = ".travis.yml";
+
+auto travisYamlAvailable()
+{
+    return TRAVIS_YAML.exists;
+}
 
 auto isScalar(T)(T node)
 {
@@ -24,6 +32,8 @@ abstract class TravisDlangPony : DlangPony
     private Node root;
     private bool upToDate = false;
 
+    this() { super(); }
+
     /++
      + Do the change on the root node and return if something was changed.
      + Return: true if something was changed
@@ -32,7 +42,7 @@ abstract class TravisDlangPony : DlangPony
 
     override CheckStatus check()
     {
-        root = Loader.fromFile(travisYaml).load;
+        root = Loader.fromFile(TRAVIS_YAML).load;
         upToDate = !change(root);
         return upToDate.to!CheckStatus;
     }
@@ -41,8 +51,8 @@ abstract class TravisDlangPony : DlangPony
     {
         if (!upToDate)
         {
-            "Writing new %s".format(travisYaml).warning;
-            dumper.dump(File(travisYaml, "w").lockingTextWriter, root);
+            "Writing new %s".format(TRAVIS_YAML).warning;
+            dumper.dump(File(TRAVIS_YAML, "w").lockingTextWriter, root);
         }
     }
 

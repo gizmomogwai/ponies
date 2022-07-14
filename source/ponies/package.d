@@ -10,7 +10,7 @@ module ponies;
 
 import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default,
     Parse, Action, PreValidation, Validation;
-import std.algorithm : filter, map, fold;
+import std.algorithm : filter, map, fold, canFind;
 import std.conv : to;
 import std.experimental.logger : info, warning;
 import std.process : execute;
@@ -21,6 +21,8 @@ import std.string : split, format, strip, join, replace;
 import std.sumtype : SumType;
 import std.traits : EnumMembers;
 import std.typecons : tuple, Tuple;
+import std.file : readText, write, exists;
+
 
 private:
 version (unittest)
@@ -197,11 +199,22 @@ public T askFor(T)() if (is(T == enum))
     return line.to!T;
 }
 
+/// Ponies can return one of these values when running check on a project
 public enum CheckStatus
 {
     todo,
     done,
     dont_know
+}
+
+/// Chain a CheckStatus with a simple bool
+public CheckStatus and(CheckStatus checkStatus, bool check)
+{
+    if (!check)
+    {
+        return CheckStatus.todo;
+    }
+    return checkStatus;
 }
 
 @("bool to checkstatus") unittest
@@ -212,18 +225,92 @@ public enum CheckStatus
 
 public abstract class Pony
 {
-    public abstract string name();
-    public abstract bool applicable();
-    public abstract CheckStatus check();
-    public string[] doctor()
+    struct EnsureStringInFile
     {
-        return [];
+        string lines;
+        string file;
+    }
+    EnsureStringInFile[] ensureStringsInFiles;
+    this()
+    {
+        this([]);
+    }
+    this(EnsureStringInFile[] ensureStringsInFiles)
+    {
+        this.ensureStringsInFiles = ensureStringsInFiles;
+    }
+    public abstract string name();
+    public abstract bool applicable()
+    {
+        foreach (ensureStringInFile; ensureStringsInFiles)
+        {
+            if (!ensureStringInFile.file.exists)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public abstract void run();
+    public CheckStatus check()
+    {
+        foreach (ensureStringInFile; ensureStringsInFiles)
+        {
+            if (!ensureStringInFile.file.readText.canFind(ensureStringInFile.lines))
+            {
+                return CheckStatus.todo;
+            }
+        }
+        return CheckStatus.done;
+    }
+
+    public string[] doctor()
+    {
+        string[] result = [];
+        foreach (ensureStringInFile; ensureStringsInFiles)
+        {
+            if (!ensureStringInFile.file.exists)
+            {
+                result ~= "Please add %s to project".format(ensureStringInFile.file);
+            }
+        }
+        return result;
+    }
+
+    public void run()
+    {
+        foreach (ensureStringInFile; ensureStringsInFiles)
+        {
+            changeFile(ensureStringInFile);
+        }
+
+    }
     protected string logTag()
     {
         return this.classinfo.name;
+    }
+
+    protected void changeFile(EnsureStringInFile ensureStringInFile)
+    {
+        changeFile(ensureStringInFile.file, (content)
+                   {
+                       if (!content.canFind(ensureStringInFile.lines))
+                       {
+                           content ~= ensureStringInFile.lines;
+                       }
+                       return content;
+                   });
+    }
+
+    protected void changeFile(string filename, string delegate(string) change)
+    {
+        const oldContent = filename.readText;
+        const newContent = change(oldContent.dup);
+        if (newContent != oldContent)
+        {
+            "%s: Writing new %s".format(logTag, filename).info;
+            filename.write(newContent);
+        }
     }
 }
 

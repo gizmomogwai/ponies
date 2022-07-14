@@ -6,7 +6,7 @@
 module ponies.dlang;
 
 import ponies : Pony, CheckStatus, askFor;
-import ponies.dlang.dub : dubSdl, dubSdlAvailable, getFromDubSdl;
+import ponies.dlang.dub : DUB_SDL, dubSdlAvailable, getFromDubSdl;
 import ponies.utils : works;
 import std.algorithm : canFind;
 import std.algorithm : sort, uniq;
@@ -47,14 +47,14 @@ enum ProtectionLevel
     Public
 }
 
-auto travisYamlAvailable()
-{
-    return exists(DlangPony.travisYaml);
-}
-
 abstract class DlangPony : Pony
 {
-    public static const travisYaml = ".travis.yml";
+    this() { super(); }
+
+    this(EnsureStringInFile[] ensureStringsInFiles)
+    {
+        super(ensureStringsInFiles);
+    }
 
     override bool applicable()
     {
@@ -69,27 +69,15 @@ abstract class DlangPony : Pony
 
 class DDoxPony : DlangPony
 {
+    this()
+    {
+        super([
+                EnsureStringInFile(DUB_SDL, "x:ddoxFilterArgs \"--min-protection=Public\"\n"),
+              ]);
+    }
     override string name()
     {
-        return "Setup ddox in %s".format(dubSdl);
-    }
-
-    override CheckStatus check()
-    {
-        try
-        {
-            auto content = readText(dubSdl);
-            return content.canFind("x:ddoxFilterArgs").to!CheckStatus;
-        }
-        catch (FileException e)
-        {
-            return CheckStatus.todo;
-        }
-    }
-
-    override void run()
-    {
-        append(dubSdl, "x:ddoxFilterArgs \"--min-protection=%s\"\n".format(askFor!ProtectionLevel));
+        return "docs: Setup ddox in %s".format(DUB_SDL);
     }
 }
 
@@ -143,7 +131,7 @@ class CopyrightCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup copyright headers in .d files (taken from %s)".format(dubSdl);
+        return "Setup copyright headers in .d files (taken from %s)".format(DUB_SDL);
     }
 
     override CheckStatus check()
@@ -251,7 +239,7 @@ class LicenseCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup license headers in .d files (taken from %s)".format(dubSdl);
+        return "Setup license headers in .d files (taken from %s)".format(DUB_SDL);
     }
 
     override CheckStatus check()
@@ -382,8 +370,7 @@ class GeneratePackageDependenciesPony : DlangPony
         }
 
         "mkdir -p out".sh;
-        "dub describe > out/dependencies.json".sh;
-
+        "dub --quiet describe > out/dependencies.json".sh; // TODO pipe
         auto json = "out/dependencies.json".readText.parseJSON;
         auto packages = Packages();
         auto rootPackage = json["rootPackage"].str;
@@ -412,49 +399,20 @@ class GeneratePackageDependenciesPony : DlangPony
 
 class PackageInfoPony : DlangPony
 {
-    string preGenerateCommands = "preGenerateCommands \"$DUB run packageinfo\"\n";
-    string sourcePaths = "sourcePaths \"source\" \"out/generated/packageinfo\"\n";
-    string importPaths = "importPaths \"source\" \"out/generated/packageinfo\"\n";
+    const PRE_GENERATE_COMMANDS = "PRE_GENERATE_COMMANDS \"$DUB run packageinfo\"\n";
+    const SOURCE_PATHS = "SOURCE_PATHS \"source\" \"out/generated/packageinfo\"\n";
+    const IMPORT_PATHS = "IMPORT_PATHS \"source\" \"out/generated/packageinfo\"\n";
+
+    this()
+    {
+        super([
+                EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),
+                EnsureStringInFile(DUB_SDL, SOURCE_PATHS),
+                EnsureStringInFile(DUB_SDL, IMPORT_PATHS),
+              ]);
+    }
     override string name()
     {
-        return "Add generation of packageinformation to %s".format(dubSdl);
-    }
-
-    override CheckStatus check()
-    {
-        auto dubSdlContent = dubSdl.readText;
-        // dfmt off
-        return (dubSdlContent.canFind(preGenerateCommands)
-            && dubSdlContent.canFind(sourcePaths)
-            && dubSdlContent.canFind(importPaths)).to!CheckStatus;
-        // dfmt on
-    }
-
-    override void run()
-    {
-        const oldContent = dubSdl.readText;
-        auto content = oldContent.dup;
-        if (!content.canFind(preGenerateCommands))
-        {
-            "Adding preGenerateCommands to %s".format(dubSdl).info;
-            content ~= preGenerateCommands;
-        }
-
-        if (!content.canFind(sourcePaths))
-        {
-            "Adding sourcePaths to %s".format(dubSdl).info;
-            content ~= sourcePaths;
-        }
-        if (!content.canFind(importPaths))
-        {
-            "Adding importPaths to %s".format(dubSdl).info;
-            content ~= importPaths;
-        }
-
-        if (content != oldContent)
-        {
-            "Writing new %s".format(dubSdl).info;
-            dubSdl.write(content);
-        }
+        return "Add generation of packageinformation to %s".format(DUB_SDL);
     }
 }

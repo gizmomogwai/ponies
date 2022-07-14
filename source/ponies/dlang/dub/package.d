@@ -16,16 +16,16 @@ import ponies : CheckStatus;
 import ponies.dlang : DlangPony;
 import std.conv : to;
 
-const dubSdl = "dub.sdl";
+const DUB_SDL = "dub.sdl";
 auto dubSdlAvailable()
 {
-    return dubSdl.exists;
+    return DUB_SDL.exists;
 }
 
 auto getFromDubSdl(string what)
 {
     auto pattern = "^%1$s \"(?P<%1$s>.*)\"$".format(what);
-    auto text = dubSdl.readText;
+    auto text = DUB_SDL.readText;
     auto match = text.matchFirst(regex(pattern, "m"));
     if (match)
     {
@@ -38,59 +38,30 @@ class DdoxWithScodSkinPony : DlangPony
 {
     const SCOD_SKIN = `x:ddoxTool "scod"
 `;
+    this()
+    {
+        super([
+                EnsureStringInFile(DUB_SDL, SCOD_SKIN),
+              ]);
+    }
     override string name()
     {
         return "Generate ddox with the scod skin";
-    }
-    override CheckStatus check()
-    {
-        return dubSdl.readText.canFind(SCOD_SKIN).to!CheckStatus;
-    }
-    override void run()
-    {
-        const oldContent = dubSdl.readText;
-        auto content = oldContent.dup;
-        if (!content.canFind(SCOD_SKIN))
-        {
-            content ~= SCOD_SKIN;
-        }
-
-        if (content != oldContent)
-        {
-            "%s: Writing new %s".format(logTag, dubSdl).info;
-            dubSdl.write(content);
-        }
     }
 }
 
 class CompilerInfoPony : DlangPony
 {
-    string preGenerateCommands = "preGenerateCommands \"$DC --version\"\n";
+    string PRE_GENERATE_COMMANDS = "PRE_GENERATE_COMMANDS \"$DC --version\"\n";
 
+    this()
+    {
+        super([
+                EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),
+              ]);
+    }
     override string name()
     {
-        return "Print compiler version before compilation in %s".format(dubSdl);
-    }
-
-    override CheckStatus check()
-    {
-        return dubSdl.readText.canFind(preGenerateCommands).to!CheckStatus;
-    }
-
-    override void run()
-    {
-        const oldContent = dubSdl.readText;
-        auto content = oldContent.dup;
-        if (!content.canFind(preGenerateCommands))
-        {
-            "Adding preGenerateCommands to %s".format(dubSdl).info;
-            content ~= preGenerateCommands;
-        }
-
-        if (content != oldContent)
-        {
-            "Writing new %s".format(dubSdl).info;
-            dubSdl.write(content);
-        }
+        return "Print compiler version before compilation in %s".format(DUB_SDL);
     }
 }

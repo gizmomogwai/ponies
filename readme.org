@@ -29,6 +29,8 @@ change, it will make another one. With this you should never loose
 data by reckless ponies.
 
 ** Walk-through tutorial
+As the output of the commands might change slightly from time to time, its omitted.
+
 Please run ~git clone git@github.com:gizmomogwai/ponies-helloworld.git~ and cd to ponies-helloworld.
 #+BEGIN_SRC
 > dub -q run ponies -- --help

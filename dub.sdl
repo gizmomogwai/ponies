@@ -13,7 +13,7 @@ dependency "androidlogger" version="~>0.0.16"
 dependency "asdf" version="~>0.7.15"
 dependency "semver" version="~>0.3.4"
 dependency "dyaml" version="~>0.8.6"
-dependency "argparse" version="~master"
+dependency "argparse" version="*"
 
 configuration "application" {
 	targetType "executable"

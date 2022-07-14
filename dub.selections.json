@@ -1,15 +1,15 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"androidlogger": "0.0.17",
-		"argparse": "~master",
+		"androidlogger": "0.0.17+commit.4.g4da5d55",
+		"argparse": "1.0.0",
 		"asciitable": "0.0.14",
 		"asdf": "0.7.15",
 		"cachetools": "0.3.1",
 		"color": "0.0.9",
 		"colored": "0.0.27",
 		"dyaml": "0.8.6",
-		"mir-algorithm": "3.14.4",
+		"mir-algorithm": "3.14.10",
 		"mir-core": "1.1.109",
 		"requests": "2.0.8",
 		"semver": "0.3.4",

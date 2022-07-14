@@ -1,6 +1,6 @@
 module ponies.dlang.gitlab;
 
-import ponies : Pony, CheckStatus;
+import ponies : Pony, CheckStatus, and;
 import std.algorithm : canFind, endsWith;
 import std.conv : to;
 import std.exception : ifThrown;
@@ -29,6 +29,12 @@ const DLANG_BUILD_SUBMODULE_CHECK = "git submodule status | grep .gitlab | grep 
  +/
 public class GitlabPony : Pony
 {
+    this()
+    {
+        super([
+                EnsureStringInFile(GITLAB_CI_YML, GITLAB_CI_YML_CONTENT),
+              ]);
+    }
 
     override public string name()
     {
@@ -37,16 +43,12 @@ public class GitlabPony : Pony
 
     override public bool applicable()
     {
-        return gitlabRemote;
+        return super.applicable() && gitlabRemote;
     }
 
     override public CheckStatus check()
     {
-        return (
-          GITLAB_CI_YML.exists
-          && GITLAB_CI_YML.readText.canFind(GITLAB_CI_YML_CONTENT)
-          && dlangBuildSubmoduleExists
-        ).to!CheckStatus;
+        return super.check().and(dlangBuildSubmoduleExists);
     }
 
     private bool dlangBuildSubmoduleExists()
