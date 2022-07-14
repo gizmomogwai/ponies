@@ -34,6 +34,35 @@ auto getFromDubSdl(string what)
     return null;
 }
 
+class DdoxWithScodSkinPony : DlangPony
+{
+    const SCOD_SKIN = `x:ddoxTool "scod"
+`;
+    override string name()
+    {
+        return "Generate ddox with the scod skin";
+    }
+    override CheckStatus check()
+    {
+        return dubSdl.readText.canFind(SCOD_SKIN).to!CheckStatus;
+    }
+    override void run()
+    {
+        const oldContent = dubSdl.readText;
+        auto content = oldContent.dup;
+        if (!content.canFind(SCOD_SKIN))
+        {
+            content ~= SCOD_SKIN;
+        }
+
+        if (content != oldContent)
+        {
+            "%s: Writing new %s".format(logTag, dubSdl).info;
+            dubSdl.write(content);
+        }
+    }
+}
+
 class CompilerInfoPony : DlangPony
 {
     string preGenerateCommands = "preGenerateCommands \"$DC --version\"\n";
