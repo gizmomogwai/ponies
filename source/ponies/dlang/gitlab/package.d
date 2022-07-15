@@ -9,7 +9,6 @@ import std.file : exists, readText, write;
 import std.format : format;
 import std.process : execute, executeShell;
 
-
 private:
 
 const TAG = "v1.0.0";
@@ -63,37 +62,21 @@ public class GitlabPony : Pony
 
     override public string[] doctor()
     {
-        import std.stdio : writeln; writeln("blub");
+        auto res = super.doctor();
         if (!gitlabRemote)
         {
-            return ["Please put project to gitlab and add it as the only remote."];
+            return res ~ "Please put project to gitlab and add it as the only remote.";
         }
-        return [];
+        return res;
     }
 
     override public void run()
     {
-        const oldContent = GITLAB_CI_YML.readText.ifThrown("");
-        auto newContent = oldContent.dup;
-        if (!newContent.endsWith("\n"))
-        {
-            newContent ~= "\n";
-        }
-        if (!oldContent.canFind(GITLAB_CI_YML_CONTENT))
-        {
-            newContent ~= GITLAB_CI_YML_CONTENT;
-        }
-
-        if (oldContent != newContent)
-        {
-            "Updating %s".format(GITLAB_CI_YML).warning;
-            GITLAB_CI_YML.write(newContent);
-            ["git", "add", GITLAB_CI_YML].execute;
-        }
+        super.run();
 
         if (!dlangBuildSubmoduleExists)
         {
-            "Adding git@gitlab.com:gizmomogwai/dlang-build.git with tag %s as submodule in .gitlab".format(TAG).warning;
+            "%s:Adding git@gitlab.com:gizmomogwai/dlang-build.git with tag %s as submodule in .gitlab".format(logTag, TAG).warning;
             ["git", "submodule", "add", "../../gizmomogwai/dlang-build.git", ".gitlab"].execute;
             ["git", "--workdir=.gitlab", "--git-dir=.gitlab/.git", "reset", "--hard", TAG].execute;
         }

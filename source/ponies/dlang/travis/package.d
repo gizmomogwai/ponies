@@ -51,7 +51,7 @@ abstract class TravisDlangPony : DlangPony
     {
         if (!upToDate)
         {
-            "Writing new %s".format(TRAVIS_YAML).warning;
+            "%s:Writing new %s".format(logTag, TRAVIS_YAML).warning;
             dumper.dump(File(TRAVIS_YAML, "w").lockingTextWriter, root);
         }
     }
@@ -103,7 +103,7 @@ class CompilerTravisDlangPony : TravisDlangPony
             if (dNode.isScalar)
             {
                 root["d"] = Node([*dNode]);
-                "Converting d node to array".warning;
+                "%s:Converting d node to array".format(logTag).warning;
                 modified = true;
             }
 
@@ -112,14 +112,14 @@ class CompilerTravisDlangPony : TravisDlangPony
             {
                 dNode.add(Node("dmd"));
                 root["d"] = *dNode;
-                "Adding dmd".warning;
+                "%s:Adding dmd".format(logTag).warning;
                 modified = true;
             }
             if (!dNode.sequence!string.canFind("ldc"))
             {
                 dNode.add(Node("ldc"));
                 root["d"] = *dNode;
-                "Adding ldc".warning;
+                "%s:Adding ldc".format(logTag).warning;
                 modified = true;
             }
             return modified;
@@ -127,7 +127,7 @@ class CompilerTravisDlangPony : TravisDlangPony
         else
         {
             root["d"] = Node([Node("dmd"), Node("ldc")]);
-            "Adding new node with dmd and ldc".warning;
+            "%s:Adding new node with dmd and ldc".format(logTag).warning;
             return true;
         }
     }
@@ -177,7 +177,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
         const deploy = "deploy" in root;
         if (!deploy)
         {
-            "Adding deploy node".warning;
+            "%s:Adding deploy node".format(logTag).warning;
             // dfmt off
             root["deploy"] =
                 Node(["provider" : Node("pages"),
@@ -199,7 +199,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
         const script = "script" in root;
         if (!script)
         {
-            "Adding ddox build script".warning;
+            "%s:Adding ddox build script".format(logTag).warning;
             root["script"] = Node(buildDdox);
             return true;
         }
@@ -225,7 +225,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
         const addons = "addons" in root;
         if (!addons)
         {
-            "Adding addons node".warning;
+            "%s:Adding addons node".format(logTag).warning;
             root["addons"] = Node([
                 "apt": Node(["packages": Node(["libevent-dev"])])
             ]);
@@ -234,7 +234,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
         if (addons.isScalar)
         {
-            "Changing addons node".warning;
+            "%s:Changing addons node".format(logTag).warning;
             root["addons"] = Node([
                 "apt": Node(["packages": Node(["libevent-dev"])])
             ]);
@@ -250,7 +250,7 @@ class GhPagesTravisDlangPony : TravisDlangPony
 
         if (apt.isScalar)
         {
-            "Changing addons.apt node".warning;
+            "%s:Changing addons.apt node".format(logTag).warning;
             root["addons"]["apt"] = Node(["packages": Node(["libevent-dev"])]);
             return true;
         }
@@ -258,21 +258,21 @@ class GhPagesTravisDlangPony : TravisDlangPony
         auto packages = "packages" in root["addons"]["apt"];
         if (!packages)
         {
-            "Adding packages to addons.apt".warning;
+            "%s:Adding packages to addons.apt".format(logTag).warning;
             root["addons"]["apt"]["packages"] = Node(["libevent-dev"]);
             return true;
         }
 
         if (packages.isScalar)
         {
-            "Changing addons.apt.packages".warning;
+            "%s:Changing addons.apt.packages".format(logTag).warning;
             root["addons"]["apt"]["packages"] = Node(["libevent-dev"]);
             return true;
         }
 
         if (!packages.sequence!string.canFind("libevent-dev"))
         {
-            "Adding libevent-dev to addons.apt.packages".warning;
+            "%s:Adding libevent-dev to addons.apt.packages".format(logTag).warning;
             packages.add("libevent-dev");
             root["addons"]["apt"]["packages"] = *packages;
             return true;

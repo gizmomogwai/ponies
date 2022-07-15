@@ -12,7 +12,8 @@ import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default,
     Parse, Action, PreValidation, Validation;
 import std.algorithm : filter, map, fold, canFind;
 import std.conv : to;
-import std.experimental.logger : info, warning;
+import std.exception : ifThrown;
+import std.experimental.logger : info;
 import std.process : execute;
 import std.range : array;
 import std.regex : Regex, regex, match, matchFirst;
@@ -22,7 +23,6 @@ import std.sumtype : SumType;
 import std.traits : EnumMembers;
 import std.typecons : tuple, Tuple;
 import std.file : readText, write, exists;
-
 
 private:
 version (unittest)
@@ -142,7 +142,7 @@ bool selected(P)(P pony, string set)
     return set
         .split(",")
         .fold!((result, pattern) => pony.vote(result, pattern))
-        (false);
+        (true);
     // dfmt on
 }
 
@@ -150,12 +150,13 @@ bool selected(P)(P pony, string set)
 {
     "test".selected(".*").shouldBeTrue;
     "test".selected("-.*").shouldBeFalse;
-    "test".selected("test1,+test").shouldBeTrue;
-    "test".selected("test1,-test").shouldBeFalse;
+    "test".selected("test1,+es").shouldBeTrue;
+    "test".selected("test1,-es").shouldBeFalse;
     "test".selected(".*,-test").shouldBeFalse;
     "test".selected("-.*,+test").shouldBeTrue;
     "a.dlang.pony".selected(".*dlang.*").shouldBeTrue;
     "a.dlang.pony".selected("-.*dlang.*").shouldBeFalse;
+    "a.dlang.pony".selected("-travis").shouldBeTrue;
 }
 
 auto applicablePonies(P)(P ponies)
@@ -227,8 +228,8 @@ public abstract class Pony
 {
     struct EnsureStringInFile
     {
-        string lines;
         string file;
+        string lines;
     }
     EnsureStringInFile[] ensureStringsInFiles;
     this()
@@ -242,13 +243,6 @@ public abstract class Pony
     public abstract string name();
     public abstract bool applicable()
     {
-        foreach (ensureStringInFile; ensureStringsInFiles)
-        {
-            if (!ensureStringInFile.file.exists)
-            {
-                return false;
-            }
-        }
         return true;
     }
 
@@ -256,7 +250,7 @@ public abstract class Pony
     {
         foreach (ensureStringInFile; ensureStringsInFiles)
         {
-            if (!ensureStringInFile.file.readText.canFind(ensureStringInFile.lines))
+            if (!ensureStringInFile.file.readText.ifThrown("").canFind(ensureStringInFile.lines))
             {
                 return CheckStatus.todo;
             }
@@ -304,12 +298,13 @@ public abstract class Pony
 
     protected void changeFile(string filename, string delegate(string) change)
     {
-        const oldContent = filename.readText;
+        const oldContent = filename.readText.ifThrown("");
         const newContent = change(oldContent.dup);
         if (newContent != oldContent)
         {
-            "%s: Writing new %s".format(logTag, filename).info;
+            "%s:Writing new %s".format(logTag, filename).info;
             filename.write(newContent);
+            ["git", "add", filename].execute;
         }
     }
 }

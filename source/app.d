@@ -15,7 +15,7 @@ import ponies.dlang;
 import ponies.shields;
 import ponies.utils;
 import ponies;
-import std.algorithm : fold, sort;
+import std.algorithm : fold, map, sort;
 import std.array : array;
 import std.conv : to;
 import std.experimental.logger : sharedLog, info, LogLevel;
@@ -33,16 +33,17 @@ void commit(string message)
 
     auto addCommand = ["git", "add", "-u"];
     auto res = addCommand.execute;
-    "result of %s: %s".format(addCommand, res).info;
+    "main:result of %s: %s".format(addCommand, res).info;
     auto commitCommand = ["git", "commit", "-m", message];
     res = commitCommand.execute;
-    "result of %s: %s".format(commitCommand, res).info;
+    "main:result of %s: %s".format(commitCommand, res).info;
 }
 
 void run(P)(P ponies)
 {
-    "run".info;
-    "Before running ponies".commit;
+    "main:run".info;
+    "main:Before running ponies".commit;
+    "main:Selected ponies:\n  %s".format(ponies.map!("a.to!string").join("\n  ")).info;
     foreach (pony; ponies)
     {
         auto check = pony.check;

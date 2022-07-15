@@ -7,7 +7,7 @@ module ponies.shields;
 
 import ponies : Pony, UserAndProject, CheckStatus, getUserAndProject;
 import std.algorithm : canFind;
-import std.experimental.logger : info, warning;
+import std.experimental.logger : warning;
 import std.file : exists, readText, append;
 import std.format : format;
 import std.string : strip;
@@ -44,7 +44,7 @@ class ShieldPony : Pony
 
     override void run()
     {
-        "Please resort your readme.org to put the shield to the right place".warning;
+        "%s:Please resort your readme.org to put the shield to the right place".format(logTag).warning;
         append("readme.org", shield);
     }
 }

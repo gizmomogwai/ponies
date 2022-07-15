@@ -10,7 +10,6 @@ import asdf : deserialize;
 import std.file : readText, exists, write;
 import std.format : format;
 import std.algorithm : canFind;
-import std.experimental.logger : info, warning;
 import std.regex : matchFirst, regex;
 import ponies : CheckStatus;
 import ponies.dlang : DlangPony;
@@ -46,7 +45,7 @@ class DdoxWithScodSkinPony : DlangPony
     }
     override string name()
     {
-        return "Generate ddox with the scod skin";
+        return "build: Generate ddox with the scod skin";
     }
 }
 
@@ -62,6 +61,6 @@ class CompilerInfoPony : DlangPony
     }
     override string name()
     {
-        return "Print compiler version before compilation in %s".format(DUB_SDL);
+        return "build: Print compiler version before compilation in %s".format(DUB_SDL);
     }
 }

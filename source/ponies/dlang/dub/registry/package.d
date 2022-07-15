@@ -18,7 +18,7 @@ import std.array : array, join, split;
 import std.conv : to;
 import std.datetime.stopwatch : AutoStart, StopWatch;
 import std.exception : ifThrown;
-import std.experimental.logger : error, warning, info, LogLevel, log;
+import std.experimental.logger : warning, info, LogLevel, log;
 import std.file : readText, exists, mkdir, write;
 import std.format : format;
 import std.functional : memoize, pipe;
@@ -52,20 +52,20 @@ version (unittest)
 }
 else
 {
-    Result timed(Argument, Result)(Argument argument, string message,
+    Result timed(Argument, Result)(Argument argument, string logTag, string message,
             Result delegate(Argument) operation, bool error = false)
     {
         auto sw = StopWatch(AutoStart.yes);
         scope (success)
         {
-            "%s took %s".format(message, sw.peek).info;
+            "%s:%s took %s".format(logTag, message, sw.peek).info;
         }
         scope (failure)
         {
-            (error ? LogLevel.error : LogLevel.warning).log("%s failed after %s".format(message,
+            (error ? LogLevel.error : LogLevel.warning).log("%s:%s failed after %s".format(logTag, message,
                     sw.peek));
         }
-        message.info;
+        "%s:%s".format(logTag, message).info;
         return operation(argument);
     }
 
@@ -116,28 +116,29 @@ else
             dumpCachePath = "%s/dub-registry.dump.cache".format(path);
         }
 
-        bool includes(string name)
+        bool includes(string name, string logTag)
         {
-            return (memoize!(() => getPackages())).any!(v => v.name == name);
+            return (memoize!(() => getPackages(logTag))).any!(v => v.name == name);
         }
 
-        private Package[] getPackages()
+        private Package[] getPackages(string logTag)
         {
             // dfmt off
             return memoize!(()
             {
-                return loadFromCache(packageNameCachePath)
-                    .ifThrown(populateCache(path, packageNameCachePath))
+                return loadFromCache(packageNameCachePath, logTag)
+                    .ifThrown(populateCache(path, packageNameCachePath, logTag))
                     ;
             });
             // dfmt on
         }
 
-        private auto loadFromCache(string cachePath)
+        private auto loadFromCache(string cachePath, string logTag)
         {
             // dfmt off
             return cachePath
-                .timed("Loading DUB registry from cache (%s)".format(cachePath),
+                .timed(logTag,
+                       "Loading DUB registry from cache (%s)".format(cachePath),
                        (string path) => path
                            .readText
                            .dup.split("\n")
@@ -154,17 +155,17 @@ else
             // dfmt on
         }
 
-        private auto loadDumpFromCache()
+        private auto loadDumpFromCache(string logTag)
         {
-            return dumpCachePath.timed("Loading DUB registry dump from cache (%s)".format(dumpCachePath),
+            return dumpCachePath.timed(logTag, "Loading DUB registry dump from cache (%s)".format(dumpCachePath),
                     (string path) => path.readText);
         }
 
-        private auto downloadDubRegistryDump()
+        private auto downloadDubRegistryDump(string logTag)
         {
             // dfmt off
             return "https://code.dlang.org/api/packages/dump"
-                .timed(
+                .timed(logTag,
                     "Downloading DUB registry dump",
                     (string url) => url.getContent.to!string,
                     true
@@ -172,13 +173,13 @@ else
             // dfmt on
         }
 
-        private auto populateCache(string path, string cachePath)
+        private auto populateCache(string path, string cachePath, string logTag)
         {
             // dfmt off
-            "Initialize cache %s".format(cachePath).info;
-            return loadDumpFromCache()
-                .ifThrown(downloadDubRegistryDump())
-                .timed(
+            "%s: Initialize cache %s".format(logTag, cachePath).info;
+            return loadDumpFromCache(logTag)
+                .ifThrown(downloadDubRegistryDump(logTag))
+                .timed(logTag,
                   "Storing DUB registry dump",
                   (string content)
                   {
@@ -193,17 +194,17 @@ else
                     write(dumpCachePath, content);
                     return content;
                 })
-                .timed(
+                .timed(logTag,
                   "Parsing DUB Registry dump",
                   (string content) => content.deserialize!(Package[])
                 )
-                .timed(
+                .timed(logTag,
                   "Filtering DUB Registry packages",
                   (Package[] packages) => packages
                       .filter!("a.versions.length > 0")
                       .array
                 )
-                .timed(
+                .timed(logTag,
                   "Storing DUB Registry package name cache", (Package[] packages)
                   {
                     if (packageNameCachePath.exists)
@@ -248,7 +249,7 @@ class DubRegistryShieldPony : ShieldPony
         {
             return false;
         }
-        return dubSdlAvailable && cache.includes(dubPackageName) && super.applicable;
+        return dubSdlAvailable && cache.includes(dubPackageName, logTag) && super.applicable;
     }
 
     override string[] doctor()
@@ -262,7 +263,7 @@ class DubRegistryShieldPony : ShieldPony
         {
             hints ~= "Please add dub.sdl";
         }
-        if (!cache.includes(dubPackageName))
+        if (!cache.includes(dubPackageName, logTag))
         {
             hints ~= "Please upload your package to https://code.dlang.org";
         }
@@ -419,7 +420,7 @@ class CheckVersionsPony : Pony
 
     public override string[] doctor()
     {
-        auto allDubPackages = dubRegistryCache.getPackages;
+        auto allDubPackages = dubRegistryCache.getPackages(logTag);
         // dfmt off
         return [
             dubSelectionsJson

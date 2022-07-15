@@ -97,15 +97,21 @@ class FormatSourcesPony : DlangPony
     {
         foreach (string file; sources)
         {
+            // dfmt off
             const oldContent = file.readText;
             [
-                environment["DUB"].ifThrown("dub"), "run", "dfmt", "--", "-i",
+                environment["DUB"].ifThrown("dub"),
+                "run",
+                "dfmt",
+                "--",
+                "-i",
                 file
             ].sh;
+            // dfmt on
             const newContent = file.readText;
             if (oldContent != newContent)
             {
-                "FormatSources:%s changed by dfmt -i".format(file).warning;
+                "%s:%s changed by dfmt -i".format(logTag, file).warning;
             }
         }
     }
@@ -131,7 +137,7 @@ class CopyrightCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup copyright headers in .d files (taken from %s)".format(DUB_SDL);
+        return "style: Setup copyright headers in .d files (taken from %s)".format(DUB_SDL);
     }
 
     override CheckStatus check()
@@ -153,7 +159,7 @@ class CopyrightCommentPony : DlangPony
 
     override void run()
     {
-        "Fixing copyright for %s".format(noCopyrightFiles).info;
+        "%s:Fixing copyright for %s".format(logTag, noCopyrightFiles).info;
 
         foreach (file; noCopyrightFiles)
         {
@@ -162,12 +168,12 @@ class CopyrightCommentPony : DlangPony
                     "m"), " + Copyright: %s".format(copyright));
             if (content == newContent)
             {
-                "Adding copyright %s to file %s".format(copyright, file).info;
+                "%s:Adding copyright %s to file %s".format(logTag, copyright, file).info;
                 newContent = "/++\n + Copyright: %s\n +/\n\n".format(copyright.to!string) ~ content;
             }
             else
             {
-                "Change copyright to %s in file %s".format(copyright, file).info;
+                "%s:Change copyright to %s in file %s".format(logTag, copyright, file).info;
             }
             file.write(newContent);
         }
@@ -178,7 +184,7 @@ class AuthorsPony : DlangPony
 {
     override string name()
     {
-        return "Setup correct authors line in all .d files (taken from git log)";
+        return "style: Setup correct authors line in all .d files (taken from git log)";
     }
 
     override CheckStatus check()
@@ -208,17 +214,17 @@ class AuthorsPony : DlangPony
             {
                 if (content == newContent)
                 {
-                    "No change of authors in file %s".format(file).info;
+                    "%s:No change of authors in file %s".format(logTag, file).info;
                 }
                 else
                 {
-                    "Change authors to %s in file %s".format(authors, file).info;
+                    "%s:Change authors to %s in file %s".format(logTag, authors, file).info;
                     file.write(newContent);
                 }
             }
             else
             {
-                "Adding authors line %s to file %s".format(authors, file).warning;
+                "%s:Adding authors line %s to file %s".format(logTag, authors, file).warning;
                 newContent = "/++\n + Authors: %s\n +/\n\n".format(authors) ~ content;
                 file.write(newContent);
             }
@@ -239,7 +245,7 @@ class LicenseCommentPony : DlangPony
 
     override string name()
     {
-        return "Setup license headers in .d files (taken from %s)".format(DUB_SDL);
+        return "style: Setup license headers in .d files (taken from %s)".format(DUB_SDL);
     }
 
     override CheckStatus check()
@@ -261,7 +267,7 @@ class LicenseCommentPony : DlangPony
 
     override void run()
     {
-        "Fixing license for %s".format(noLicenseFiles).info;
+        "%s:Fixing license for %s".format(logTag, noLicenseFiles).info;
 
         foreach (file; noLicenseFiles)
         {
@@ -270,7 +276,7 @@ class LicenseCommentPony : DlangPony
                     "m"), " + License: %s".format(license));
             if (content == newContent)
             {
-                "Adding license %s to file %s".format(license, file).info;
+                "%s:Adding license %s to file %s".format(logTag, license, file).info;
                 newContent = "/++\n + License: %s\n +/\n\n".format(license.to!string) ~ content;
             }
             else
@@ -287,7 +293,7 @@ class GeneratePackageDependenciesPony : DlangPony
 {
     override string name()
     {
-        return "Generate dependency diagrams.";
+        return "docs: Generate dependency diagrams.";
     }
 
     override CheckStatus check()
@@ -413,6 +419,6 @@ class PackageInfoPony : DlangPony
     }
     override string name()
     {
-        return "Add generation of packageinformation to %s".format(DUB_SDL);
+        return "build: Add generation of packageinformation to %s".format(DUB_SDL);
     }
 }
