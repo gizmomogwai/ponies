@@ -11,7 +11,7 @@ import std.process : execute, executeShell;
 
 private:
 
-const TAG = "v1.0.1";
+const TAG = "v1.0.2";
 const GITLAB_CI_YML = ".gitlab-ci.yml";
 const GITLAB_CI_YML_CONTENT = `include:
   - project: "gizmomogwai/dlang-build"
@@ -80,3 +80,4 @@ public class GitlabPony : Pony
         }
     }
 }
+V
