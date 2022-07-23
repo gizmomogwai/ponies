@@ -11,11 +11,9 @@ import std.process : execute, executeShell;
 
 private:
 
-const TAG = "v1.0.0";
+const TAG = "v1.0.1";
 const GITLAB_CI_YML = ".gitlab-ci.yml";
-const GITLAB_CI_YML_CONTENT = `variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-include:
+const GITLAB_CI_YML_CONTENT = `include:
   - project: "gizmomogwai/dlang-build"
     file: "dlang-build.yml"
     ref: "` ~ TAG ~ "\"\n";
