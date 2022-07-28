@@ -405,7 +405,7 @@ class GeneratePackageDependenciesPony : DlangPony
 
 class PackageInfoPony : DlangPony
 {
-    const PRE_GENERATE_COMMANDS = "PRE_GENERATE_COMMANDS \"$DUB run packageinfo\"\n";
+    const PRE_GENERATE_COMMANDS = "preGenerateCommands \"$DUB run packageinfo\"\n";
     const SOURCE_PATHS = "SOURCE_PATHS \"source\" \"out/generated/packageinfo\"\n";
     const IMPORT_PATHS = "IMPORT_PATHS \"source\" \"out/generated/packageinfo\"\n";
 

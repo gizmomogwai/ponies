@@ -80,4 +80,3 @@ public class GitlabPony : Pony
         }
     }
 }
-V
