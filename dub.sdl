@@ -13,7 +13,7 @@ dependency "androidlogger" version="~>0.0.16"
 dependency "asdf" version="~>0.7.15"
 dependency "semver" version="~>0.3.4"
 dependency "dyaml" version="~>0.8.6"
-dependency "argparse" version="*"
+dependency "argparse" version="1.1.0"
 
 configuration "application" {
 	targetType "executable"
@@ -23,7 +23,7 @@ configuration "application" {
 	importPaths "source" "out/generated/packageinfo"
 }
 configuration "ut" {
-	dependency "unit-threaded" version="~>2.0.4"
+	dependency "unit-threaded" version="~>2.1.0"
 	targetType "executable"
 	targetPath "out/test"
 	targetName "ut"
@@ -31,7 +31,7 @@ configuration "ut" {
 	versions "unitThreadedLight"
 }
 configuration "unittest" {
-	dependency "unit-threaded" version="~>2.0.4"
+	dependency "unit-threaded" version="~>2.1.0"
 	targetType "executable"
 	targetPath "out/test"
 	targetName "unittest"

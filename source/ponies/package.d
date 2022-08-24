@@ -9,7 +9,7 @@
 module ponies;
 
 import argparse : ArgumentGroup, NamedArgument, Command, SubCommands, Default,
-    Parse, Action, PreValidation, Validation;
+    Parse, Action, PreValidation, Validation, ansiStylingArgument, Description;
 import std.algorithm : filter, map, fold, canFind;
 import std.conv : to;
 import std.exception : ifThrown;
@@ -62,6 +62,9 @@ public
 
             @(NamedArgument.Description("Comma separated list of +- regexes."))
             string set = "+.*";
+
+            @NamedArgument
+            auto color = ansiStylingArgument;
         }
         @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
     }
