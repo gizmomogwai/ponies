@@ -32,7 +32,10 @@ abstract class TravisDlangPony : DlangPony
     private Node root;
     private bool upToDate = false;
 
-    this() { super(); }
+    this()
+    {
+        super();
+    }
 
     /++
      + Do the change on the root node and return if something was changed.

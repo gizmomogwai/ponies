@@ -52,8 +52,8 @@ version (unittest)
 }
 else
 {
-    Result timed(Argument, Result)(Argument argument, string logTag, string message,
-            Result delegate(Argument) operation, bool error = false)
+    Result timed(Argument, Result)(Argument argument, string logTag,
+            string message, Result delegate(Argument) operation, bool error = false)
     {
         auto sw = StopWatch(AutoStart.yes);
         scope (success)
@@ -62,8 +62,8 @@ else
         }
         scope (failure)
         {
-            (error ? LogLevel.error : LogLevel.warning).log("%s:%s failed after %s".format(logTag, message,
-                    sw.peek));
+            (error ? LogLevel.error : LogLevel.warning).log("%s:%s failed after %s".format(logTag,
+                    message, sw.peek));
         }
         "%s:%s".format(logTag, message).info;
         return operation(argument);
@@ -157,7 +157,8 @@ else
 
         private auto loadDumpFromCache(string logTag)
         {
-            return dumpCachePath.timed(logTag, "Loading DUB registry dump from cache (%s)".format(dumpCachePath),
+            return dumpCachePath.timed(logTag,
+                    "Loading DUB registry dump from cache (%s)".format(dumpCachePath),
                     (string path) => path.readText);
         }
 

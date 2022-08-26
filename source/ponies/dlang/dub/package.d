@@ -39,10 +39,9 @@ class DdoxWithScodSkinPony : DlangPony
 `;
     this()
     {
-        super([
-                EnsureStringInFile(DUB_SDL, SCOD_SKIN),
-              ]);
+        super([EnsureStringInFile(DUB_SDL, SCOD_SKIN),]);
     }
+
     override string name()
     {
         return "build: Generate ddox with the scod skin";
@@ -55,10 +54,9 @@ class CompilerInfoPony : DlangPony
 
     this()
     {
-        super([
-                EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),
-              ]);
+        super([EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),]);
     }
+
     override string name()
     {
         return "build: Print compiler version before compilation in %s".format(DUB_SDL);
@@ -71,9 +69,7 @@ class Lst2ErrorMessagesPony : DlangPony
 
     this()
     {
-        super([
-                EnsureStringInFile(DUB_SDL, POST_RUN_COMMANDS),
-              ]);
+        super([EnsureStringInFile(DUB_SDL, POST_RUN_COMMANDS),]);
     }
 
     override string name()

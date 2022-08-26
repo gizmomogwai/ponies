@@ -44,7 +44,8 @@ class ShieldPony : Pony
 
     override void run()
     {
-        "%s:Please resort your readme.org to put the shield to the right place".format(logTag).warning;
+        "%s:Please resort your readme.org to put the shield to the right place".format(logTag)
+            .warning;
         append("readme.org", shield);
     }
 }
