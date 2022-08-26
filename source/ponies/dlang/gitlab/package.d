@@ -1,4 +1,8 @@
 /++
+ + Copyright: Copyright (c) 2018, Christian Koestlin
+ +/
+
+/++
  + Authors: Christian Köstlin
  +/
 
