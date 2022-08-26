@@ -36,9 +36,7 @@ public class GitlabPony : Pony
 {
     this()
     {
-        super([
-                EnsureStringInFile(GITLAB_CI_YML, GITLAB_CI_YML_CONTENT),
-              ]);
+        super([EnsureStringInFile(GITLAB_CI_YML, GITLAB_CI_YML_CONTENT),]);
     }
 
     override public string name()
@@ -82,9 +80,16 @@ public class GitlabPony : Pony
 
         if (!dlangBuildSubmoduleExists)
         {
-            "%s:Adding git@gitlab.com:gizmomogwai/dlang-build.git with tag %s as submodule in .gitlab".format(logTag, TAG).warning;
-            ["git", "submodule", "add", "../../gizmomogwai/dlang-build.git", ".gitlab"].execute;
-            ["git", "--workdir=.gitlab", "--git-dir=.gitlab/.git", "reset", "--hard", TAG].execute;
+            "%s:Adding git@gitlab.com:gizmomogwai/dlang-build.git with tag %s as submodule in .gitlab".format(logTag,
+                    TAG).warning;
+            [
+                "git", "submodule", "add", "../../gizmomogwai/dlang-build.git",
+                ".gitlab"
+            ].execute;
+            [
+                "git", "--workdir=.gitlab", "--git-dir=.gitlab/.git", "reset",
+                "--hard", TAG
+            ].execute;
         }
     }
 }
