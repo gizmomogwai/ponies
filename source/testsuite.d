@@ -3,7 +3,7 @@
  +/
 
 /++
- + Authors: Christian Köstlin
+ + Authors: Christian Koestlin, Christian Köstlin
  +/
 
 import unit_threaded;

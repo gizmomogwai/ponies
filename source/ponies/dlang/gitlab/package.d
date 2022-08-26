@@ -3,7 +3,7 @@
  +/
 
 /++
- + Authors: Christian Köstlin
+ + Authors: Christian Koestlin, Christian Köstlin
  +/
 
 module ponies.dlang.gitlab;
