@@ -1,3 +1,7 @@
+/++
+ + Authors: Christian Köstlin
+ +/
+
 module ponies.dlang.gitlab;
 
 import ponies : Pony, CheckStatus, and;

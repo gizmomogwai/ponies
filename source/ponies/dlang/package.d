@@ -1,5 +1,5 @@
 /++
- + Authors: Christian Koestlin, Christian Koestlin
+ + Authors: Christian Koestlin, Christian Köstlin
  + Copyright: Copyright (c) 2018, Christian Koestlin
  + License: MIT
  +/

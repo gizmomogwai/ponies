@@ -1,7 +1,7 @@
 /++
  + License: MIT
  + Copyright: Copyright (c) 2018, Christian Koestlin
- + Authors: Christian Koestlin
+ + Authors: Christian Koestlin, Christian Köstlin
  +/
 
 module ponies.dlang.dub;
