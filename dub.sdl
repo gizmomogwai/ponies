@@ -3,7 +3,9 @@ description "Helps you to setup nice projects."
 authors "Christian Koestlin"
 copyright "Copyright (c) 2018, Christian Koestlin"
 license "MIT"
-x:ddoxFilterArgs "--min-protection=Private"
+
+preGenerateCommands "$DC --version"
+x:ddoxFilterArgs "--min-protection=Public"
 x:ddoxTool "scod"
 
 dependency "requests" version="~>2.0.8"
@@ -24,12 +26,11 @@ configuration "application" {
 }
 configuration "unittest" {
 	dependency "unit-threaded" version="~>2.1.1"
-    subConfiguration "unit-threaded" "nodips"
+	subConfiguration "unit-threaded" "nodips"
 	targetType "executable"
 	targetPath "out/test"
 	targetName "unittest"
 	mainSourceFile "source/testsuite.d"
 	excludedSourceFiles "source/app.d"
+	postRunCommands "$DUB run lst2errormessages || true"
 }
-preGenerateCommands "$DC --version"
-x:ddoxFilterArgs "--min-protection=Public"
