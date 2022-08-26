@@ -63,8 +63,7 @@ public
             @(NamedArgument.Description("Comma separated list of +- regexes."))
             string set = "+.*";
 
-            @NamedArgument
-            auto color = ansiStylingArgument;
+            @NamedArgument auto color = ansiStylingArgument;
         }
         @SubCommands SumType!(Default!Version, Doctor, List, Run) subcommand;
     }
@@ -234,15 +233,18 @@ public abstract class Pony
         string file;
         string lines;
     }
+
     EnsureStringInFile[] ensureStringsInFiles;
     this()
     {
         this([]);
     }
+
     this(EnsureStringInFile[] ensureStringsInFiles)
     {
         this.ensureStringsInFiles = ensureStringsInFiles;
     }
+
     public abstract string name();
     public abstract bool applicable()
     {
@@ -282,6 +284,7 @@ public abstract class Pony
         }
 
     }
+
     protected string logTag()
     {
         return this.classinfo.name;
@@ -289,14 +292,13 @@ public abstract class Pony
 
     protected void changeFile(EnsureStringInFile ensureStringInFile)
     {
-        changeFile(ensureStringInFile.file, (content)
-                   {
-                       if (!content.canFind(ensureStringInFile.lines))
-                       {
-                           content ~= ensureStringInFile.lines;
-                       }
-                       return content;
-                   });
+        changeFile(ensureStringInFile.file, (content) {
+            if (!content.canFind(ensureStringInFile.lines))
+            {
+                content ~= ensureStringInFile.lines;
+            }
+            return content;
+        });
     }
 
     protected void changeFile(string filename, string delegate(string) change)

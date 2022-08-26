@@ -49,7 +49,10 @@ enum ProtectionLevel
 
 abstract class DlangPony : Pony
 {
-    this() { super(); }
+    this()
+    {
+        super();
+    }
 
     this(EnsureStringInFile[] ensureStringsInFiles)
     {
@@ -72,9 +75,10 @@ class DDoxPony : DlangPony
     this()
     {
         super([
-                EnsureStringInFile(DUB_SDL, "x:ddoxFilterArgs \"--min-protection=Public\"\n"),
-              ]);
+            EnsureStringInFile(DUB_SDL, "x:ddoxFilterArgs \"--min-protection=Public\"\n"),
+        ]);
     }
+
     override string name()
     {
         return "docs: Setup ddox in %s".format(DUB_SDL);
@@ -412,11 +416,12 @@ class PackageInfoPony : DlangPony
     this()
     {
         super([
-                EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),
-                EnsureStringInFile(DUB_SDL, SOURCE_PATHS),
-                EnsureStringInFile(DUB_SDL, IMPORT_PATHS),
-              ]);
+            EnsureStringInFile(DUB_SDL, PRE_GENERATE_COMMANDS),
+            EnsureStringInFile(DUB_SDL, SOURCE_PATHS),
+            EnsureStringInFile(DUB_SDL, IMPORT_PATHS),
+        ]);
     }
+
     override string name()
     {
         return "build: Add generation of packageinformation to %s".format(DUB_SDL);
