@@ -7,12 +7,12 @@ x:ddoxFilterArgs "--min-protection=Private"
 x:ddoxTool "scod"
 
 dependency "requests" version="~>2.0.8"
-dependency "colored" version="~>0.0.27"
-dependency "asciitable" version="~>0.0.14"
+dependency "colored" version="~>0.0.28"
+dependency "asciitable" version="~>0.0.15"
 dependency "androidlogger" version="~>0.0.16"
 dependency "asdf" version="~>0.7.15"
 dependency "semver" version="~>0.3.4"
-dependency "dyaml" version="~>0.8.6"
+dependency "dyaml" version="~>0.9.2"
 dependency "argparse" version="1.1.0"
 
 configuration "application" {
@@ -22,16 +22,9 @@ configuration "application" {
 	sourcePaths "source" "out/generated/packageinfo"
 	importPaths "source" "out/generated/packageinfo"
 }
-configuration "ut" {
-	dependency "unit-threaded" version="~>2.1.0"
-	targetType "executable"
-	targetPath "out/test"
-	targetName "ut"
-	excludedSourceFiles "source/app.d"
-	versions "unitThreadedLight"
-}
 configuration "unittest" {
-	dependency "unit-threaded" version="~>2.1.0"
+	dependency "unit-threaded" version="~>2.1.1"
+    subConfiguration "unit-threaded" "nodips"
 	targetType "executable"
 	targetPath "out/test"
 	targetName "unittest"

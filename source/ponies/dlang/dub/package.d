@@ -51,7 +51,7 @@ class DdoxWithScodSkinPony : DlangPony
 
 class CompilerInfoPony : DlangPony
 {
-    string PRE_GENERATE_COMMANDS = "PRE_GENERATE_COMMANDS \"$DC --version\"\n";
+    string PRE_GENERATE_COMMANDS = "preGenerateCommands \"$DC --version\"\n";
 
     this()
     {
@@ -62,5 +62,22 @@ class CompilerInfoPony : DlangPony
     override string name()
     {
         return "build: Print compiler version before compilation in %s".format(DUB_SDL);
+    }
+}
+
+class Lst2ErrorMessagesPony : DlangPony
+{
+    string POST_RUN_COMMANDS = "postRunCommands \"$DUB run lst2errormessages || true\"\n";
+
+    this()
+    {
+        super([
+                EnsureStringInFile(DUB_SDL, POST_RUN_COMMANDS),
+              ]);
+    }
+
+    override string name()
+    {
+        return "build: Analyze codecoverage after `dub test --coverage` in %s".format(DUB_SDL);
     }
 }

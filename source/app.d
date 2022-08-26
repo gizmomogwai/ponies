@@ -178,6 +178,7 @@ int main_(Arguments arguments)
         new ponies.dlang.LicenseCommentPony,
         new ponies.dlang.dub.DdoxWithScodSkinPony,
         new ponies.dlang.dub.CompilerInfoPony,
+        new ponies.dlang.dub.Lst2ErrorMessagesPony,
         new ponies.dlang.dub.registry.DubLicenseShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.DubVersionShieldPony(dubRegistry),
         new ponies.dlang.dub.registry.DubWeeklyDownloadsShieldPony(dubRegistry),
